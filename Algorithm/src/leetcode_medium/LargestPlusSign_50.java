@@ -180,6 +180,21 @@ public class LargestPlusSign_50 {
         //Ta tư duy như sau:
         //- Ở bên trên ta đã tư duy sai do ta đã không xét đến các khả năng các phần tử bị gián đoạn nếu đi theo các chiều (left, righ, top, bottom)
         //Mà chỉ xét đên (kích thước dấu cộng lớn nhất) --> Sai
+        //1, Ở đây ta cần lưu 4 hưởng (left (Từ trái sang), top (Từ trên xuống), right (Từ phái sang), top (Từ dưới lên)
+        //--> Ta cần lưu kết quả vào 1 mảng dạng [4][i][j]
+        //1.1, Kinh nghiệm: Để [4][i][j] trước --> Debug xem toàn bộ ma trận dễ hơn.
+        //2, Sau đó ta sẽ lấy Max cùa min(all directions) của left, right, top, bottom ở vòng lặp cuối cùng
+        //
+        //Tối ưu lại:
+        //Vì ta tính max của min (left, top, right, bottom) thế nên:
+        // Việc tính min --> Thay vì update kích thước mảng lên 4 lần ta có thể update tại 1 phần tử duy nhất là:
+        //dp[i][j]
+//        grid[i][j] = Math.min(grid[i][j], l = (grid[i][j] == 0 ? 0 : l + 1));  // left direction
+//        grid[i][k] = Math.min(grid[i][k], r = (grid[i][k] == 0 ? 0 : r + 1));  // right direction
+//        grid[j][i] = Math.min(grid[j][i], u = (grid[j][i] == 0 ? 0 : u + 1));  // up direction
+//        grid[k][i] = Math.min(grid[k][i], d = (grid[k][i] == 0 ? 0 : d + 1));  // down direction
+        //--> Kinh nghiệm: Nếu lấy min 4 hướng --> Ta hoàn toàn có thể tính luôn: (Chúng có thể tính cùng 1 lúc)
+        //Min của all --> Ta sẽ giảm được kích thước init dynamic array --> Reduce time
         System.out.println(orderOfLargestPlusSign1(n, mines));
     }
 }
