@@ -76,7 +76,7 @@ public class PredictTheWinner_34 {
 //            //Của left --> (Điều này là sai)
 //            //VD: Nếu trước đó là left mà --> Ta sẽ so sánh tổng left>=sum-left
 //            //Trước đó là right --> Ta phải so sánh right --> Mới cho kết quả đúng của right
-//            //CHÚ Ý: (KHÓ)--> Tập trung vào kết quả của recursion trước đó
+//            //***** CHÚ Ý: (KHÓ)--> Tập trung vào kết quả của recursion trước đó
 //            //MAP 1:1: Trường hợp nào sẽ mong muốn kết quả như thế nào?
 //            if (!isLeft && left >= sum - left) {
 //                return false;
@@ -89,8 +89,8 @@ public class PredictTheWinner_34 {
 ////            }
 //            return true;
 //        }
-        //Ở đấy nếu ta so sánh ngược lại --> Gây sai vì left thực tế chưa được cộng hết phần tử
-        //Nó chí đúng khi left chưa cộng hết --> Mà đã lớn hơn
+        //- Ở đấy nếu ta so sánh ngược lại --> Gây sai vì left thực tế chưa được cộng hết phần tử
+        //- Nó chí đúng khi left chưa cộng hết --> Mà đã lớn hơn
         //Trường hợp chưa cộng hết mà < sum-left --> Vô nghĩa vì:
         //- Left có thể tăng lên
         //- sum -left --> Có thể giảm đi sau sự tăng lên của left
