@@ -27,6 +27,7 @@ public class SumOfSubarrayMinimums_65 {
 //                }
 //            }
 
+            //Tối ưu lại đoạn này.
             while (!beforeRs.isEmpty()){
                 int e=beforeRs.peek();
 
@@ -124,6 +125,55 @@ public class SumOfSubarrayMinimums_65 {
     public static int sumSubarrayMins(int[] arr) {
         long rs=0;
         int n=arr.length;
+        long[] lefts =new long[n];
+        long[] rights =new long[n];
+        Stack<Pair> leftStack=new Stack<>();
+        Stack<Pair> rightStack=new Stack<>();
+        lefts[0]=1;
+        rights[n-1]=1;
+        leftStack.push(new Pair(arr[0], 1));
+        rightStack.push(new Pair(arr[n-1], 1));
+
+        for(int i=1;i<n;i++){
+            int left=1;
+
+//            while (!leftStack.isEmpty()){
+//                Pair before=leftStack.peek();
+//
+//                if(before.getX()<arr[i]){
+//                    break;
+//                }else{
+//                    //Case 1: Nếu viết như thế này --> Thành 2 câu lệnh rồi
+//                    //--> Nên gộp việc pop và việc get ra thành cùng 1 câu lệnh
+//                    left+=before.getY();
+//                    leftStack.pop();
+//                }
+//            }
+            while (!leftStack.isEmpty()&&leftStack.peek().getX()>=arr[i]){
+                left+=leftStack.pop().getY();
+            }
+            leftStack.push(new Pair(arr[i], left));
+            lefts[i]=left;
+
+            int before=n-i-1;
+            int right=1;
+
+            while(!rightStack.isEmpty()&&rightStack.peek().getX()>arr[before]){
+                right+=rightStack.pop().getY();
+            }
+            rightStack.push(new Pair(arr[before], right));
+            rights[before]=right;
+        }
+
+        for(int i=0;i<n;i++){
+            rs=(rs+(arr[i]*lefts[i]*rights[i])%1_000_000_007)%1_000_000_007;
+        }
+        return (int)rs;
+    }
+
+    public static int sumSubarrayMinsOptimize(int[] arr) {
+        long rs=0;
+        int n=arr.length;
         long lefts[]=new long[n];
         long rights[]=new long[n];
         lefts[0]=1;
@@ -175,5 +225,20 @@ public class SumOfSubarrayMinimums_65 {
         System.out.println(sumSubarrayMinsTimeOut(arr));
         System.out.println(sumSubarrayMinsWrong(arr));
         System.out.println(sumSubarrayMins(arr));
+        //Bài này tư duy như sau:
+        //1, bài này ta đã thử làm việc dùng list để lưu lại danh sách cases chuỗi kết thúc tại vị trí [i]
+        //Nhưng bị timeout
+        //1.1, Đã thử dung PriorityQueue: Để giảm thời gian xuống khi loại bỏ trường hợp element cũ là 1 array có MIN < arr[i] đang xét
+        // rs+=min.size() --> Không cần duyệt all lại --> Vẫn timeout
+        //1.2, Dùng treeset --> Sai kết quả
+        //2,  [3], [1], [2], [4], [3,1], [1,2], [2,4], [3,1,2], [1,2,4], [3,1,2,4].
+        //Minimums are 3, 1, 2, 4, 1, 1, 2, 1, 1, 1.
+        //Kết quả cuối cùng là:
+        //left[i]*right[i]: với left[i] độ dài chuỗi liên tiếp dài nhất xét 0--> (i) mà (i) là min nhất
+        //+ Kiểu gì (i) cũng xuất hiện trong số cases có thể xảy ra: (Có thể đứng 1 mình/ Kết hợp với số trước đó)
+        //--> ta chỉ cần đếm số chuỗi mà liên tiếp nhau có min cảu all arrays --> rs=sum( all )
+        //+ Đề bài tính là chuỗi tự do --> Cần start(i) * end(i) : Bắt đầu và kết thúc có min tại (i)
+        //--> left[i]*right[i]
+        //3, Bài toán con --> Ta có thể tối ưu bằng cách dúng stack --> refer từ bài 65_1
     }
 }
