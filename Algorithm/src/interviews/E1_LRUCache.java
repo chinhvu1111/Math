@@ -64,52 +64,68 @@ class LRUCache{
     }
 
     public int get(Integer key) {
-        if(key>=10000||cache[key]==null){
+        Node oldNode=cache[key];
+        if(key>=10000||oldNode==null){
             return -1;
         }
-        Node node=cache[key];
+        Node node=oldNode;
         if(node!=null){
             removeKey(node);
+            node.prev=null;
 //            usage.remove(key);
         }
-        addKey(node, last);
-        return cache[key].getValue();
+        addKey(node);
+        return node.getValue();
     }
 
     public void put(Integer key, Integer value) {
         Node node=cache[key];
         if(currentLength+1>capacity&&cache[key]==null){
             if(first!=null){
+                cache[first.key]=null;
                 first=first.next;
             }
-            cache[key]=null;
+            if(first!=null){
+                first.prev=null;
+            }
         }else if(node==null){
             this.currentLength++;
-        }else if(node!=null){
+        }else {
             removeKey(node);
+            node.prev=null;
+            cache[key]=null;
         }
-        cache[key]=new Node(key, value);
+        Node newNode=new Node(key, value);
+        cache[key]=newNode;
 
         if(first==null){
-            first=cache[key];
+            first=newNode;
         }
-        addKey(cache[key], this.last);
+        addKey(newNode);
     }
 
     private void removeKey(Node node){
         if(node.prev!=null){
             node.prev.next=node.next;
-            node.next.prev=node.prev;
+            if(node.next!=null){
+                node.next.prev=node.prev;
+            }else{
+                last=node.prev;
+            }
         }else if(node.next!=null){
+            this.first=node.next;
             node.next.prev=null;
         }
+        node.next=null;
+        node.prev=null;
     }
 
-    private void addKey(Node node, Node prevNode){
+    private void addKey(Node node){
         if(this.last==null&&node!=null){
-            if(prevNode!=null){
-                prevNode.next=node;
-            }
+            this.last=node;
+        }else if(this.last!=null){
+            this.last.next=node;
+            node.prev=this.last;
             this.last=node;
         }
     }
@@ -123,19 +139,20 @@ class LRUCache{
     }
 }
 
-public class I1_LRUCache {
+public class E1_LRUCache {
     public static void main(String[] args) {
-        LRUCache lRUCache = new LRUCache(2);
+        LRUCache lRUCache = new LRUCache(3);
         //Case 1:
-        lRUCache.put(1, 1); // cache is {1=1}
-        lRUCache.put(2, 2); // cache is {1=1, 2=2}
-        System.out.println(lRUCache.get(1));    // return 1
-        lRUCache.put(3, 3); // LRU key was 2, evicts key 2, cache is {1=1, 3=3}
-        System.out.println(lRUCache.get(2));    // returns -1 (not found)
-        lRUCache.put(4, 4); // LRU key was 1, evicts key 1, cache is {4=4, 3=3}
-        System.out.println(lRUCache.get(1));    // return -1 (not found)
-        System.out.println(lRUCache.get(3));    // return 3
-        System.out.println(lRUCache.get(4));    // return 4
+        //Với cách code 2: Lỗi liên quan đến gán cache[key]=nyll đối với element bị remove
+//        lRUCache.put(1, 1); // cache is {1=1}
+//        lRUCache.put(2, 2); // cache is {1=1, 2=2}
+//        System.out.println(lRUCache.get(1));    // return 1
+//        lRUCache.put(3, 3); // LRU key was 2, evicts key 2, cache is {1=1, 3=3}
+//        System.out.println(lRUCache.get(2));    // returns -1 (not found)
+//        lRUCache.put(4, 4); // LRU key was 1, evicts key 1, cache is {4=4, 3=3}
+//        System.out.println(lRUCache.get(1));    // return -1 (not found)
+//        System.out.println(lRUCache.get(3));    // return 3
+//        System.out.println(lRUCache.get(4));    // return 4
 
         //Case 2: Case này sai do nếu put duplicated key --> Thì không tăng length của Array nữa .
 //        System.out.println(lRUCache.get(2));
@@ -153,5 +170,30 @@ public class I1_LRUCache {
 //        lRUCache.put(4, 1);
 //        System.out.println(lRUCache.get(2));
         //Case 4: time limit
+        //Case 5: Lỗi do set nhầm cache[first.value]=null --> cache[first.key]=null
+//        lRUCache.put(1, 0);
+//        lRUCache.put(2, 2);
+//        System.out.println(lRUCache.get(1));
+//        lRUCache.put(3, 3);
+//        System.out.println(lRUCache.get(2));
+//        lRUCache.put(4, 4);
+//        System.out.println(lRUCache.get(1));
+//        System.out.println(lRUCache.get(3));
+//        System.out.println(lRUCache.get(4));
+        //Case 6:
+        lRUCache.put(1, 1); //1
+        lRUCache.put(2, 2);//1,2
+        lRUCache.put(3, 3);//1,2,3
+        lRUCache.put(4, 4);//2,3,4
+        System.out.println(lRUCache.get(4));//2,3,4
+        System.out.println(lRUCache.get(3));//2,4,3
+        System.out.println(lRUCache.get(2));//4,3,2
+        System.out.println(lRUCache.get(1));//4,3,2
+        lRUCache.put(5, 5);//3,2,5
+        System.out.println(lRUCache.get(1));//-1
+        System.out.println(lRUCache.get(2));//3,5,2 : 2
+        System.out.println(lRUCache.get(3));//5,2,3 : 3
+        System.out.println(lRUCache.get(4));//-1
+        System.out.println(lRUCache.get(5));//2,3,5 : 5
     }
 }
