@@ -70,6 +70,42 @@ public class LengthOfLongestFibonacciSubsequence_61 {
 //        return rs>=3?rs:0;
 //    }
 
+    public static int lenLongestFibSubseq(int[] arr) {
+        int n=arr.length;
+        //Kinh nghiệm: sẽ lưu index
+        HashMap<Integer, Integer> mapLength=new HashMap<>();
+        //Array sẽ lưu length --> để lúc tính tăng tốc độ
+        //Index sẽ bị giới hạn
+        int dp[][]=new int[n][n];
+        int rs=0;
+
+        for(int i=0;i<n;i++){
+            mapLength.put(arr[i],i);
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(i!=j){
+                    dp[i][j]=2;
+                }else{
+                    dp[i][j]=1;
+                }
+            }
+        }
+        for(int i=1;i<n;i++){
+            for(int j=i-1;j>=0;j--){
+                int sub=arr[i]-arr[j];
+                Integer indexBefore=mapLength.get(sub);
+
+                if(indexBefore==null||indexBefore>=j){
+                    continue;
+                }
+                dp[i][j]=dp[j][indexBefore]+1;
+                rs=Math.max(rs, dp[i][j]);
+            }
+        }
+        return rs>=3?rs:0;
+    }
+
     public static void main(String[] args) {
 //        int arr[]=new int[]{1,3,7,11,12,14,18};
 //        int arr[]=new int[]{1,2,3,4,5,6,7,8};
@@ -79,8 +115,15 @@ public class LengthOfLongestFibonacciSubsequence_61 {
 //        int arr[]=new int[]{2,5,6,7,8,10,12,17,24,41,65};
         //{7,17,24,41,65}
 //        int arr[]=new int[]{1,3,4,7,10,11,12,18,23,35};
-        int arr[]=new int[]{3,4,9,10,12,14,15,24,27,38,42};
 
-        System.out.println(lenLongestFibSubseqWrong(arr));
+//        int arr[]=new int[]{3,4,9,10,12,14,15,24,27,38,42};
+        //Case 1: 3(0),12(4),15(6),27(8),42(10)
+        //Xét thiếu trường hợp ddp[i][j]=dp[j][k]+1
+        //k lấy từ map ra phải thỏa mãn điều kiện: (k != null&& k <= j)
+//        System.out.println(lenLongestFibSubseqWrong(arr));
+//        int arr[]=new int[]{};
+//        int arr[]=new int[]{1,2,3};
+        int arr[]=new int[]{1};
+        System.out.println(lenLongestFibSubseq(arr));
     }
 }
