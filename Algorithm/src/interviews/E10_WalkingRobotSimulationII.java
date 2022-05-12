@@ -26,17 +26,8 @@ public class E10_WalkingRobotSimulationII {
             step=num%((width-2)*2+height*2);
         }
         if(num/(width*2+(height-2)*2)>=0) {
-            if (x == 0 && y == 0) {
-                currentDirectioIndex = 1;
-            }
-            if (x == width - 1 && y == 0) {
-                currentDirectioIndex = 0;
-            }
-            if (x == width && y == height - 1) {
+            if (x == 0 && y == 0&&currentDirectioIndex==0) {
                 currentDirectioIndex = 3;
-            }
-            if (x == 0 && y == height - 1) {
-                currentDirectioIndex = 2;
             }
         }
 //        if((x==0&&y==0)||(x==width-1&&y==0)||(x==width&&y==height-1)||(x==0&&y==height-1)){
@@ -86,6 +77,9 @@ public class E10_WalkingRobotSimulationII {
 //        System.out.println(robot.getPos()); // return [1, 2]
 //        System.out.println(robot.getDir()); // return "West"
 
+        //Case 1: Case đặc biệt với:
+        //Start =(0,0) Hướng east --> Quay n vòng --> Chuyển qua south
+        //--> Các biên khác thì không ảnh hưởng gì cả.
         E10_WalkingRobotSimulationII robot=new E10_WalkingRobotSimulationII(97, 98);
         robot.step(448918);  // It moves two steps East to (2, 0), and faces East.
 //        robot.step(66392);  // It moves two steps East to (2, 0), and faces East.
