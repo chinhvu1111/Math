@@ -16,6 +16,9 @@ public class E3_RemoveDuplicateLetters {
             int cI=c-'a';
 
             if(dp[cI]!=-1&&(dp[cI]+1>rs.size()-1||rs.get(dp[cI])>rs.get(dp[cI]+1))){
+                for(int j=dp[cI]+1;j<rs.size();j++){
+                    dp[rs.get(j)-'a']--;
+                }
                 rs.remove(dp[cI]);
                 rs.add(c);
                 int currentIndex=rs.size()-1;
@@ -37,6 +40,7 @@ public class E3_RemoveDuplicateLetters {
     public static void main(String[] args) {
 //        String s="bcabc";
         String s="cbacdcbc";
+//        StringBuilder s1=new StringBuilder(s);
         System.out.println(removeDuplicateLetters(s));
 
     }
