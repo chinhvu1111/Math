@@ -20,14 +20,14 @@ public class E2_LargestNumber {
 //                }else{
 //                    return -1;
 //                }
-                if((length1 - length2)*10 * t2 - t1<0 || number2-number1<=0){
+                if((Math.pow(10,length1 - length2) * t2 - t1<0&&length1!=length2) && number2-number1<=0){
                     return -1;
                 }else{
                     return 1;
                 }
 //                return (length1 - length2)*10 * t2 - t1>=0 && number2-number1>=0;
             }
-            if((length2 - length1) *10 * t1 -t2 >0 || number1-number2>=0){
+            if(Math.pow(10, length2 - length1) * t1 -t2 >0 && number1-number2>=0){
                 return -1;
             }else{
                 return 1;
@@ -56,11 +56,16 @@ public class E2_LargestNumber {
         //Wrong : 303
         //Expect : 330
         //--> cần sửa lại equal condition.
-//        int arr[]=new int[]{3,30,34,5,9};
+        int arr[]=new int[]{3,30,34,5,9};
         //Case 4: {111311, 1113}
         //Sai case cùng khi nhân lần *10 > nhưng bù vào số sau sẽ bị sai.
 //        int arr[]=new int[]{111311, 1113};
-        int arr[]=new int[]{2,1};
+        //NOTE:
+        //Sort :
+        // return 1 : Tức là sẽ t1>t2 --> Sắp xếp theo t2,t1
+        // return -1 : Tức là sẽ t1<t2 --> Sắp xếp theo t1,t2
+//        int arr[]=new int[]{2,1};
+//        int arr[]=new int[]{1113,111311};
         System.out.println(largestNumber(arr));
     }
 }
