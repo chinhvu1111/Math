@@ -206,12 +206,38 @@ public class E17_PalindromeLinkedList {
         // Dùng 2 pointers trong trường hợp này để:
         //- 1 point để check độ dài nếu nó vượt quá next.next --> Và để lưu lại middle point
         //- 2 point để check chạy double linked list --> Dùng để check point chạy vượt biên (Length của linkedlist)
+        //ERRORS:
+        //Liên quan đến việc tìm middle có 2 option đề chọn điểm với length "chẵn":
+        //Ex: 1, 2(mid-1), 2(mid-2), 1
+        //Lúc này sẽ check while(fast!=null)
+        //---> Vì check trước đó, nên nếu init:
+        //slow=head;
+        //fast=head.next;
+        //slow đi được 2 nodes --> thì fast đang ở (1)
+        //Và khi fast.next==null ==> Cần (break luôn) vì nếu không (break luôn)
+        //--> Có thể đến việc fast sẽ run từng steps 1 --> Sẽ bị sai số
 
         //Ngoài ra còn reverse linked list nếu chỉ dùng 1 node để làm --> Sẽ rất khó vì:
         //+ Vừa cut next của node đó đến node trước + nối node đó lại với node sau
         //+ Node đằng sau đó cũng cần phải nối lại
         //--> Khởi tạo 2 node ngay từ đầu để lưu temp lại
 
+        //Bài reverse linkedlist là 1 bài classis khi nhiều bài áp dụng điều này:
+        //Temp cần phải next nên temp sẽ đi đằng trước
+        //Temp 1 cần lưu giá trị tiếp theo (next) --> Vì khi nối currentNode --> Previous node (Mất connection đến node tiếp theo r)
+        //Reverse linked list
+        //- Cần phải lưu 2 biến dạng : prevNode và current node
+        //Prev_node sẽ được update liên tục với current_node.next.
+        //Và khi reverse như thì không cần update lại prev_node.next vì nó đã được update trước đó rồi.
+        //- Lưu biên local (loop) liên quan đến currentNode --> Để có thể gán lại prev_node.
+        //- PrevNode.next=null : Chỉ càn assign 1 lần duy nhất ngoài loop vì:
+        //Trong loop với mỗi cặp prevNode và temp --> Đã gán lại next (TÁCH RỜI CÁC ĐIỂM SẴN RỒI)
+        //==> Không gán bên trong loop.
+        //3, Với chẵn hay lẻ chọn middle:
+        //Chẵn: 1,2,2 (mid),1
+        //Lẻ : 1,2,3(mid),2,1
+        //---> Ta kiểm tra đối xứng thì sẽ chỉ kiểm tra LinkedList có (số nodes ít hơn)
+        //while(danh sách node bên trái) : Danh sách node bên trái luôn có số nodes ít hơn.
         System.out.println(isPalindromeOptimize(listNode));
     }
 }
