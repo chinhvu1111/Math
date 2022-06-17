@@ -58,5 +58,9 @@ public class E37_ProductOfTheLastKNumbersOptimized {
         //Word Search II
         //Max Value of Equation
         //Removing Minimum and Maximum From Array
+
+        //Minimum Absolute Sum Difference
+        //Longest Common Subsequence Between Sorted Arrays
+        //Count Number of Maximum Bitwise-OR Subsets
     }
 }

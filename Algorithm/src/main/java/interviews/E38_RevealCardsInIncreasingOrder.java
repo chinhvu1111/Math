@@ -25,6 +25,28 @@ public class E38_RevealCardsInIncreasingOrder {
         return rs;
     }
 
+    public int[] deckRevealedIncreasingArray(int[] deck) {
+        Arrays.sort(deck);
+        int[] cycleArray=new int[deck.length];
+        int res[]=new int[deck.length];
+        for(int i=0;i<deck.length;i++){
+            cycleArray[i]=i;
+        }
+        int head=0;
+        int tail=0;
+        int index=0;
+        while(index<deck.length){
+            res[cycleArray[head++]]=deck[index++];
+            head=head%cycleArray.length;
+            if(index<deck.length){
+                cycleArray[tail++]=cycleArray[head++];
+                tail=tail%cycleArray.length;
+                head=head%cycleArray.length;
+            }
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
 //        int deck[]=new int[]{17,13,11,2,3,5,7};
         int deck[]=new int[]{};
