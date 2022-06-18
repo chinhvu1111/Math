@@ -83,8 +83,14 @@ public class E39_MinimumAbsoluteSumDifference {
     public static int findElementGreaterThan(int nums1[], int value, int low, int high){
         int mid=(low+high)/2;
 
-        if(low>=high){
-            return low;
+        if(value==nums1[mid]){
+            return mid;
+        }
+        if(low>=high-2&&nums1[high-1]>value){
+            return high-1;
+        }
+        if(low>=high-1&&nums1[high]>value){
+            return high;
         }
         if(value>nums1[mid]){
             low=mid+1;
@@ -98,16 +104,22 @@ public class E39_MinimumAbsoluteSumDifference {
     public static int findElementLessThan(int nums1[], int value, int low, int high){
         int mid=(low+high)/2;
 
-        if(low>=high){
-            return low;
+        if(value==nums1[mid]){
+            return mid;
         }
-        if(value>=nums1[mid]){
-            low=mid;
+        if(low>=high-1&&nums1[high-1]<value){
+            return high-1;
+        }
+        if(low>=high-2&&nums1[high-2]<value){
+            return high-2;
+        }
+        if(value>nums1[mid]){
+            low=mid+1;
         }else{
             low=0;
             high=mid;
         }
-        return findElementGreaterThan(nums1, value, low, high);
+        return findElementLessThan(nums1, value, low, high);
     }
 
     public static void main(String[] args) {
@@ -135,6 +147,7 @@ public class E39_MinimumAbsoluteSumDifference {
         //==> Ta cần dùng implement custom method để tìm điểm thỏa mãn.
         //- Add các phần tử nums1 vào TreeSet để sắp xếp trước
         //==> Ta có thể dùng ceil, floor method để tìm điểm thỏa mãn.
+        System.out.println(minAbsoluteSumDiff(nums1, nums2));
         System.out.println(minAbsoluteSumDiffOptimized(nums1, nums2));
     }
 }

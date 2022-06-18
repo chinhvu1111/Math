@@ -94,6 +94,12 @@ public class E8_RemoveKDigits {
 //        int k=3;
 //        String s="10001";
 //        int k=4;
+        //Bài này tư duy như sau:
+        //1, Ta có 1 rule như sau:
+        //1.1, Ta có : dabc
+        //Số sau khi remove(a) < Số sau khi remove(b)
+        //Nếu a > b
+        //NX: a và b đóng vai trò đối xứng ==> nên ko còn trường hợp nào nữa.
         System.out.println(removeKdigits(s, k));
     }
 }
