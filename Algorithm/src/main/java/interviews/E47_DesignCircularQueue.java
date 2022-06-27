@@ -68,18 +68,30 @@ public class E47_DesignCircularQueue {
 //        queue.enQueue(4);
 //        System.out.println(queue.Rear());
 
-        E47_DesignCircularQueue queue = new E47_DesignCircularQueue(6);
-        queue.enQueue(6);
-        System.out.println(queue.Rear());
-        System.out.println(queue.Rear());
+//        E47_DesignCircularQueue queue = new E47_DesignCircularQueue(6);
+//        queue.enQueue(6);
+//        System.out.println(queue.Rear());
+//        System.out.println(queue.Rear());
+//        System.out.println(queue.deQueue());
+//        queue.enQueue(5);
+//        System.out.println(queue.Rear());;
+//        System.out.println(queue.deQueue());
+//        System.out.println(queue.Front());;
+//        System.out.println(queue.deQueue());
+//        System.out.println(queue.deQueue());
+//        System.out.println(queue.deQueue());
+
+        E47_DesignCircularQueue queue = new E47_DesignCircularQueue(2);
+        queue.enQueue(1);
+        queue.enQueue(2);
         System.out.println(queue.deQueue());
-        queue.enQueue(5);
-        System.out.println(queue.Rear());;
+        queue.enQueue(2);
         System.out.println(queue.deQueue());
-        System.out.println(queue.Front());;
+        queue.enQueue(3);
         System.out.println(queue.deQueue());
+        queue.enQueue(3);
         System.out.println(queue.deQueue());
-        System.out.println(queue.deQueue());
+        System.out.println(queue.Front());
     }
 
 }
