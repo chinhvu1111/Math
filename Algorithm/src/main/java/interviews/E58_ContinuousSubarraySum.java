@@ -18,7 +18,8 @@ public class E58_ContinuousSubarraySum {
 //            if((sum%k==0&&!hashMap.isEmpty())||hashMap.containsKey(sum)){
 //                return true;
 //            }
-            if(hashMap.containsKey(sum)&&hashMap.get(sum)!=i-1 || (!hashMap.containsKey(sum)&&sum%k==0)){
+            if(hashMap.containsKey(sum)&&hashMap.get(sum)!=i-1
+                    || (!hashMap.containsKey(sum)&&sum%k==0)&&hashMap.size()>1){
                 return true;
             }
 
@@ -45,8 +46,9 @@ public class E58_ContinuousSubarraySum {
 //        int nums[]=new int[]{23,2,4,6,6};
         // % : 2, 2, 4, 6, 6.
 //        int nums[]=new int[]{5,0,0,0};
-        int nums[]=new int[]{0};
+//        int nums[]=new int[]{0};
 //        int nums[]=new int[]{1,0};
+        int nums[]=new int[]{1,0};
         System.out.println(checkSubarraySum(nums, 7));
     }
 }
