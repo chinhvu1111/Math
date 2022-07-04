@@ -1,13 +1,62 @@
 package interviews;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class E24_MergeIntervals {
+
+    public static List<List<Integer>> mergeList(List<List<Integer>> intervals) {
+        int n=intervals.size();
+        Collections.sort(intervals, new Comparator<List<Integer>>() {
+            @Override
+            public int compare(List<Integer> o1, List<Integer> o2) {
+                return o1.get(0)-o2.get(0);
+            }
+        });
+        int x=-1;
+        int y=-1;
+        if(n>=1){
+            x=intervals.get(0).get(0);
+            y=intervals.get(0).get(1);
+        }
+        List<List<Integer>> rs=new ArrayList<>();
+        if(n==0){
+            return rs;
+        }
+        if(n==1){
+            List<Integer> integerList=new ArrayList<>();
+            integerList.add(x);
+            integerList.add(y);
+            return rs;
+        }
+//        boolean isMerge=false;
+
+        for(int i=1;i<n;i++){
+            int nextX=intervals.get(i).get(0);
+            int nextY=intervals.get(i).get(1);
+
+            if(y>=nextX){
+//                isMerge=true;
+                x=Math.min(x, nextX);
+                y=Math.max(y, nextY);
+            }else{
+                List<Integer> integerList=new ArrayList<>();
+                integerList.add(x);
+                integerList.add(y);
+                rs.add(integerList);
+//                isMerge=false;
+                x=nextX;
+                y=nextY;
+            }
+//            rs.add(new int[]{x, y});
+        }
+        List<Integer> integerList=new ArrayList<>();
+        integerList.add(x);
+        integerList.add(y);
+        rs.add(integerList);
+        return rs;
+    }
 
     public static int[][] merge(int[][] intervals) {
         int n=intervals.length;
@@ -67,7 +116,8 @@ public class E24_MergeIntervals {
 //        int intervals[][]=new int[][]{{1,4}};
 //        int intervals[][]=new int[][]{{1,4},{5,6}};
 //        int intervals[][]=new int[][]{{1,4},{0,0}};
-        int intervals[][]=new int[][]{{1,4},{0,2},{3,5}};
+//        int intervals[][]=new int[][]{{1,4},{0,2},{3,5}};
+        int intervals[][]=new int[][]{{6,9},{2,3},{9,11},{1,5},{14,18}};
 //        int intervals[][]=new int[][]{};
         //Ta tư duy như sau:
         //1, Ở đây để merge được ta cần sort array theo column X
