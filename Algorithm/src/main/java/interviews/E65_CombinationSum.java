@@ -7,9 +7,10 @@ public class E65_CombinationSum {
     public static char[]frequency;
     public static Set<String> setMap;
     public static List<List<Integer>> rs;
-    public static Map<Integer, List<List<Integer>>> mapSum;
+//    public static Map<Integer, List<List<Integer>>> mapSum;
 
-    public static void subCombinatioSum(int[] candidates, char frequency[], List<Integer> list, int currentSum){
+    public static void subCombinatioSum(
+            int[] candidates, char frequency[], List<Integer> list, int index, int currentSum){
 
         if(currentSum<=0){
             if(currentSum==0){
@@ -22,26 +23,29 @@ public class E65_CombinationSum {
             }
             return;
         }
-        List<List<Integer>> lists=mapSum.get(currentSum);
+//        List<List<Integer>> lists=mapSum.get(currentSum);
 
-        if(lists!=null){
-            for(List<Integer> integers: lists){
-                List<Integer> integerList=new LinkedList<>();
-                integerList.addAll(list);
-                integerList.addAll(integers);
-                rs.add(integerList);
-            }
-            return;
-        }
+//        if(lists!=null){
+//            for(List<Integer> integers: lists){
+//                List<Integer> integerList=new LinkedList<>();
+//                integerList.addAll(list);
+//                integerList.addAll(integers);
+//                rs.add(integerList);
+//            }
+//            return;
+//        }
 
-        for(int i=0;i<candidates.length;i++){
-            if(candidates[i]>=150){
-                continue;
+        for(int i=index;i<candidates.length;i++){
+//            if(candidates[i]>=150){
+//                continue;
+//            }
+            if(candidates[i]>currentSum){
+                break;
             }
             frequency[candidates[i]]++;
             list.add(candidates[i]);
-            subCombinatioSum(candidates, frequency, list,currentSum-candidates[i]);
-            mapSum.put(currentSum, new LinkedList<>(rs));
+            subCombinatioSum(candidates, frequency, list,i,currentSum-candidates[i]);
+//            mapSum.put(currentSum, new LinkedList<>(rs));
             frequency[candidates[i]]--;
             list.remove(list.size()-1);
         }
@@ -51,16 +55,17 @@ public class E65_CombinationSum {
         frequency=new char[201];
         setMap=new HashSet<>();
         rs=new LinkedList<>();
-        mapSum=new HashMap<>();
+        Arrays.sort(candidates);
+//        mapSum=new HashMap<>();
 
-        subCombinatioSum(candidates, frequency, new LinkedList<>(), target);
+        subCombinatioSum(candidates, frequency, new LinkedList<>(), 0, target);
         return rs;
     }
 
     public static void main(String[] args) {
 //        int arr[]=new int[]{2,3,5};
-        int arr[]=new int[]{100,200,4,12};
-//        combinationSum(arr, 8);
+        int arr[]=new int[]{4,12};
+//        combinationSum(arr, 7);
         combinationSum(arr, 400);
         System.out.println("");
     }
