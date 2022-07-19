@@ -62,6 +62,7 @@ public class E84_MaximumProductAfterKIncrements {
     public static int maximumProductOptimize1(int[] nums, int k) {
         Arrays.sort(nums);
         int idx = 1;
+
         while(idx != nums.length && k > 0){
             if(nums[0] < nums[idx]){
                 for(int i = 0; i < idx; i++){
@@ -111,6 +112,36 @@ public class E84_MaximumProductAfterKIncrements {
         //--> Add elements vào PriorityQueue
         //--> Luôn lấy peek +1 --> Add vào queue lại.
         //3, Tối ưu:
+        //Với cách thứ 2:
+        //Gồm các steps như sau:
+        //3.1, Ta luôn so sánh nums[0] với nums[index]
+        //Sau đó ta sẽ cộng lần lượt số vào giữa khoảng [0, index]
+        //+ Bắt đầu với : nums[0] và nums[index=1]
+        //--> Sau đó với ta sẽ dãn dần index++
+        //VD:
+        //
+        //value: 2,3(indx),5,6
+        //index: 0,1,2,3
+        //Step 1: nums[0]=2+1 --> = nums[1] : index++;
+        //-->
+        //value: 3,3,5(indx),6
+        //index: 0,1,2,3
+        //Step 2:
+        // --> Lúc này cần cộng 1 vào giữa (0 --> <indx)
+        //Step 3:
+        //value: 4,4,5(indx),6
+        //index: 0,1,2,3
+        // --> Sau khi +1, nums[0] <nums[index]
+        //==> Ta tiếp tục +1
+        //STEP 4:
+        //value: 5,5,5(indx),6
+        //index: 0,1,2,3
+        //3.2, Đến cuối ta sẽ có 1 dãy giá trị bằng nhau:
+        //VD:
+        //value: 6,6,6,6 (index)
+        //index: 0,1,2,3
+        //+ Vì k quá lớn --> (index==nums.length-1)
+        //--> index cần quay lại = 0 ==> Cộng 1 từ đầu.
         //
     }
 }
