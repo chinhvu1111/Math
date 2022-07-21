@@ -79,5 +79,12 @@ public class E88_ImplementStrStr {
         String needle="issip";
         System.out.println(strStr(haystack, needle));
         System.out.println(strStrRollHashingFunction(haystack, needle));
+        //Bài này ta tư duy như sau:
+        //1, Dạng bài này là 1 dạng bài kết hợp:
+        //Vị trí (i: 0--> n-1) sẽ kết hợp với các giá trị (j) lần lượt
+        //+ Với mỗi giá trị (i) nếu tìm được (needle) thuộc (haystack) --> Thì ta sẽ trả lại (i) luôn
+        //1.1, Lưu ý để tránh sử dụng thêm biến tạm boolean isExists=true --> Ta có thể tạo Global variable (j)
+        //for(j=0;j<needle.length();j++) ==> check( j== needle.lenght()) <==> thay cho if(isExists){}
+
     }
 }

@@ -87,6 +87,9 @@ public class E89_1CountNumberOfDistinctSubstringInAString {
     public static void main(String[] args) {
 //        String s="aaaa";
         String s="aaaabc";
+        //Bài này ta tư duy như sau:
+        //+ Thực ra dạng bài kiểu này thường ta sẽ dùng tư duy kết hợp để làm:
+        //(i) (0--> n-1) sẽ kết hợp với các (j tương ứng)
         //Cách 1:
         //Time Complexity: O(n3logn)
         //Auxiliary Space: O(n),  since n extra space has been taken.
