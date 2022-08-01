@@ -33,6 +33,18 @@ public class E100_SplitArrayLargestSum {
         return dp[n-1][m];
     }
 
+    public int splitArrayBinarySearch(int[] nums, int m) {
+        int n=nums.length;
+        int right=1_000_000 *50;
+        int left=0;
+
+        while(left<right){
+
+        }
+
+        return 1;
+    }
+
     public static void main(String[] args) {
         int arr[]=new int[]{7,2,5,10,8};
         int m=2;
