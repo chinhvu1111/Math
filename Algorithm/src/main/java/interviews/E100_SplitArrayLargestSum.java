@@ -52,21 +52,29 @@ public class E100_SplitArrayLargestSum {
 //            System.out.println(mid);
             int sum=0;
             int currentRs=0;
+//            boolean isValid=true;
 
             for(int i=0;i<n;i++){
                 sum+=nums[i];
 
+//                if(nums[i]>mid){
+//                    isValid=false;
+//                    break;
+//                }
                 if(sum>mid){
                     valueRs++;
                     currentRs=Math.max(currentRs, sum-nums[i]);
                     sum=nums[i];
+                    if(nums[i]==mid){
+                        valueRs++;
+                        sum=0;
+                    }
                 }
             }
             currentRs=Math.max(currentRs, sum);
             if(sum!=0){
                 valueRs++;
             }
-            System.out.println("Value : "+ mid+ " ,Max : "+currentRs+" ,count : "+valueRs);
 
             if(valueRs>m){
                 left=mid+1;
@@ -83,6 +91,10 @@ public class E100_SplitArrayLargestSum {
             if(mid==left&&mid==right){
                 break;
             }
+        }
+        if(rs==Integer.MAX_VALUE){
+            int maxValue=Arrays.stream(nums).max().getAsInt();
+            rs=maxValue;
         }
 
         return rs;
@@ -129,5 +141,8 @@ public class E100_SplitArrayLargestSum {
         System.out.println(maxValue(0, arr));
         System.out.println(splitArrayDynamic(arr, m));
         System.out.println(splitArrayBinarySearch(arr, m));
+        //Bài này tư duy như sau:
+        //https://leetcode.com/problems/split-array-largest-sum/discuss/1904499/JAVA-or-0ms-100-or-Clean-Simplest-Solution-with-comments
+        //
     }
 }
