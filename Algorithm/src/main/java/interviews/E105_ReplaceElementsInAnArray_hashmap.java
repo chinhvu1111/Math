@@ -2,7 +2,7 @@ package interviews;
 
 import java.util.HashMap;
 
-public class E105_ReplaceElementsInAnArray {
+public class E105_ReplaceElementsInAnArray_hashmap {
 
     public static int[] arrayChange(int[] nums, int[][] operations) {
         int n=nums.length;

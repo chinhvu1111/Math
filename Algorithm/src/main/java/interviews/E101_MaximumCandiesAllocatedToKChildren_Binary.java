@@ -1,6 +1,6 @@
 package interviews;
 
-public class E101_MaximumCandiesAllocatedToKChildren {
+public class E101_MaximumCandiesAllocatedToKChildren_Binary {
 
     public static int maximumCandies(int[] candies, long k) {
         int low=1;

@@ -2,7 +2,7 @@ package interviews;
 
 import java.util.Arrays;
 
-public class E100_SplitArrayLargestSum {
+public class E100_SplitArrayLargestSum_Binary {
     public static int splitArrayDynamic(int[] nums, int m) {
         int n=nums.length;
         int dp[][]=new int[n][m+1];
