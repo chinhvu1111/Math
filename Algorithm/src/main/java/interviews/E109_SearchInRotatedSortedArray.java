@@ -27,10 +27,12 @@ public class E109_SearchInRotatedSortedArray {
         //Nếu đã bị giới hạn bới (low, high) ==> Chỉ được search trong phạm vi đó thôi
         //[4],5,6,(7),0,1,[2]
         if(nums[mid]>right){
-            if(value>=nums[low]&&value<=nums[mid]){
+            if(value>=left&&value<=nums[mid]){
                 high=mid;
-            }else if(value<=nums[high]||value>=nums[mid]){
+            }else if(value<=right||value>=nums[mid]){
                 low=mid;
+            }else{
+                return -1;
             }
         }
         //[4],(5),6,[7],0,1,2
@@ -45,9 +47,9 @@ public class E109_SearchInRotatedSortedArray {
         else if(left>nums[mid]&&nums[mid]<right){
             //Chỗ này nếu so sánh với nums[mid] --> Không có nghĩa gì cả
             //Vì 2 bên của mid > nums[mid]
-            if(value>=nums[mid]){
+            if(value>=nums[mid]&&value<=right){
                 low=mid;
-            }else if(value<=nums[mid]){
+            }else if(left<=value&&value<=nums[mid]){
                 high=mid;
             }
         }
@@ -68,8 +70,10 @@ public class E109_SearchInRotatedSortedArray {
 //        int target=6;
 //        int arr[]=new int[]{4,5,6,7,1,2};
 //        int target=2;
-        int arr[]=new int[]{4,5,6,7,1,2};
-        int target=3;
+//        int arr[]=new int[]{4,5,6,7,1,2};
+//        int target=3;
+        int arr[]=new int[]{5,1,3};
+        int target=5;
         System.out.println(search(arr, target));
     }
 }
