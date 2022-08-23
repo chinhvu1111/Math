@@ -1,6 +1,6 @@
 package interviews;
 
-public class E112_CheckIfAParenthesesStringCanBeValid {
+public class E113_CheckIfAParenthesesStringCanBeValid {
 
     public static boolean canBeValidWrong(String s, String locked) {
         int[] stack=new int[s.length()];

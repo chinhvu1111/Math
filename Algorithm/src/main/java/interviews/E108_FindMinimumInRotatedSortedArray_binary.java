@@ -1,6 +1,6 @@
 package interviews;
 
-public class E108_FindMinimumInRotatedSortedArray {
+public class E108_FindMinimumInRotatedSortedArray_binary {
 
     public static int findMinSlow(int[] nums) {
         int rs=Integer.MIN_VALUE;

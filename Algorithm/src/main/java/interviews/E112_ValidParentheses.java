@@ -2,7 +2,7 @@ package interviews;
 
 import java.util.Stack;
 
-public class E110_ValidParentheses {
+public class E112_ValidParentheses {
 
     public static boolean isValid(String s) {
         Stack<Character> st=new Stack();

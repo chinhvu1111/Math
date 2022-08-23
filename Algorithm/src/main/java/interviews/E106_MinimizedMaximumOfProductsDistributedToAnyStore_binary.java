@@ -1,6 +1,6 @@
 package interviews;
 
-public class E106_MinimizedMaximumOfProductsDistributedToAnyStore {
+public class E106_MinimizedMaximumOfProductsDistributedToAnyStore_binary {
 
     public static int minimizedMaximum(int n, int[] quantities) {
         int low=1;

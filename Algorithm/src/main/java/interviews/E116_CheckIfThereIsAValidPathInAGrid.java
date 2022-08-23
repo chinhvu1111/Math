@@ -1,10 +1,9 @@
 package interviews;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class E115_CheckIfThereIsAValidPathInAGrid {
+public class E116_CheckIfThereIsAValidPathInAGrid {
 
 //    public static int dx[][]=new int[][]{{0,0}, {2, -2}, {1, -1}, {-1, 1}, {1, -1}, {1, -1}};
 //    public static int dy[][]=new int[][]{{2,-2}, {0, 0}, {1, -1}, {1, -1}, {-1, 1}, {1, -1}};
