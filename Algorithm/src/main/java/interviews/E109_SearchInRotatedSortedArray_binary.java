@@ -398,6 +398,11 @@ public class E109_SearchInRotatedSortedArray_binary {
         // real_index = (4+5) % 7=2
         // <=> 4 - (rotate =2 ) = 2.
         //2, So sánh real mid ==> Nhưng mà tính (low, high) dựa trên (mid)
+
+        //- Thường sẽ có 3 cách tiếp cận:
+        //+ So sánh dựa trên mid ==> Với left, right
+        //+ So sánh dựa trên mid <=> targer → break tiếp
+        //+ Biến đổi arr rotate → chưa rotate để → Tìm real mid.
         System.out.println(searchMoreOptimize1(arr, target));
     }
 }
