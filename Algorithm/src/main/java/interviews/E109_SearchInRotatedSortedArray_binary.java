@@ -188,6 +188,60 @@ public class E109_SearchInRotatedSortedArray_binary {
         return -1;
     }
 
+    public static int searchMoreOptimize(int[] nums, int target) {
+        int low=0, high=nums.length-1;
+
+        while(low<high){
+            int mid=low + (high-low)/2;
+
+            if(nums[mid]>nums[high]){
+                low=mid+1;
+            }else{
+                high=mid;
+            }
+        }
+        int indexSmallest=low;
+        low=0;
+        high=nums.length-1;
+
+        while (low<=high){
+            int mid=low + (high-low)/2;
+            int realMid= (mid + indexSmallest)% nums.length;
+
+            if(nums[realMid]>target){
+                high=mid-1;
+            }else if(nums[realMid]<target){
+                low=mid+1;
+            }else{
+                return realMid;
+            }
+        }
+        return -1;
+    }
+
+    public static int searchMoreOptimize1(int[] nums, int target) {
+        int start = 0, end = nums.length - 1;
+
+        while (start < end) {
+            int mid = (start + end) / 2;
+            if (nums[mid] > nums[end]) {  // eg. 3,4,5,6,1,2
+                if (target > nums[mid] || target <= nums[end]) {
+                    start = mid + 1;
+                } else {
+                    end = mid;
+                }
+            } else {  // eg. 5,6,1,2,3,4
+                if (target > nums[mid] && target <= nums[end]) {
+                    start = mid + 1;
+                } else {
+                    end = mid;
+                }
+            }
+        }
+        if (start == end && target != nums[start]) return -1;
+        return start;
+    }
+
     public static void main(String[] args) {
 //        int arr[]=new int[]{4,5,6,7,0,1,2};
 //        int target=0;
@@ -224,6 +278,7 @@ public class E109_SearchInRotatedSortedArray_binary {
         int target=6;
         System.out.println(search(arr, target));
         //Bài này tư duy như sau:
+        //Cách 1:
         //1, Ở đây ta dùng custom binary search + break conditions để scan hết các điều kiện
         //*** CHÚ Ý : Khi liệt kê all cases ===> Ta chỉ được phép liệt kê nằm trong (low, high)
         //
@@ -259,7 +314,90 @@ public class E109_SearchInRotatedSortedArray_binary {
         //2.1, Lỗi sai có thể gây hiểu lầm + debug mãi không ra kết quả
         //---> Liên quan đến so sánh midVal với target:
         //+ Có rất nhiều trường hợp đặc --> So sánh mỗi midVal không thể chia được hết case ==> Ta cần phải kết hợp so sánh với (left, right)
+        //- Cần liệt kê các cases có thể xảy ra 1 cách chi tiết + đầy đủ thì dạng bài này sẽ dễ hơn, chỉ cần quan tâm đến 2 thứ:
+        //+ (high=mid-1/ low=mid+1) ===> Khi nào thì xảy ra 2 cases này
+        //+ Luôn check cases ít xảy ra cuối cùng.
+        //VD: Liệt kê danh sách các cases như sau:
+        //+ Với case ( nums[mid]>=target )
+        //Với dạng bài kiểu này, cần phần tích các vị trí mid, target ngay từ đầu --> Rất nhiều cases xảy ra:
+        //- 4,5,6,(7)(mid),8,1,[2](target) : ==> Case duy nhất low=mid+1 (Chỉ liệt kê điều kiện của case này thôi)
+        //- 4,5,6,7,8,1,2(target),3 (mid)
+        //- 4,[5](target),6,(7)(mid),8,1,2
+        //
+        //+ Với case nums[mid] < target
+        //Các cases:
+        //1 - 4,5,6,[7](target),8,1(mid),2 : ==> Case duy nhất high=mid-1 (Chỉ liệt kê điều kiện của case này thôi)
+        //===> Luôn dùng midVal để so sánh (quyết định bên cho midValue) --> Như thế mới quyết định được (high/low)
+        // Dùng (mid>=indexSmallest&&target>=nums[low])
+        //===> Bị case 4(low),5(mid),[6](target),7(high)
+        //===> mặc dù là (low = mid+1) do (low == smallestIndex) ===> SO SÁNH với HIGH (NGUYÊN LÝ SO SÁNH CÙNG BÊN <=)
+        //* Vẫn bị trùng với case 2 ==> mid cần nằm bên (right) ==> (mid_value > low_value)
+        //===> Thêm ( target>=nums[low]&&nums[mid]<nums[low] )
+        //2 - 4,5,6,7,8,1,(2)(mid),[3] (target) : target < low_value && mid > smallest_index
+        //3 - 4,(5)(mid),6,[7](target),8,1,2
+        //4 - {4,5(mid),[6](target),7}
+        //
+        //** SUMMARY:
+        //- 1, Cần liệt kê all cases :
+        //1.1, Chia theo :
+        //+ nums[mid] >= target
+        //+ nums[mid] < target
+        //Cần xác định vị trí [ (low), (mid), (target), (smallestIndex) (high) ] như thế nào:
+        //Thường có các trường hợp như sau:
+        //+ nums[mid] >= target
+        //1 + [ (low), (mid), (smallestIndex), (target), (high) ] : low = mid + 1
+        //1.1, (indexSmallest>mid&&target<nums[low])
+        //2 + [ (low), (target), (mid),(smallestIndex), (high) ] : high = mid - 1
+        //3 + [ (low),(smallestIndex), (target), (mid), (high) ] : high = mid - 1
+        //4 + [ (low), (target), (mid==smallestIndex), (high) ] : Tùy thuộc vào (target) đứng ở đâu
+        //4.1, target >= nums[low] : high= mid - 1
+        //4.2, target <= nums[high] : low = mid + 1 (Case này trùng với case 1)
+        //
+        //+ nums[mid] < target
+        //1 + [ (low), (target), (smallestIndex), (mid), (high) ] : high = mid-1
+        //1.1, ( target >= nums[low] && mid >=smallestIndex )
+        //1.2, *** CASE đặc biệt: (4,5,6,7)
+        //- ( nums[low] > nums[high] ) - Dãy có giảm dần.
+        //- ( nums[low] < nums[high] ) - Dãy không giảm dần.
+        //
+        //Vẫn là ( target >= nums[low] && mid >=smallestIndex ) ---> Chưa đủ để phân biệt với case dưới.
+        // [ (smallestIndex==low), (mid), (target) (high) ] : mid + 1
+        //* Khác nhau ở vị trí
+        //+ [low] (target), (smallestIndex), (mid) [high]
+        //+ [low] (smallestIndex), (mid), (target) [high] ( Do nums[low] < nums[high] )
+        //===> Cần thêm điều kiện ( nums[mid] > nums[high])
+        //VD: 4(small), 5(mid), 6(target), 7
+        //2 + [ (low), (mid), (target), (smallestIndex), (high) ] : low = mid+1
+        //3 + [ (low), (smallestIndex), (mid), (target), (high) ] : low = mid+1
+        //4 + [ (low), (mid==smallestIndex), (target), (high) ] : Tùy vào vị trí (target)
+        //4.1, target <= nums[high] : low = mid+1
+        //4.2, target >= nums[low] : high=mid-1 (Trùng với case 1)
+        //
+        //2, Chú ý case đặc biệt (4,5,7,8)
+        //- Chuỗi nums[low] > nums [high] - Chuỗi không giảm dần (Không rotated)
+        //- Chuỗi nums[low] <= nums [high] - Chuỗi có giảm dần (Có rotated)
+        //
+        // 3, Cần chú ý vị trí ưu tiên theo:
+        //3.1, mid và target
+        //3.2, target và (low, high)
+        //3.3, mid và (low, high) ---> Xử lý case đặc biệt.
+        //
+        // 4, Có cần tận dụng cả (low < high-1)
         //
         System.out.println(searchOptimize(arr, target));
+        //mid>=indexSmallest && nums[mid]<nums[low]
+        System.out.println(searchMoreOptimize(arr, target));
+        //Cách 2:
+        //1, Coi như arr là 1 dãy tăng dần bình thường ==> Ta sẽ tính (mid thực sự) của nó bằng cách
+        //+ Tính mid bình thường
+        //+ Thực hiện rotate --> Xác định real mid
+        //1.1, real mid = (mid + smallest index) % n
+        // <=> mid - (number of rotate from last)
+        //VD: 5,6,7,8,9(mid),1(smallest),2,3
+        //+ mid = 4, smallest index=5
+        // real_index = (4+5) % 7=2
+        // <=> 4 - (rotate =2 ) = 2.
+        //2, So sánh real mid ==> Nhưng mà tính (low, high) dựa trên (mid)
+        System.out.println(searchMoreOptimize1(arr, target));
     }
 }
