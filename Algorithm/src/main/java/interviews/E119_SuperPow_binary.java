@@ -69,6 +69,7 @@ public class E119_SuperPow_binary {
         //==> Khi % 1337 thì kết quả chỉ có thể nằm trong (1--> 1337)
         //1, Đây là 1 cách tư duy mới --> Thay vì cố gắng tìm kết quả
         //1.1, Hướng đến việc limit kết quả ==> Scan từng trường hợp ==> Tìm <> có khả thi hay không
+        //2, Số dư sẽ tăng dần khi ta tăng dần init lên : (init = init * a)
         int power=1;
 
         while (!hashSet.contains(init)){
@@ -93,6 +94,21 @@ public class E119_SuperPow_binary {
         //+ 1 * 10 + 2
         //+ 12 * 10 + 3
         //==> Ở dưới ta tính dư theo (số lượng số mũ có thể % 1337)
+        //4, Với những dạng theo kiểu toán như thế này ==> Cố dùng toán để mà giải quyết
+        //==> nếu chỉ dùng phép thử như bình thường thì rất khó có thể đánh giá được hết khả năng.
+        //VD: 2^i % 1337 = k ---> Cần biến đổi ngược lại (2^i = 1337 * x + k)
+        //Cái ta cần tính là 2^n theo 2^i
+        // ==> 2^n = 1337 * x * 2^(n-i) + k * 2^(n-i)
+        //==> Thay vì cố thử các case 2^i --> theo 2^n bằng cách thử
+        //VD: (2^3)^15 %k có giống (2^3%k)^15 hay không.
+        //--> Thử như thế này có thể rất mất thời gian + sai sót.
+        //
+        //5, Với bài kiểu này ---> Để phát hiện ra quy luật ta sẽ chỉ cần thử 2 --> 3 steps loop gần nhất.
+        //VD:
+        //- ở đây hashset.size() thể hiện (số mũ lớn nhất) k : (a^k) <=> (a^k % 1337 = m)
+        //+ m không xuất hiện trước đó : [Không tồn tại] (a^i % 1337) = m
+        //
+        System.out.println(hashSet.size());
         for(int i=0;i<n;i++){
             initPower=(initPower*10+b[i])%hashSet.size();
             System.out.printf("%s %s\n",b[i],initPower);
@@ -147,15 +163,117 @@ public class E119_SuperPow_binary {
         System.out.println(Math.pow(2,11)%1337);
         //Case 2 : Case này bị sai khi lấy số ^ (Số dư) nhân liên tiếp với nhau
         System.out.println((Math.pow(711,18)%1337*(4%1337))%1337);
+        //Thử tính chất số mũ
+        System.out.println("=================Test tính chất số mũ=================");
+        System.out.println(Math.pow(3,23)%11);
+        System.out.println((9*Math.pow(3,21))%11);
+        System.out.println(Math.pow(2,23)%3);
+        System.out.println((Math.pow(2,3))%3);
+        System.out.println("=================Test tính chất số mũ=================");
         System.out.println("=================");
 
 //        System.out.println(64%14);
 //        System.out.println(56%14);
 //        System.out.println(Math.pow(8,14)%14);
-
-        //- Kỹ năng phân tích bài toán --> chia ra nhiều kiểu tư duy + loại dần
-        //- Kỹ năng chuyển 1 test case sai --> 1 test case có thể debug được local
-
+        //
+        //1, Bài này học được khá nhiều skill liên quan đến:
+        //1.1, Kỹ năng phân tích bài toán --> chia ra nhiều kiểu tư duy + loại dần
+        //+ Gạch các ý tưởng đầu dòng --> Sau đó loại dần (Thực ra cái này từ trước mình vẫn làm)
+        //Chỉ là mình làm trên giấy thôi.
+        //VD: Ở bài này ta có rất nhiều tư duy bị loại như:
+        //1.1.1, Trừ dần dần (số mũ) --> Tránh quan tâm đến độ lớn của số arr
+        //==> Vì chia theo hàng trăm, hàng chục ==> Tính dần dần vẫn phải tính
+        //--> Sai
+        //==> a range khá lớn --> việc tính ^ cho a là không thể
+        //1.1.2, Chuyển đổi dãy đó --> 1337
+        //--> Quy luật % * % ---> % tiếp sẽ ra kết quả chung
+        //1.1.2.1,
+        //+ 2000 chữ số quá lớn ==> chia ra thì thành nhiều số nhỏ hơn ---> Rất nhiều
+        //VD: Nếu làm theo phương pháp phân tách dần dần chia dư (1337%8==0) >1337
+        //4096
+        //VD: 15 : 5 + 10 --> 15 lần loops
+        //==> 2000 số ==> Có ít nhất 2000 lần loops
+        //+ Chia đôi ra để đi binary --> Cũng rất tệ.
+        //log2(n) : 2000 số (Khá tệ)
+        //** ===> Cần 1 tư duy toán học hơn.
+        //
+        //1.2, Kỹ năng chuyển (1 test case sai/quá lớn --> 1 test case) có thể debug được local
+        //VD: số quá lớn a=26214412312312, b=[2.0.0] ==>Chuyển (26214412312312 --> 2)
+        // Để có thể test được với (b)
+        //1.3, Cách đọc loop (for) để hiểu dễ dàng hơn:
+        //Để phát hiện ra quy luật ta sẽ chỉ cần thử 2 --> 3 steps loop gần nhất.
+        //---> Có thể hiện thị dưới dạng print ra.
+        //1.4,
+//        Với những dạng theo kiểu toán như thế này ==> Cố dùng toán để mà giải quyết
+        //==> nếu chỉ dùng phép thử như bình thường thì rất khó có thể đánh giá được hết khả năng.
+        //VD: 2^i % 1337 = k ---> Cần biến đổi ngược lại (2^i = 1337 * x + k)
+        //Cái ta cần tính là 2^n theo 2^i
+        // ==> 2^n = 1337 * x * 2^(n-i) + k * 2^(n-i)
+        //==> Thay vì cố thử các case 2^i --> theo 2^n bằng cách thử
+        //VD: (2^3)^15 %k có giống (2^3%k)^15 hay không.
+        //--> Thử như thế này có thể (rất mất thời gian) + sai sót.
+        //Bài này tư duy như sau:
+        //
+        //Bài này ta có 4 cách làm:
+        //Cách 1:
+        //https://leetcode.com/problems/super-pow/discuss/1124654/Java-4ms-solution-use-HashMap
+        //1, Tính chất nhân số dư
+        // x= a*b
+        //+ a%1337=x <=> 1337*k + x = a
+        //+ b%1337=y <=> 1337*k1 + y = b
+        //--> Nhân 2 số a*b = 1337*(k*k1 + 1337 * y + 1337 * x) + (x*y)
+        //==> a*b= (x*y) %1337
+        //
+        //2,
+        //2.1,Ta sẽ áp dụng tính chất cycle của phép %
+        //VD: ( a*x ) %1337 với (x++)
+        //=> Cho có thể cho kết quả nằm trong (0,1337)
+        //- Tính chất cycle back lại vị trí first (Nếu số đủ lớn)
+        //VD:
+        //2%5
+        //pow=1: 2%5=(2)
+        //pow=2 :(2^2)%5=(4)
+        //pow=3 :(2^3)%5=3
+        //pow=4 :(2^4)%5=1
+        //pow=5 :(2^5)%5=(2)
+        //pow=6 :(2^6)%5=(4)
+        //---> Số quá lớn --> quay lại vị trí (first) (Xoay vòng)
+        //- Vì tính chất xoay vòng
+        //==> a^k --> Luôn luôn thuộc (0 --> 1337)
+        //+ Giả sử pow(max) = power (Là số mũ lớn nhất để SỐ DƯ ROLLBACK)
+        //a^(power+1) % N = a (Vì là số đầu tiên)
+        //<=> (a^power * a ) % N = a
+        //<=> (a^power * a ) = N * k + a
+        //<=> a^power = N*(K/a) + 1 ( Vì a^power là số tự nhiên --> N*(k/a) sẽ là (Integer)
+        //==> [ a^power % N = 1 ]
+        //** a^k % N = ( a^power * a ^ (k-power) )%N
+        // a^k % N = ( a^power % N) * (a ^ (k-power) %N )
+        //a^k % N = ( 1 * a (k-power) ) %N
+        //VD
+        //a=2, b=23, số chia =5
+        //+ power_max = 4 (Vì 5 ra dư trùng 1)
+        //2^23 ==> Chỉ quan tâm đến số mũ
+        //23 = (4)*5 + 3
+        //23 % 4 = 3
+        //==> (2^23 % N) = (2^3 % N)
+        //
+        //2.2, Vì ta tư duy thành số MŨ (exponent)
+        //--> Mọi thứ đã trở nên dễ dàng hơn
+        //- 1 số có 2 cách biểu diễn sau đây:
+        //+ right --> left (1 cách tư duy bình thường)
+        //+ left --> right (cách tư duy khác biệt hơn 1 chút)
+        //VD:
+        //123
+        //+ right --> left :
+        //123 = 3 + 2 * 10 + 1* 100 (Số tăng dần quá lớn)
+        //==> Vì 100 được tính trực tiếp tại mỗi loop ==> Cách này không thể được
+        //==> Ta cần dùng phép biến đổi làm sao (result_2) --> Tính theo (result_1)
+        //+ left --> right
+        //VD: (1*10 + 2) * 10 + 3
+        //123
+        //+ 0 * 10 + 1
+        //+ 1 * 10 + 2
+        //+ 12 * 10 + 3
         //Method:
         //https://leetcode.com/problems/super-pow/discuss/1873389/Java-2-Approaches%3A-BF-and-Binary-Exponentiation
         //https://leetcode.com/problems/super-pow/discuss/2412552/Java-or-Binary-Exponentiation-%2B-Euler-Totient-Function-(ETF)-with-Explanation
