@@ -116,6 +116,29 @@ public class E119_SuperPow_binary {
         return map.get(initPower);
     }
 
+    public static int superPowEulerBinary(int a, int[] b) {
+        int num=0;
+
+        for(int i=0;i<b.length;i++){
+            num=(num*10 + b[i])%1140;
+        }
+        return modPow(a, num, 1337);
+    }
+
+    public static int modPow(int a, int b, int modNumber){
+        int rs=1;
+        a=a%modNumber;
+
+        while (b>0){
+            if(b%2==1){
+                rs=(rs*a)%modNumber;
+            }
+            a=(a*a)%modNumber;
+            b/=2;
+        }
+        return rs;
+    }
+
     public static void main(String[] args) {
 //        int[] arr=new int[]{4,3};
 //        int a=8;
@@ -274,6 +297,20 @@ public class E119_SuperPow_binary {
         //+ 0 * 10 + 1
         //+ 1 * 10 + 2
         //+ 12 * 10 + 3
+        //3, Vì dùng cách tính trùng hay không phân theo power
+        //- Ta cần 1 haset để check trùng
+        //- 1 hasmap để lưu thông tin (power(số mũ), value) ==> Value chính là (số dư)
+        //==> khi xác định số mũ cần tính ---> Ta chỉ cần lây (số dư) dựa trên power là xong.
+        //
+        //Cách 2: Áp dụng tính chất euler
+        //1, Ở đây hashSet.size() sẽ được thay cho (số lượng các số nguyên tố với 1337)
+        //Theo ct Euler thì:
+        //- (a^(b%1140))%m
+        //
+        //2, Và phần tính kết quả là pow(n, m) % 1337 ==> Ta có thể kết hợp 1337 vào để tính (%) dần dần ra kết quả.
+        //3, Tốc độ:
+        //- b&1 nhanh hơn so với > (b%2) (Vì nó chỉ (and bit 1)))
+        //- b>>=1 nhanh hơn so với > b/2 (Vì nó chỉ là phép dịch bit))
         //Method:
         //https://leetcode.com/problems/super-pow/discuss/1873389/Java-2-Approaches%3A-BF-and-Binary-Exponentiation
         //https://leetcode.com/problems/super-pow/discuss/2412552/Java-or-Binary-Exponentiation-%2B-Euler-Totient-Function-(ETF)-with-Explanation
@@ -282,6 +319,7 @@ public class E119_SuperPow_binary {
 
 //        System.out.println(superPowWrong(a, arr));
         System.out.println(superPow(a, arr));
+        System.out.println(superPowEulerBinary(a, arr));
         //https://leetcode.com/problems/find-n-unique-integers-sum-up-to-zero/
         //https://leetcode.com/problems/find-the-kth-largest-integer-in-the-array/
     }
