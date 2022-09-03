@@ -2,9 +2,8 @@ package interviews;
 
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Queue;
 
-public class E121_MaximizeTheConfusionOfAnExam_binary {
+public class E121_MaximizeTheConfusionOfAnExam_binary_slide {
 
     public static int maxConsecutiveAnswers(String answerKey, int k) {
         int rs=0;
@@ -174,11 +173,15 @@ public class E121_MaximizeTheConfusionOfAnExam_binary {
         return rs;
     }
 
-    public static int maxConsecutiveAnswersOptimizeON(String answerKey, int k) {
+    /*
+    - Đọc lại ở đây
+     */
+    public static int maxConsecutiveAnswersOptimizeONRedunancy(String answerKey, int k) {
         int rs=0;
         int n=answerKey.length();
-        int[] valuesTrue =new int[n];
-        int[] valuesFalse =new int[n];
+        //Không dùng cái này để làm gì hết
+//        int[] valuesTrue =new int[n];
+//        int[] valuesFalse =new int[n];
 //        int queueArr[]=new int[k];
 //        int front=-1, rear=-1;
         Deque<Integer> queueTrue=new LinkedList<>();
@@ -187,20 +190,25 @@ public class E121_MaximizeTheConfusionOfAnExam_binary {
         Deque<Integer> queueFalse=new LinkedList<>();
         int currentValueFalse=0;
         int countWindowFalse=0;
+//        StringBuilder log1=new StringBuilder();
+//        StringBuilder log2=new StringBuilder();
+//        StringBuilder log3=new StringBuilder();
 
         for(int i=0;i<n;i++){
             //F -> T
             currentValueTrue++;
             countWindowTrue++;
             if (answerKey.charAt(i) == 'F') {
-                if(queueTrue.isEmpty()){
-                    countWindowTrue=1;
-                }
+//                if(queueTrue.isEmpty()){
+//                    countWindowTrue=1;
+//                }
                 if(queueTrue.size()==k){
-                    currentValueTrue=countWindowTrue-valuesTrue[queueTrue.pollFirst()];
-                    valuesTrue[i]=currentValueTrue;
+                    countWindowTrue=currentValueTrue;
+//                    currentValueTrue=countWindowTrue-valuesTrue[queueTrue.pollFirst()];
+                    currentValueTrue=i-queueTrue.pollFirst();
+//                    valuesTrue[i]=currentValueTrue;
                 }else{
-                    valuesTrue[i]=currentValueTrue;
+//                    valuesTrue[i]=currentValueTrue;
                 }
                 queueTrue.add(i);
             }
@@ -211,18 +219,64 @@ public class E121_MaximizeTheConfusionOfAnExam_binary {
             currentValueFalse++;
             countWindowFalse++;
             if (answerKey.charAt(i) == 'T') {
-                if(queueFalse.isEmpty()){
-                    countWindowFalse=1;
-                }
+//                if(queueFalse.isEmpty()){
+//                    countWindowFalse=1;
+//                }
                 if(queueFalse.size()==k){
-                    currentValueFalse=countWindowFalse-valuesFalse[queueFalse.pollFirst()];
-                    valuesFalse[i]=currentValueFalse;
+                    countWindowFalse=currentValueFalse;
+//                    currentValueFalse=countWindowFalse-valuesFalse[queueFalse.pollFirst()];
+                    currentValueFalse=i-queueFalse.pollFirst();
+//                    valuesFalse[i]=currentValueFalse;
                 }else{
-                    valuesFalse[i]=currentValueFalse;
+//                    valuesFalse[i]=currentValueFalse;
                 }
                 queueFalse.add(i);
             }
 //            System.out.printf("%s (%s), ", currentValueFalse, answerKey.charAt(i));
+//            log1.append(currentValueFalse).append(",");
+//            log2.append(answerKey.charAt(i)).append(",");
+//            log3.append(countWindowFalse).append(",");
+//            System.out.printf("%s,", currentValueFalse);
+//            System.out.printf("%s,", answerKey.charAt(i));
+            rs=Math.max(rs, currentValueFalse);
+        }
+//        System.out.println(log2.toString());
+//        System.out.println(log3.toString());
+//        System.out.println(log1.toString());
+
+        return rs;
+    }
+
+    public static int maxConsecutiveAnswersOptimizeONOptimize(String answerKey, int k) {
+        int rs=0;
+        int n=answerKey.length();
+        int[] queueArrTrue=new int[n];
+        int frontTrue=0, rearTrue=0;
+        int currentValueTrue=0;
+        int[] queueArrFalse=new int[n];
+        int frontFalse=0, rearFalse=0;
+        int currentValueFalse=0;
+
+        for(int i=0;i<n;i++){
+            //F -> T
+            currentValueTrue++;
+            if (answerKey.charAt(i) == 'F') {
+                if(rearTrue-frontTrue==k){
+                    currentValueTrue=i-queueArrTrue[frontTrue++];
+                }
+                queueArrTrue[rearTrue++]=i;
+            }
+//            System.out.printf("%s (%s), ", currentValueTrue, answerKey.charAt(i));
+            rs=Math.max(rs, currentValueTrue);
+
+            // T -> F
+            currentValueFalse++;
+            if (answerKey.charAt(i) == 'T') {
+                if(rearFalse-frontFalse==k){
+                    currentValueFalse=i-queueArrFalse[frontFalse++];
+                }
+                queueArrFalse[rearFalse++]=i;
+            }
             rs=Math.max(rs, currentValueFalse);
         }
 
@@ -238,16 +292,16 @@ public class E121_MaximizeTheConfusionOfAnExam_binary {
 //        int k=3;
 //        String answerKey="FFTTFFFTTTTTTTFFFTTTTT";
 //        int k=2;
-//        String answerKey="FFFTTFTTFT";
-//        int k=3;
+        String answerKey="FFFTTFTTFT";
+        int k=3;
         //Case liên quan đến leftIndex ==T
 //        String answerKey="FFTFTTTFFF";
 //        int k=1;
 //        String answerKey="TTFTTFTT";
 //        int k=1;
         //Case này là case phải pop đi và giá trị cũ currentValue cũng phải giữ 1 phần
-        String answerKey="FFFTTFTTFTFFFFF";
-        int k=3;
+//        String answerKey="FFFTTFTTFTFFFFF";
+//        int k=3;
         //Case 1 : Phải set nhiều đoạn
         //FF(TT)FFFFFF(TT)FFFF(TTTTT)
         //k=4
@@ -317,6 +371,23 @@ public class E121_MaximizeTheConfusionOfAnExam_binary {
         //+ currentValue - values[i] --> Trong 1 cycle nhất định được thôi
         System.out.println(maxConsecutiveAnswers(answerKey, k));
         System.out.println(maxConsecutiveAnswersOptimizeOnN(answerKey, k));
-        System.out.println(maxConsecutiveAnswersOptimizeON(answerKey, k));
+        //Với cách code này gặp rất nhiều lỗi sai:
+        //- Tư duy dùng (countWindowFalse) để lưu số lượng elements trong 1 cycle
+        //--> Dùng để tính các phần tử liên tiếp (cần transform trong 1 cycle)
+        //VD : F,F,F,T(value=4),T,F,T,T(countWindowFalse=8),F,T,F,F,F,F,F
+        //Vẫn là cycle đó thêm 1 transform (T -> F) tức là cần pop 1 element ra
+        //--> currentValue = countWindowFalse - ( (độ dài chuỗi trước đó tại index=3 : T )==4 )
+        //<=> currentValue = 8 - 4 = 4
+        //** Problem : Vấn đề ở đây bao giờ (countWindowFalse) thay đổi
+        //VD : FFFF(TT)FF(TT(T)(Tại vị trí này countWindowFalse=1) TTTT) ===> Ý TƯỞNG SAI
+        //VD: TTTT(T)TTFTTTTT
+        //k=2 --> countWindowFalse luôn = 2 : Vì các phép toán chỉ là (pop + add) đi liên mà thôi
+        // ==> Không có reset về 1 ==> Sẽ reset về (value) trong (khoảng) từ (index pop ra) đến (i) .
+        // ===> Rất khó có thể làm bằng VALUE.
+        //*** Kinh nghiệm : (Slide window)(Chỉ dùng (INDEX) để lấy cycle)
+        //+ Lưu value tại (i) là số lượng chuỗi tìm được trước đó
+        //- Đọc lại thì đọc ở đây
+        System.out.println(maxConsecutiveAnswersOptimizeONRedunancy(answerKey, k));
+        System.out.println(maxConsecutiveAnswersOptimizeONOptimize(answerKey, k));
     }
 }
