@@ -139,6 +139,26 @@ public class E119_SuperPow_binary {
         return rs;
     }
 
+    public static int superPowBruteForce(int a, int[] b) {
+        if(a==1){
+            return 1;
+        }
+        int n=b.length;
+        int rs=1;
+
+        for(int i=n-1;i>=0;i--){
+            int base= (int) Math.pow(10, n-i-1);
+            int num=b[i]*base;
+//            System.out.printf("%s\n",num);
+
+            for(int j=1;j<=num;j++){
+                rs=((rs%1337)*(a%1337))%1337;
+            }
+//            System.out.printf("%s\n\n",rs);
+        }
+        return rs;
+    }
+
     public static void main(String[] args) {
 //        int[] arr=new int[]{4,3};
 //        int a=8;
@@ -198,7 +218,9 @@ public class E119_SuperPow_binary {
 //        System.out.println(64%14);
 //        System.out.println(56%14);
 //        System.out.println(Math.pow(8,14)%14);
-        //
+        //0, Test cases:
+        //Chú ý test case :
+        //number = MAX_INTEGER.
         //1, Bài này học được khá nhiều skill liên quan đến:
         //1.1, Kỹ năng phân tích bài toán --> chia ra nhiều kiểu tư duy + loại dần
         //+ Gạch các ý tưởng đầu dòng --> Sau đó loại dần (Thực ra cái này từ trước mình vẫn làm)
@@ -306,12 +328,22 @@ public class E119_SuperPow_binary {
         //1, Ở đây hashSet.size() sẽ được thay cho (số lượng các số nguyên tố với 1337)
         //Theo ct Euler thì:
         //- (a^(b%1140))%m
-        //
+        //--> tại sao lại chọn 1140 ==> Cần chứng minh
         //2, Và phần tính kết quả là pow(n, m) % 1337 ==> Ta có thể kết hợp 1337 vào để tính (%) dần dần ra kết quả.
         //3, Tốc độ:
         //- b&1 nhanh hơn so với > (b%2) (Vì nó chỉ (and bit 1)))
         //- b>>=1 nhanh hơn so với > b/2 (Vì nó chỉ là phép dịch bit))
+        //3.1, Cách viết để rs cũng cần % 1337 --> Tránh tràn giá trị
+        //+ rs=1 (Phải khởi tạo ban đầu =1)
+        //========================
+        //for(int j=1;j<=num;j++){
+        //   rs=((rs%1337)*(a%1337))%1337;
+        //}
+        //========================
         //Method:
+        //** KINH NGHIỆM:
+        //- a^n % K = (lần lượt * a) %k.
+        //
         //https://leetcode.com/problems/super-pow/discuss/1873389/Java-2-Approaches%3A-BF-and-Binary-Exponentiation
         //https://leetcode.com/problems/super-pow/discuss/2412552/Java-or-Binary-Exponentiation-%2B-Euler-Totient-Function-(ETF)-with-Explanation
         //https://leetcode.com/problems/super-pow/discuss/84504/Java-4ms-short-solution
@@ -320,6 +352,7 @@ public class E119_SuperPow_binary {
 //        System.out.println(superPowWrong(a, arr));
         System.out.println(superPow(a, arr));
         System.out.println(superPowEulerBinary(a, arr));
+        System.out.println(superPowBruteForce(a, arr));
         //https://leetcode.com/problems/find-n-unique-integers-sum-up-to-zero/
         //https://leetcode.com/problems/find-the-kth-largest-integer-in-the-array/
     }
