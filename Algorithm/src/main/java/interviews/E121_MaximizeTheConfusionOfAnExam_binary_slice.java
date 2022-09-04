@@ -3,7 +3,7 @@ package interviews;
 import java.util.Deque;
 import java.util.LinkedList;
 
-public class E121_MaximizeTheConfusionOfAnExam_binary_slide {
+public class E121_MaximizeTheConfusionOfAnExam_binary_slice {
 
     public static int maxConsecutiveAnswers(String answerKey, int k) {
         int rs=0;
@@ -247,6 +247,7 @@ public class E121_MaximizeTheConfusionOfAnExam_binary_slide {
         return rs;
     }
 
+    //Cách dùng queue
     public static int maxConsecutiveAnswersOptimizeONOptimize(String answerKey, int k) {
         int rs=0;
         int n=answerKey.length();
@@ -283,6 +284,47 @@ public class E121_MaximizeTheConfusionOfAnExam_binary_slide {
         return rs;
     }
 
+    //Cách chia đoạn (count--)
+    public static int maxConsecutiveAnswersOptimizeONRefer(String answerKey, int k) {
+        int rs=0;
+        int n=answerKey.length();
+        int maxCount=0;
+        int start=0;
+        int[] count =new int[128];
+
+        for(int i=0;i<n;i++){
+            maxCount=Math.max(maxCount, ++count[answerKey.charAt(i)-'A']);
+
+            while (i-start+1-maxCount>k){
+                count[answerKey.charAt(start)-'A']--;
+                start++;
+            }
+            rs=Math.max(rs, i-start+1);
+        }
+
+        return rs;
+    }
+
+    //Cách beat 99%
+    public static int maxConsecutiveAnswersOptimizeONReferOptimize(String answerKey, int k) {
+        int rs=0;
+        int n=answerKey.length();
+        int maxCount=0;
+        int[] count =new int[128];
+
+        for(int i=0;i<n;i++){
+            maxCount=Math.max(maxCount, ++count[answerKey.charAt(i)-'A']);
+
+            //res --> Chuyển về (i-start)
+            //+ Mỗi lần nó luôn tăng rs++ ==> Có thể viết ntn
+            if (rs-maxCount<k){
+                rs++;
+            }else count[answerKey.charAt(i-rs)-'A']--;
+        }
+
+        return rs;
+    }
+
     public static void main(String[] args) {
 //        String answerKey="TTFF";
 //        int k=2;
@@ -294,81 +336,7 @@ public class E121_MaximizeTheConfusionOfAnExam_binary_slide {
 //        int k=2;
         String answerKey="FFFTTFTTFT";
         int k=3;
-        //Case liên quan đến leftIndex ==T
-//        String answerKey="FFTFTTTFFF";
-//        int k=1;
-//        String answerKey="TTFTTFTT";
-//        int k=1;
-        //Case này là case phải pop đi và giá trị cũ currentValue cũng phải giữ 1 phần
-//        String answerKey="FFFTTFTTFTFFFFF";
-//        int k=3;
-        //Case 1 : Phải set nhiều đoạn
-        //FF(TT)FFFFFF(TT)FFFF(TTTTT)
-        //k=4
-        //True
-        //
-        //Không phải lúc nào đánh k cũng bắt đầu bằng T
-        //--> Bắt đầu bằng F
-        //
-        //
-        //1, Tuy là set nhiều đoạn nhưng vẫn cần phái chạy từ (left --> right)
-        ////==> Chỉ cần O(n)
-        //
-        //Case 1.1
-        //
-        //(FF)TTTT(F)
-        //k=2
-        //rs=6
-        //
-        //Case 1.2 : Không thể đi 2 chiều
-        //
-        //(FF)TTTT(F)
-        //k=3
-        //rs=6
-        //
-        //Case 2 : Chọn 1 trong các đoạn
-        //FF(TT)FFF(TTTTTTT)FFF(TTTTT)
-        //k=2
-        //
-        //
-        //
-        //TTT(FF)TTT
-        //
-        //
-        //Case 4:
-        //"FFFTTFTTFT"
-        //3
-        //
-        //FFFFFFFTFT
-        //FFTTTTTTTT
-        //
-        //
-        //wrong : 7
-        //expect : 8
-        //
-        //Case 5:
-        //
-        //FFF(TT)F(TT)F(T)FFFFF
-        //
-        //Set F to T
-        //FFF(TT)F(TT)F(T)FFFFF
-        //123 45 5 67 7 8
-        //
-        //Set T to F
-        //input	: FFF(TT)F(TT)F(T)FFFFF
-        //k	: 123 21 1 08 9 9
-        //rs	: 123 45 6 77 8
-        //---> Việc push cái T ở cuối ra, currentValue cũng cần phải trừ đi đoạn sau T
-        //==> Chứ không phải giữ nguyên --> Về cơ bản logic đã SAI rồi.
-        //
-        //Lại :
-        //T -> F
-        //input	: FFF(TT)F(TT)F(T)FFFFF
-        //k	: 123 45 6 74 5 5 6 7 8 9 10
-        //rs	: 123 45 6 78 9 10
-        //
-        //+ Mỗi vị trí F có giá trị riêng (Trong 1 khoảng nhất đinh) ==> Cần 1 cycle count
-        //+ currentValue - values[i] --> Trong 1 cycle nhất định được thôi
+
         System.out.println(maxConsecutiveAnswers(answerKey, k));
         System.out.println(maxConsecutiveAnswersOptimizeOnN(answerKey, k));
         //Với cách code này gặp rất nhiều lỗi sai:
@@ -385,9 +353,107 @@ public class E121_MaximizeTheConfusionOfAnExam_binary_slide {
         // ==> Không có reset về 1 ==> Sẽ reset về (value) trong (khoảng) từ (index pop ra) đến (i) .
         // ===> Rất khó có thể làm bằng VALUE.
         //*** Kinh nghiệm : (Slide window)(Chỉ dùng (INDEX) để lấy cycle)
-        //+ Lưu value tại (i) là số lượng chuỗi tìm được trước đó
+        //+ Lưu value tại (i) là số lượng chuỗi tìm được trước đó ==> Cách suy nghĩ này sai.
         //- Đọc lại thì đọc ở đây
         System.out.println(maxConsecutiveAnswersOptimizeONRedunancy(answerKey, k));
         System.out.println(maxConsecutiveAnswersOptimizeONOptimize(answerKey, k));
+        //Bài này tư duy như sau:
+        //0, Bài này có khá nhiều cases cần fix:
+//        Case 1 : Phải set nhiều đoạn
+//        FF(TT)FFFFFF(TT)FFFF(TTTTT)
+//        k=4
+//        True
+//        Không phải lúc nào đánh k cũng bắt đầu bằng T --> Bắt đầu bằng F
+        // Không phải lúc nào ta cũng start at T --> Để tính số lượng liên tiếp lớn nhất
+        //==> Ta cần start F để có thể replace F --> T + T đằng sau đó --> Tính số lượng liên tiếp lớn nhất.
+//        Case 1, Tuy là set nhiều đoạn nhưng vẫn cần phái chạy từ (left --> right)
+//        ==> Chỉ cần O(n)
+//        Case 1.1
+//        (FF)TTTT(F) :
+//        + Case này phải (chọn SET 1 trong 2 phía)
+//        k=2
+//        rs=6
+//        Case 1.2 :
+//        + Không thể đi 2 chiều (FF)TTTT(F) (k=3 có thể set 2 chiều)
+//        + Case này phải start với (F) (Change value ở 2 phía của T)
+//        k=3
+//        rs=6
+//        Case 4:
+//        FFF(TT)F(TT)FT : Ở đây có nhiều cách để change (value)
+//        3
+//        FFFFFFFTFT
+//        FFTTTTTTTT
+//        wrong : 7
+//        expect : 8
+//        Case 5:
+//        FFF(TT)F(TT)F(T)FFFFF
+//        Set F to T
+//        FFF(TT)F(TT)F(T)FFFFF
+//        123 45 5 67 7 8
+        //Cách 1:
+        //1, Độ phức tạp O(n^2)
+        //1.1, Với (n) việc start at (i) --> Ta có thể cover được hết các trường hợp bù (k) elements.
+        //1.2, Với cách suy nghĩ như thế này
+        //VD: Vị trí (i) ta sẽ replace tất cả (k) phần tử từ vị trí (i) trở đi ==> Sau đó tính (số lượng các ký tự T liên tiếp)
+        //==> N trường hợp bắt đầu với vị trí (i) --> Cover all cases.
+        //
+        //Cách 2:
+        //1, Độ phức tạo O(n)
+        //2,
+        //Với cách code này gặp rất nhiều lỗi sai:
+        //2.1, Tư duy theo dạng
+        //FFF(TT)F(TT)F(T)
+        //    12   1 0
+        //==> Tư duy theo dạng trừ dần value, (1,2,3) --> (2,1,0)
+        //+ Với tư duy theo dạng này TT(FF)[ (FF)TTT(F) ], k=3
+        //--> Khó tìm ra kết quả trong [] = 5
+        //Khi mà (currentValue) (Kết quả bài toán thay đổi) ==> không biết khi nào thì ta sẽ thay đổi
+        //--> (Khi mà sau (FF) vẫn còn 2 (TT), currentValue mới khi chọn (FF) từ vị trí (index=4) cần phải loại các value (TT) =2 đi.
+        //
+        //2.2,
+        //* Tư duy dùng leftIndex, rightIndex --> Không thích hợp vì ta cần lưu danh sách index cần loại đi
+        //- Tư duy queue (Add index) : Dùng để lưu danh sách index của các elements dùng để (change T -> F/ F -> T)
+        //+ Mục đích để loại bỏ case : (TTFF)TTTTTF --> Khi ta bỏ F thì ta cũng phải bỏ đi số lượng T sau F đó (VD: Number(T)=2)
+        //==> Tư duy ngu ngốc là ta sẽ tính currentValue tại vị trí (F) --> pop thì lấy currentValue trừ đi (Tư duy khởi nguyên)
+        //+ mặc dù sẽ bị sai --> Do nếu lấy currentValue - (trừ) ==> Không được
+        //+ currentValue được update liên tục ---> Ta cần tính 1 biến cycle trong lần check đó
+        // ==> (countWindowFalse) : luôn cộng liên tục ++, chỉ Update khi hết cycle đó (Mặc dù tư duy này cũng sai)
+        //---> Sai do (countWindowFalse) luôn cộng lên (Không bao h reset)
+        //+ (countWindowFalse) - value_pop (không tính được là nó tính đến vị trí nào)
+        //VD: TTTTFF(FF)(TT)FF(TT(T), k=2
+        //Với case nhiều FFFF liên tiếp với (k==2) --> Tính (countWindowFalse) rất khó do:
+        //+ countWindowFalse không reset về 1 --> reset trong khoảng pop ra cho đến (i) --> dùng (i) cho nhanh (- trừ đi index pop ra)
+        //
+        //2.3, Tư duy dùng (countWindowFalse) để lưu số lượng elements trong 1 cycle
+        //--> Dùng để tính các phần tử liên tiếp (cần transform trong 1 cycle)
+        //VD : F,F,F,T(value=4),T,F,T,T(countWindowFalse=8),F,T,F,F,F,F,F
+        //Vẫn là cycle đó thêm 1 transform (T -> F) tức là cần pop 1 element ra
+        //--> currentValue = countWindowFalse - ( (độ dài chuỗi trước đó tại index=3 : T )==4 )
+        //<=> currentValue = 8 - 4 = 4
+        //** Problem : Vấn đề ở đây bao giờ (countWindowFalse) thay đổi
+        //VD : FFFF(TT)FF(TT(T)(Tại vị trí này countWindowFalse=1) TTTT) ===> Ý TƯỞNG SAI
+        //VD: TTTT(T)TTFTTTTT
+        //k=2 --> countWindowFalse luôn = 2 : Vì các phép toán chỉ là (pop + add) đi liên mà thôi
+        // ==> Không có reset về 1 ==> Sẽ reset về (value) trong (khoảng) từ (index pop ra) đến (i) .
+        // ===> Rất khó có thể làm bằng VALUE.
+        //
+        //3, Dùng queue dạng Array --> Tốt hơn khi sử dụng lại (Cùng kích thước)
+        //==> Do chỉ cần reset front=0, rear=0.
+        //
+        //*** KINH NGHIỆM :
+        //- (Slide window)(Chỉ dùng (INDEX) để lấy cycle)
+        //
+        //Cách 3:
+        //
+        System.out.println(maxConsecutiveAnswersOptimizeONRefer(answerKey, k));
+        //3.1, Tương tự bài (E122_LongestRepeatingCharacterReplacement) tối ưu:
+        // res --> Chuyển về (i-start)
+        //+ Mỗi lần nó luôn tăng rs++ ==> Có thể viết ntn
+        //=============CODE=============
+        //if (rs-maxCount<k){
+        //    rs++;
+        //}else count[answerKey.charAt(i-rs)-'A']--;
+        //=============CODE=============
+        System.out.println(maxConsecutiveAnswersOptimizeONReferOptimize(answerKey, k));
     }
 }
