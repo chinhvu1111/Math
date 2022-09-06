@@ -23,9 +23,30 @@ public class E127_CountNumberOfHomogenousSubstrings_slice {
         rs= (int) ((rs+value)% 1_000_000_007);
         return rs;
     }
+
+    public static int countHomogenousOptimize(String s) {
+        char last = '.';
+        int found = 1;
+        long ct = 0;
+        for(char ch : s.toCharArray()){
+            if(ch == last)
+                found++;
+            else{
+                found = 1;
+                last = ch;
+            }
+            ct += found;
+        }
+        return (int)(ct % 1_000_000_007);
+    }
+
     public static void main(String[] args) {
 //        String s="abbcccaa";
         String s="ab";
         System.out.println(countHomogenous(s));
+        //tư duy như sau:
+        //Cách này cũng không có gì đặc biệt
+        //1, Cộng dần lên + reset value thôi.
+        System.out.println(countHomogenousOptimize(s));
     }
 }
