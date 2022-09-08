@@ -65,6 +65,7 @@ public class E150_TaskScheduler {
     }
 
     public static int leastIntervalOptimize(char[] tasks, int n) {
+        if(n==0) return tasks.length;
         int[] count =new int[27];
         int length=tasks.length;
 
@@ -73,7 +74,7 @@ public class E150_TaskScheduler {
         }
         int rs=0;
         int t=0;
-        PriorityQueue<Integer> integers=new PriorityQueue<>();
+        PriorityQueue<Integer> integers=new PriorityQueue<>((integer, t1) -> t1-integer);
 
         for(int i=0;i<=26;i++){
             if(count[i]!=0){
@@ -82,6 +83,7 @@ public class E150_TaskScheduler {
             }
         }
 //        System.out.println();
+
         while (!integers.isEmpty()){
             Integer currentValue=integers.poll();
             rs=Math.max(rs, (currentValue-1)*(n+1)+1+t);
@@ -95,10 +97,11 @@ public class E150_TaskScheduler {
     public static void main(String[] args) {
 //        char[] s=new char[]{'A','A','A','A','A','A','B','C','D','E','F','G'};
 //        char[] s=new char[]{'A','A','A','B','B','B'};
-        char[] s=new char[]{'A','A','A','B','B','B'};
+//        char[] s=new char[]{'A','A','A','B','B','B'};
 //        char[] s=new char[]{'A'};
 //        char[] s=new char[]{'A','A','A'};
-        int n=0;
+        char[] s=new char[]{'A','A','A','B','B','B', 'C','C','C', 'D', 'D', 'E'};
+        int n=2;
         System.out.println(leastInterval(s, n));
         System.out.println(leastIntervalOptimize(s, n));
         //
