@@ -117,6 +117,13 @@ public class E132_ValidTriangleNumber_two_pointers {
         //với b < (c-a) (c giảm / a tăng)
         //===> numss[i] đóng vai trò là c ==> kết quả vẫn thế vì chỉ là phép chuyển vế mà thôi.
         //1.4,
+        //VD:
+        //(1,2,3,4),7
+        //
+        //(3,4,5,6),7
+        //case này ta có nhưng dãy thỏa mãn như:
+        //(3,6,7), (3,5,7), (4,6,7), (4,5,7)
+        //==> Chia ntn?
         //- Phân tích
         //(3,6,7) ==> all case (4 (>3),6,7)
         //--> Ta sẽ cộng vào kết quả --> right--;
