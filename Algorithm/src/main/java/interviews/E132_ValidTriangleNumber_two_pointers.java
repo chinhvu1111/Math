@@ -85,13 +85,25 @@ public class E132_ValidTriangleNumber_two_pointers {
         //3: Có 2 giá trị thỏa mãn
         System.out.println(triangleNumberMethod1(arr));
         //Bài này tư duy như sau:
+        //Cách 1:
+        //1, Độ phức tạp O( n^2 * log(n) )
+        //1.1, Tư duy này là tư duy phổ biến --> Phân tích thành nhiều cases (mid value)
+        //VD: a, b, (c), d, e
+        //- 1 vòng for cho mid (1 --> n-2)
+        //- 1 vòng for cho (left) ==> Lúc đó ta chỉ cần tìm (right) phù hợp.
+        //- Với việc phân tích thành từng (left, mid)
+        //---> rs= all sum[ right/(left, mid) ] : tìm tổng all right thỏa mãn với từng (left, mid)
+        //- Áp dụng binary search : Tìm right xa nhất mà thỏa mãn (left + value > right)
+        //--> Số lượng lúc đó sẽ bằng rs+= (index_right) - (index_middle)
+        //2, Cách log ra để xem kết quả:
+        //2.1, Log trong (for), (log ra ngoài for), (log trong if) .
+        //
         //0, Bài này thêm kinh nghiệm + thêm 1 luồng tư duy liên quan đến Thinking idea
         //==> Thảo luận về tips của bài toán --> Xem nên:
         //- Biến đổi bài toán như thế nào --> Áp dụng 1 vài quy luật về toán
         //- Phân tích rõ tư tưởng/ problems thay vì chỉ tập trung vào code luôn. ===> (Có thể dẫn đến đi sai hướng/ Solution không tối ưu)
         //
-        //1,
-
+        //
         //Cách 2:
         //1,
         //1.0, ==> Bài này dạng tip tricks ==> Cần (TƯ DUY RỘNG RA).
@@ -111,9 +123,9 @@ public class E132_ValidTriangleNumber_two_pointers {
         //
         //a + b < c
         //
-        //1.3, nếu nums[i] đóng vai trò khác thì sao:
+        //1.3, nếu nums[i] đóng vai trò khác VD (c) thì sao:
         //a + b < c
-        //nums[i] mà đóng vai trò (a/b) ===>  Cuối cùng thì bài toán nó vẫn quay về O(n^3)
+        //- nums[i] mà đóng vai trò (a/b) ===>  Cuối cùng thì bài toán nó vẫn quay về O(n^3)
         //với b < (c-a) (c giảm / a tăng)
         //===> numss[i] đóng vai trò là c ==> kết quả vẫn thế vì chỉ là phép chuyển vế mà thôi.
         //1.4,
@@ -125,7 +137,7 @@ public class E132_ValidTriangleNumber_two_pointers {
         //(3,6,7), (3,5,7), (4,6,7), (4,5,7)
         //==> Chia ntn?
         //- Phân tích
-        //(3,6,7) ==> all case (4 (>3),6,7)
+        //Khi chọn case (3,6,7) ==> sẽ chứng minh được (all cases) (4 (>3),6, [7] ) --> Cũng thỏa mãn khi ghép với 7
         //--> Ta sẽ cộng vào kết quả --> right--;
         System.out.println(triangleNumber(arr));
     }
