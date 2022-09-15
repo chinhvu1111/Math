@@ -53,11 +53,14 @@ public class E133_SumOfSquareNumbers_2_pointers {
 //        int n=4;
 //        int n=2;
         int n=2147483600;
-        //fast
+        //fast (binary search tận dụng tìm kiếm i*i </ >= target)
         System.out.println(judgeSquareSum(n));
         //more and more slower
+        //Tận dụng cast [ Math.sqrt((c-i*i))= (int)Math.sqrt((c-i*i)) ]
         System.out.println(judgeSquareSumJump(n));
         //more slower
+        //Lưu vào hashet (1 --> sqrt(n))
+        //hashSet.add(i*i) ==> for(i*i) --> Check hashSet có tồn tại hay chưa.
         System.out.println(judgeSquareSumHashSet(n));
     }
 }
