@@ -107,6 +107,10 @@ public class E7_ReorderList {
         node2.next=node3;
         reverseList(node);
         reorderList1(node);
+        //Đề bài là biến đổi list --> (0, n), (1, n-1) ....,(n-1, 1), (n, 0) ==> Chuỗi này dạng đối xứng
+        //0,
+        //- Tư duy là add các node vào array list --> Ta sẽ xác định được vị trí (0 --> (n-1)/2 | n/2)
+        //- Sau đó ta nối theo pair (i, n-i)
         //Cách làm tối ưu như sau:
         //1, Chạy vòng từ trong ra ngoài (Lúc đó mũi tên sẽ bị ngược)
         //2, Reverse vòng đó --> ta sẽ ra đúng chiều

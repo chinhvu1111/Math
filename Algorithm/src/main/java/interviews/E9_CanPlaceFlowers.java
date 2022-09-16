@@ -26,6 +26,14 @@ public class E9_CanPlaceFlowers {
 
     public static void main(String[] args) {
         int arr[]=new int[]{1,0,0,0,0,1};
+        //Đề bài:
+        //Input: flowerbed = [1,0,0,0,1], n = 2
+        //Output: false
+        //- Không được trồng cây cạnh nhau (1 planted, 0 blank)
+        //- Trả lại kết quả liệu có trồng được không (true/ false)
+        //Bài này tư duy như sau:
+        //1, Bài này plant từ đầu đến cuối rs++, if (rs> n) return false,
+        //<> ut of loop : return true.
         System.out.println(canPlaceFlowers(arr, 2));
     }
 }

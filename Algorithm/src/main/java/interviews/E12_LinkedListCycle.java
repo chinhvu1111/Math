@@ -59,5 +59,20 @@ public class E12_LinkedListCycle {
 //        listNode1.next=listNode;
 
         System.out.println(hasCycle(listNode));
+        System.out.println(hasCycleOptimize(listNode));
+        //Đề bài:
+        //- Tìm xem list hiện tại có cycle hay không.
+        //Bài này tư duy như sau:
+        //Cách 1:
+        //1,
+        //1.1, Sử dụng hashSet để lưu thông tin từng node --> Sau đó check dần dần các nodes đằng sau xem có xuất hiện chưa!
+        //
+        //Cách 2:
+        //1,
+        //1.1, Phương pháp slow, fast tức là :
+        //+ Sẽ luôn có 1 node fast đi trước (Đi nhanh x2 lần so với slow) sau đó --> Nếu node đó là node dạng cycle thì
+        //node đó sẽ đuổi kịp slow (Khi vòng lại sớm)
+        //--> Khi đuổi kịp ==> có cycle
+        //1.2, Tại sao có quy luật như thế : Ta sẽ tìm hiểu những bài sau đó.
     }
 }

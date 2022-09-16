@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class E8_CountingBits {
 
     public static int[] countBits(int n) {
-        int dp[]=new int[n+1];
+        int[] dp =new int[n+1];
 
         if(n==0){
             return dp;
@@ -54,6 +54,7 @@ public class E8_CountingBits {
     public static void main(String[] args) {
 //        int n=5;
 //        int n=1;
+        //Đề bài : Đếm số bit 1 trong biểu diễn của số C.
         //Case 1:
         //Sai cycle khi reset length --> dp[i]=1
         //<> thì apply theo ct nếu cycle=4 --> dp[i]=dp[i-4]+1
@@ -91,6 +92,21 @@ public class E8_CountingBits {
 //        int n=64;
 //        int n=0;
         int arr[]=countBits(n);
+        //Để bài:
+        //Input: n = 5
+        //Output: [0,1,1,2,1,2]
+        //Explanation:
+        //0 --> 0
+        //1 --> 1
+        //2 --> 10
+        //3 --> 11
+        //4 --> 100
+        //5 --> 101
+        //Bài này tư duy như sau:
+        //1, Bài này ta dùng dynamic programming
+        //1.1, Dynamic ở đây được xác định là chỉ có hiệu lực trong 1 cycle nhất định
+        //+ cycleCount=4
+        //
         Arrays.stream(arr).forEach(i -> System.out.print(i+","));
     }
 }
