@@ -74,5 +74,12 @@ public class E11_MergeTwoSortedLists {
             root=root.next;
             System.out.println(root.val);
         }
+        //Đề bài:
+        //- Merge 2 list đã được sorted --> 1 list cũng được sorted.
+        //Bài này tư duy như sau:
+        //1,
+        //1.1, Bài này ta sẽ tạo ra (a new list)
+        //--> Create new Node()
+        //1.2, Ta sẽ check giá trị từ 2 phía để add dần (new node + node=node.next) .
     }
 }
