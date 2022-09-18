@@ -1,6 +1,6 @@
 package interviews;
 
-public class E16_RemoveDuplicatesFromSortedList {
+public class E16_RemoveDuplicatesFromSortedList_linkedList {
 
     static class ListNode {
         int val;
@@ -31,6 +31,13 @@ public class E16_RemoveDuplicatesFromSortedList {
     }
 
     public static void main(String[] args) {
-
+        //** Đề bài
+        //- Remove những phần tử duplicate từ list đã cho
+        //{1,1,2} --> {1,2}
+        //** Bài này tư duy như sau:
+        //- Ta tạo 2 temp variable --> So sánh (before, after) --> after sẽ không nối thêm vào before nếu (after == before)
+        //
+        //#Reference
+        //- Remove Duplicates from Sorted List II
     }
 }

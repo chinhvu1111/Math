@@ -196,7 +196,11 @@ public class E17_PalindromeLinkedList {
 
 
         System.out.println(isPalindrome(listNode));
-        //Với các dạng bài linjkedlist nếu muốn bỏ O(n) space --> Chỉ có thể là tạo ra 1 linkedlist mới
+        //** Đề bài:
+        //- Kiểm tra xem list có phải đối xứng hay không (return true/ false)
+        //
+        //** Bài này tư duy như sau:
+        //Với các dạng bài linkedlist nếu muốn bỏ O(n) space --> Chỉ có thể là sửa lại 1 linkedlist cũ.
         //VD: Như bài này sẽ tạo ra 1 linkedlist dạng reverse
         //---> Sẽ phải loop 1 vòng để create linkedList trước.
         //- Nếu dùng stack thì vẫn phải xác định (middle point() nên vẫn cần xác định độ dài linkedlist
@@ -238,6 +242,9 @@ public class E17_PalindromeLinkedList {
         //Lẻ : 1,2,3(mid),2,1
         //---> Ta kiểm tra đối xứng thì sẽ chỉ kiểm tra LinkedList có (số nodes ít hơn)
         //while(danh sách node bên trái) : Danh sách node bên trái luôn có số nodes ít hơn.
+        //4, Bài này fast, slow --> Xác định middle qua việc (fast.next==null).
+        //VD: 1,2,3(slow),4,5(fast)
+        //- Fast.next==null --> 3 là middle.
         System.out.println(isPalindromeOptimize(listNode));
     }
 }

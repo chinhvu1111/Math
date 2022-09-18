@@ -106,6 +106,11 @@ public class E19_ValidPalindrome {
 //        String s="0P";
 //        String s=".P";
         String s="ab_a";
+        //** Đề bài:
+        //- Có chuỗi s --> convert (Uppercase --> lowercase), remove all non-alphanumeric characters
+        //- Check chuỗi đó đối xứng hay không.
+        //
+        //** Bài này tư duy như sau:
         //Bài này tuy là bài easy nhưng cần lưu ý 1 số điểm:
         //1, Không cố gắng dùng 2 points khi data chưa được clean --> Có thể ảnh hưởng dến index của left, right
         //---> Khó kiểm soát index của left và right
@@ -118,7 +123,7 @@ public class E19_ValidPalindrome {
         //3, StringBuilder trong xử lý chuỗi sẽ nhanh hơn với ArrayList
         // --> Vì chỉ phải (khởi tạo new instance) + (Không cần double size + copy values) .
         //4, Hãy làm bài này 1 cách bình thường.
-        //5, Nếu muống tối ưu hơn cả string builder --> Về cơ bản StringBuilder hơn ArrayList ở chỗ không cần copy
+        //5, Nếu muốn tối ưu hơn cả string builder --> Về cơ bản StringBuilder hơn ArrayList ở chỗ không cần copy
         //--> Nếu muốn tối ưu hơn : Using ArrayCharacter
         //--> Reduce Array bằng cách gán lại các giá trị array, arr[i]=arr[index] --> Faster StringBuilder/ ArrayList.
         //-1 ms

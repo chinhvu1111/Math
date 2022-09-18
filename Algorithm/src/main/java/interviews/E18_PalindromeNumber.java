@@ -51,7 +51,7 @@ public class E18_PalindromeNumber {
         return false;
     }
 
-    public boolean isPalindromeSlow(int x) {
+    public static boolean isPalindromeSlow(int x) {
         int hLength=0;
 
         do{
@@ -133,7 +133,10 @@ public class E18_PalindromeNumber {
 //        int x=1001;
         System.out.println(isPalindrome(x));
 //        System.out.println(isPalindromeOptimize(x));
-        //Bài này có các tư duy như sau:
+        //** Đề bài
+        //- Kiểm tra 1 số int có đối xứng hay không.
+        //
+        //** Bài này có các tư duy như sau:
         //Cách 1, Cast int to string
         //Cách 2,
         //2.1, Tìm điểm middle point bằng cách check khoảng cách reach lớn nhất cho cả chuỗi (chẵn/ lẻ):
@@ -161,6 +164,15 @@ public class E18_PalindromeNumber {
         //left=1221/ (hLength-1)
         //left =121 / (hlengh)
         //4.2, right là đảo của 21 chỉ cần /10 là xong.
+        //
+        //Cách 5:
+        //- Dùng phương pháp build 1 số mới integer
+        //VD: 453 --> ta build 354
+        //- So sánh 453 <> 354 để xem đối xứng hay không
+        //==> Cần tư duy tạo số ngược (temp* 10 + num%10).
+        System.out.println(isPalindromeNormal(x));
+        System.out.println(isPalindromeSlow(x));
         System.out.println(isPalindromeO(x));
+        System.out.println(isPalindromeOptimize(x));
     }
 }

@@ -1,7 +1,5 @@
 package interviews;
 
-import java.util.LinkedList;
-
 public class E20_MaximumTwinSumOfALinkedList {
 
     public static class ListNode {
@@ -78,11 +76,16 @@ public class E20_MaximumTwinSumOfALinkedList {
         listNode1.next=listNode2;
         listNode2.next=listNode3;
         listNode3.next=listNode4;
+        //** Đề bài
+        //- {5,4,2,1} : (5,4), (2.1) là cặp twin sum
+        //- Tìm maximum twin sum : Đơn giản là ta lại tìm middle node như bình thường.
+        //
         //Tư duy như cũ:
         //Chú ý:
         //Khi init:
-        //slow =head;
-        //fast=head.next;
+        //+ slow =head;
+        //+ fast=head.next;
+        //---> Với cái kiểu fast=head.next ngay từ đầu ==> while(fast!=null) thay vì while(fast.next!=null).
         System.out.println(pairSum(listNode));
     }
 }
