@@ -36,7 +36,7 @@ public class E23_IntervalListIntersections {
             int secondRightY=Integer.MAX_VALUE;
             int firstRightX=Integer.MAX_VALUE;
             int firstRightY=Integer.MAX_VALUE;
-            int arr[][]=null;
+            int[][] arr;
 
             if(iRight<m){
                 secondRightX=secondList[iRight][0];
@@ -69,10 +69,13 @@ public class E23_IntervalListIntersections {
         return rs;
     }
 
+    /*
+    Cách này chạy được
+     */
     public static int[][] intervalIntersectionFixed(int[][] firstList, int[][] secondList) {
         int n=firstList.length;
         int m=secondList.length;
-        int arr[][]=new int[n+m][2];
+        int[][] arr =new int[n+m][2];
         int iLeft=0;
         int iRight=0;
         int index=0;
@@ -141,63 +144,8 @@ public class E23_IntervalListIntersections {
         return rs;
     }
 
-    public int[][] intervalIntersectionDiscuss(int[][] first, int[][] second) {
-        if(first == null || first.length == 0 && second == null || second.length == 0)
-            return new int[][] {};
-
-        List<int[]> list = new ArrayList<>();
-        int i = 0, j = 0;
-
-        while(i < first.length && j < second.length) {
-            int[] A = first[i];
-            int[] B = second[j];
-
-            int x = Math.max(A[0], B[0]);
-            int y = Math.min(A[1], B[1]);
-
-            if(x <= y)
-                list.add(new int[] {x, y});
-
-            if(A[1] < B[1])
-                i++;
-            else
-                j++;
-        }
-
-        return list.toArray(new int[list.size()][]);
-    }
-
-    public int[][] intervalIntersectionOptimized(int[][] first, int[][] second) {
-        if(first==null||first.length==0||second==null||second.length==0){
-            return new int[][]{};
-        }
-
-        int iLeft=0;
-        int iRight=0;
-        int n=first.length;
-        int m=second.length;
-        List<int[]> list = new ArrayList<>();
-
-        while(iLeft<n&&iRight<m){
-            int left[]=first[iLeft];
-            int right[]=second[iRight];
-            int x=Math.max(left[0], right[0]);
-            int y=Math.min(left[1], right[1]);
-
-            if(left[1]<right[1]){
-                iLeft++;
-            }else{
-                iRight++;
-            }
-            if(x<=y){
-                list.add(new int[]{x,y});
-            }
-        }
-        return list.toArray(new int[list.size()][]);
-    }
-
     public static int[][] merge(int x, int y, int x1, int y1){
-        int arr[][]=new int[2][2];
+        int[][] arr =new int[2][2];
 
         if(y<x1){
             arr[0][0]=-1;
@@ -225,6 +173,67 @@ public class E23_IntervalListIntersections {
         return arr;
     }
 
+    /*
+    Cách này tối ưu
+     */
+    public static int[][] intervalIntersectionOptimized(int[][] first, int[][] second) {
+        if(first==null||first.length==0||second==null||second.length==0){
+            return new int[][]{};
+        }
+
+        int iLeft=0;
+        int iRight=0;
+        int n=first.length;
+        int m=second.length;
+        List<int[]> list = new ArrayList<>();
+
+        while(iLeft<n&&iRight<m){
+            int[] left =first[iLeft];
+            int[] right =second[iRight];
+            int x=Math.max(left[0], right[0]);
+            int y=Math.min(left[1], right[1]);
+
+            if(left[1]<right[1]){
+                iLeft++;
+            }else{
+                iRight++;
+            }
+            if(x<=y){
+                list.add(new int[]{x,y});
+            }
+        }
+        return list.toArray(new int[list.size()][]);
+    }
+
+    /*
+    Cách 3
+     */
+    public static int[][] intervalIntersectionDiscuss(int[][] first, int[][] second) {
+        if(first == null || first.length == 0 && second == null || second.length == 0)
+            return new int[][] {};
+
+        List<int[]> list = new ArrayList<>();
+        int i = 0, j = 0;
+
+        while(i < first.length && j < second.length) {
+            int[] A = first[i];
+            int[] B = second[j];
+
+            int x = Math.max(A[0], B[0]);
+            int y = Math.min(A[1], B[1]);
+
+            if(x <= y)
+                list.add(new int[] {x, y});
+
+            if(A[1] < B[1])
+                i++;
+            else
+                j++;
+        }
+
+        return list.toArray(new int[list.size()][]);
+    }
+
     public static void main(String[] args) {
 //        int firstList[][]=new int[][]{{0,2},{5,10},{13,23},{24,25}};
 //        int secondList[][]=new int[][]{{1,5},{8,12},{15,24},{25,26}};
@@ -234,13 +243,23 @@ public class E23_IntervalListIntersections {
 //        int firstList[][]=new int[][]{{1,5}};
 //        int secondList[][]=new int[][]{};
         //Case 1:
-        int firstList[][]=new int[][]{{14,16}};
-        int secondList[][]=new int[][]{{7,13},{16,20}};
+        int[][] firstList =new int[][]{{14,16}};
+        int[][] secondList =new int[][]{{7,13},{16,20}};
+
+        //** Đề bài :
+        //- Cho 2 dãy các thanh list_1= { [x,y] }, list_2= { [x,y] }; ==> Merge trả lại các đoạn giao nhau của 2 lists
+        //VD: [0,2] + [1,5] = [1,2]
+        //- Each list of intervals is pairwise disjoint and in sorted order : Các phần tử elements không giao nhau (start<end)
+        // ==> Tức là luôn tăng dần.
+        //
+        //
         //Wrong way
-//        System.out.println(intervalIntersection(firstList, secondList));
-//        int firstList[][]=new int[][]{};
-//        int secondList[][]=new int[][]{};
-        //Bài này tư duy như sau:
+        //System.out.println(intervalIntersection(firstList, secondList));
+        //int firstList[][]=new int[][]{};
+        //int secondList[][]=new int[][]{};
+        //
+        //** Bài này tư duy như sau:
+        //
         //ERROR - Cách làm sai:
         //1, Nếu ta làm theo cách tư duy kiểu map nodes:
         //1.1, Chọn (x,y) đẩu tiên có thể là tọa độ của (first và second list)
@@ -249,15 +268,20 @@ public class E23_IntervalListIntersections {
         //- Giá trị trả về sẽ là (khoảng giao giữa 2 điểm đó) + (khoảng thừa trả lại của 2 điểm đó)
         //- Lấy giá trị khoảng thừa đó --> Đi so sánh tiếp với 2 điểm tiếp theo của first, second list.
         //Nhưng sẽ bị sai case
-//        int firstList[][]=new int[][]{{14,16}};
-//        int secondList[][]=new int[][]{{7,13},{16,20}};
+        //int firstList[][]=new int[][]{{14,16}};
+        //int secondList[][]=new int[][]{{7,13},{16,20}};
         //Output : {14, 13}, {16, 16}
         //Expected : {16,16}
         //SAI : {14,16} và {7,13} không giao nhau ở điểm nào --> Không được phép lấy.
         //==> Chỉ trả lại phần thừa mà thôi.
+        //---> Có vẻ phép giao đang viết sai:
+        //+ {14,16} + {7,13} = 0.
+        //1.2, Nhưng làm kiểu map này còn có thể sai khi ta cần map nhiều node > 2 trở lên thì:
+        //- Map [ node-1 + node-2 = (node-3) ]
+        //==> [ node-3 + node-4 = (node-5) ]
 
         //2, Cách 2:
-        //Merge tất cả vào 1 array + ordered by arr[0] tức là trục X.
+        //2.1, Merge tất cả vào 1 array + ordered by arr[0] tức là trục X.
         //Các bước tư duy như sau:
         //- Merge first list và second list
         //- Merge các tọa độ --> Chỉ fix lỗi bên trên:
@@ -269,7 +293,26 @@ public class E23_IntervalListIntersections {
         //MIN, MAX của các điểm
         //--> Nhưng khi add vào list + thêm điều kiện kiểm tra điểm x<=y hay không
         // --> Vì đôi khi chúng có thể ko giao nhau ==> Gây ra x>y.
+        //+ max(left-1, left-2) --> Đặc điềm giao nhau của left
+        //+ min(right-2, right-2) --> Đặc điềm giao nhau của right
+        //3.1, Tại sao tư duy bên trên lại đúng
+        //- sort bên trong từng list
+        //- so sánh 2 cái từ 2 cái list --> có thể suy ra những cái sau (Phụ thuộc nhau)
+        //VD:
+        //Thử 1 vài cases:
+        //Case 1:
+        //{0,2},{5,10},{13,23},{24,25}
+        //{1,5},{8,12},{15,24},{25,26}
+        //+ {0,2} + {1,5} = {1,2}
+        //+ Ta thấy {1,2} sẽ có (1<5, 1<8) là điều luôn xảy ra
+        //==> Xét giao tiếo sẽ đúng.
+        //Wrong
         System.out.println(intervalIntersection(firstList, secondList));
+        //Fix lại từ cách wrong
         System.out.println(intervalIntersectionFixed(firstList, secondList));
+        //2 pointers
+        System.out.println(intervalIntersectionOptimized(firstList, secondList));
+        //Discussion
+        System.out.println(intervalIntersectionDiscuss(firstList, secondList));
     }
 }

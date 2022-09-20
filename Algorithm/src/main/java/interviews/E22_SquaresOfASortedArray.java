@@ -36,7 +36,7 @@ public class E22_SquaresOfASortedArray {
     }
 
     public static int[] sortedSquaresOptimize(int[] nums) {
-        int rs[]=new int[nums.length];
+        int[] rs =new int[nums.length];
         int indexPositive=-1;
         int indexNegative=-1;
 
@@ -78,7 +78,7 @@ public class E22_SquaresOfASortedArray {
     }
 
     public int[] sortedSquaresOptimized(int[] nums) {
-        int res[]=new int[nums.length]; //Create new Array to return from function
+        int[] res =new int[nums.length]; //Create new Array to return from function
         int last=nums.length-1; //pointer at End
         int start=0; // pointer at start
         int dlast=res.length-1; // pointer at last for resultant array
@@ -103,21 +103,29 @@ public class E22_SquaresOfASortedArray {
 //        int arr[]=new int[]{-4,-1,0,3,10};
         //Case 1 : Basic case khi IndexOutofBound
 //        int arr[]=new int[]{-1};
-        int arr[]=new int[]{1};
+        int[] arr =new int[]{1};
 
-        //Cách 1: Chưa tối ưu vì (ArrayList copy elements + có thể arrau được tạo ra bị thừa space)
+        //** Đề bài:
+        //- Cho 1 array tăng dần (Cả số âm) --> Trả lại dãy bình phương tăng dần.
+        //
+        //** Bài này tư duy như sau:
+        //
+        //Cách 1: Chưa tối ưu vì (ArrayList copy elements + có thể array được tạo ra bị thừa space)
         sortedSquares(arr);
+        //1.1, Tư duy ở đây là (array negative (Đảo ngược thứ tự khi ^2) , positive elements (Giữ nguyên thứ tự khi ^2)
         //Lỗi sai:
         //1, while(iLeft<n||iRight<m) : Cẩn thận cần check both indexs khi viết while or
         //2 list có thể có 1 cái có số elements ít hơn --> Có thể gây ra lỗi IndexOutOfBound.
-
+        //
         //Cách 2:
+        //- Key : Cách này tìm middle của (negative, positive) elements ở mid of array.
+        //
         //Case 1:
         //iRight (Negative) không tìm thấy
-//        int arr1[]=new int[]{1};
+        //int arr1[]=new int[]{1};
         //Case 2:
         //iRight (Negative) không tìm thấy
-//        int arr1[]=new int[]{-1};
+        //int arr1[]=new int[]{-1};
         //Lỗi:
         //2,
         //Có thể bị lỗi liên quan đến:
@@ -131,13 +139,13 @@ public class E22_SquaresOfASortedArray {
         //- Âm (-) là tăng dần --> Bình phương (^2) là giảm dần ==> Ta cần iRight--;
         //- Dương (+) là tăng dần --> Bình phương (^2) là giảm dần ==> Ta cần iLeft++;
         //2.3, Sau đó ta merge 2 array ra 1 new array như bình thường.
-
+        //
         //Cách 3:
-        //Nếu quan sát kỹ hơn thì các số sau khi bình phương ^2 --> có dạng (Max1)...(min)....(Max2)
+        //- Key : Nếu quan sát kỹ hơn thì các số sau khi bình phương ^2 --> có dạng (Max1)...(min)....(Max2)
         //===> hội tụ vào giữa --> Nên ta chỉ cần chạy 2 pointers 2 đầu
         //Bài toán chuyển thành ===> Coi như là merge 2 arrays giảm dần.
         //** Chỉ cần gán index từ end --> start ==> Ra được array (RESULT).
-        int arr1[]=new int[]{-4,-1,0,3,10};
+        int[] arr1 =new int[]{-4,-1,0,3,10};
         sortedSquaresOptimize(arr1);
         System.out.println("");
     }
