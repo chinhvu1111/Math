@@ -118,8 +118,17 @@ public class E24_MergeIntervals {
 //        int intervals[][]=new int[][]{{1,4},{0,0}};
 //        int intervals[][]=new int[][]{{1,4},{0,2},{3,5}};
         int intervals[][]=new int[][]{{6,9},{2,3},{9,11},{1,5},{14,18}};
-//        int intervals[][]=new int[][]{};
-        //Ta tư duy như sau:
+        //** Đề bài
+        //- Merge 1 list các [x,y]
+        //VD: [1,3] + [2,6] = [1,6] (Do giao nhau)
+        //
+        //Input: intervals = [[1,3],[2,6],[8,10],[15,18]]
+        //Output: [[1,6],[8,10],[15,18]]
+        //Explanation: Since intervals [1,3] and [2,6] overlap, merge them into [1,6].
+        //
+        //** Bài này tư duy như sau:
+        //
+        //int intervals[][]=new int[][]{};
         //1, Ở đây để merge được ta cần sort array theo column X
         //1.1, Sau đó ta sẽ merge lần lượt
         //2, Ta cần phải merge theo các quy tắc sau đây:

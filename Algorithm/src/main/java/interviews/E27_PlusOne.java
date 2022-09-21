@@ -75,6 +75,11 @@ public class E27_PlusOne {
 //        int arr[]=new int[]{9,9,9,9};
 //        int arr[]=new int[]{};
 //        plusOne(arr);
+        //** Đề bài:
+        //- Có 1 array biểu diễn 1 số + 1 vào --> return kết quả arr[]
+        //
+        //** Bài này tư duy như sau:
+        //
         //Tối ưu như sau:
         //Bài này chỉ hơn thua với trường hợp, ta không dùng ArrayList --> (Không tạo array mới + copy elements)
         //- Array hiện tại sẽ được update lại value tại array[i] do không cần dùng nhiều lần

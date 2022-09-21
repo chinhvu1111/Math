@@ -54,7 +54,11 @@ public class E29_PascalTriangleII {
 
     public static void main(String[] args) {
         int n=3;
-//        int n=0;
+        //int n=0;
+        //
+        //** Đề bài:
+        //- Cho số thứ tự row --> Tìm danh sách các số trong row đó của
+        //
         //Bài này chỉ cần dùng 1 list là đủ
         //Các giá trị được trung gian được lưu vào list temp --> Sẽ không thay đổi luôn các giá trị của list ==> Kết quả tính tiếp vẫn sẽ đúng
         //--> Chỉ dùng 1 list là được <-> Không cần list[2].

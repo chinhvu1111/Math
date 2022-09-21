@@ -3,7 +3,7 @@ package interviews;
 public class E26_SumOfUniqueElements {
 
     public static int sumOfUnique(int[] nums) {
-        int count[]=new int[101];
+        int[] count =new int[101];
         int rs=0;
         int subTraction=0;
 
@@ -22,5 +22,10 @@ public class E26_SumOfUniqueElements {
     public static void main(String[] args) {
         int arr[]=new int[]{1,2,3,2};
         System.out.println(sumOfUnique(arr));
+        //** Đề bài
+        //- Tổng các phần tử khác nhau:
+        //
+        //** Bài này tư duy như sau:
+        //- sum - (sum các phần tử có lần xuất hiện >1)
     }
 }
