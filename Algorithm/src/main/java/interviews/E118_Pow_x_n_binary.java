@@ -281,6 +281,7 @@ public class E118_Pow_x_n_binary {
         System.out.println(myPowIterativeWrong1(2, 5));
         //2.1,
         //(2.1*2.1,n/2)
+        System.out.println(myPowOptimize(2, 5));
         System.out.println(myPowFinal(2, 5));
     }
 }
