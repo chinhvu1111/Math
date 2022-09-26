@@ -3,10 +3,12 @@ package interviews;
 public class E170_SingleNumberII {
 
     public static int singleNumber(int[] nums) {
-        return 1;
+
+        return -1;
     }
 
     public static void main(String[] args) {
         int arr[]=new int[]{2,2,3,2};
+        System.out.println(singleNumber(arr));
     }
 }
