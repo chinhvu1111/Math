@@ -32,5 +32,23 @@ public class E170_SingleNumberII {
         System.out.println(singleNumber(arr));
 //        System.out.println(1<<1);
         System.out.println(singleNumberSort(arr));
+        //2,2,3,2
+        //
+        //
+        //1, Có các cách suy nghĩ như sau:
+        //1.1, Dùng index 1>>index --> Thay ở đây index lung tung
+        //1.2, Dùng nums[i] là số:
+        //
+        //VD: 2,2,3,2
+        //Ta có thể cân dịch không?
+        //1<< nums[i] -2^31 <= nums[i] <= 2^31 - 1
+        //--> Không thể dịch kiểu này được
+        //
+        //2, Ta quan tâm đến số lượng chữ số có thể xuất hiện
+        //- 3 chữ số
+        //- 1 chữ số
+        //2.1, Tip trick ở đây là gì?
+        //
+        //VD: 2,2,3,2
     }
 }
