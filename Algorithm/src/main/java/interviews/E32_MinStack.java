@@ -15,7 +15,7 @@ public class E32_MinStack {
     public void push(int val) {
         arr[top]=val;
         min=Math.min(min, val);
-        mins[top]=Math.min(min, val);
+        mins[top]= min;
         top++;
     }
 
@@ -103,5 +103,40 @@ public class E32_MinStack {
         System.out.println(minStack.top());
         System.out.println(minStack.getMin());
         minStack.pop();
+        //
+        //** Đề bài
+        //- Implement stack push, pop, top --> Lấy phần thử nhỏ nhất trong thời gian constant.
+        //VD:
+        //Input
+        //["MinStack","push","push","push","getMin","pop","top","getMin"]
+        //[[],[-2],[0],[-3],[],[],[],[]]
+        //
+        //Output
+        //[null,null,null,null,-3,null,0,-2]
+        //
+        //Explanation
+        //MinStack minStack = new MinStack();
+        //minStack.push(-2);
+        //minStack.push(0);
+        //minStack.push(-3);
+        //minStack.getMin(); // return -3
+        //minStack.pop();
+        //minStack.top();    // return 0
+        //minStack.getMin(); // return -2
+        //--> Tức là stack phải thỏa mãn các tiêu chí như sau:
+        //- stack[top] phải luôn luôn là giá trị MIN nhất
+        //- Khi pop giá trị ở top ra ta cần phải lấy giá trị min nhất của các giá trị còn lại
+        //
+        //
+        //** Bài naỳ tư duy như sau:
+        //1, Ở đây ta phải dùng 2 array để lưu lại các elements
+        //1.1, Cái thứ nhất để lưu min của tất cả các phần tử từ đầu đến cuối cho đến vị trí (top).
+        //1.2, Cái thứ 2 để lưu lại toàn bộ lịch sử của stack.
+        //VD:    -10,14,-20
+        //Min1 : -10,-10,-20
+        //--> pop() --> return -20.
+        //==> phần tử tiếp theo sẽ là (-10)
+        //
+        //
     }
 }

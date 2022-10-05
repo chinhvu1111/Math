@@ -337,6 +337,14 @@ public class E32_MatchsticksToSquare {
 //        int arr[] = new int[]{12,13,1,15,11,17,16,3,15,11,13,4,2,16,15};
         int arr[] = new int[]{5,5,5,5,1,1,1,1};
 
+        //
+        //** Đề bài
+        //- Check xem dùng các sticks khác nhau có thể tạo thành hình vuông không
+        //VD
+        //Input: matchsticks = [1,1,2,2,2]
+        //Output: true
+        //
+
         //Tại sao khi thêm vào c2 phải thỏa mãn điều kiện: c2!=c1
         System.out.println(makesquare(arr));
 //        System.out.println(makesquare1(arr));

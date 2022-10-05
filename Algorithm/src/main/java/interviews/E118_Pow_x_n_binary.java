@@ -278,6 +278,15 @@ public class E118_Pow_x_n_binary {
 //        System.out.println(myPowIterative(2, 10));
         //Case 3: Case dạng 5 --> 2 --> 1
         //==> Nếu bỏ qua 1 thì có thể sẽ sai (Khi không khởi tạo giá trị ban đầu rs là x).
+
+        //Complexity:
+        //f(2n) --> f(n)
+        //f(2n+1) --> f(n)
+        //n,n/2,,...1
+        //Đô phực tạp là số steps : log(2)(n)
+        //1 --> 2 --> 4 -->8
+        //Có s bước
+        //2^s=n ==> s= log2(n)
         System.out.println(myPowIterativeWrong1(2, 5));
         //2.1,
         //(2.1*2.1,n/2)

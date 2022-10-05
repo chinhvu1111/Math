@@ -59,9 +59,21 @@ public class E29_PascalTriangleII {
         //** Đề bài:
         //- Cho số thứ tự row --> Tìm danh sách các số trong row đó của
         //
+        //** Đề bài:
+        //Cách 1:
+        //1,
+        //1.1, Ta chỉ lưu lại 2 giá trị gần nhất để tính toán tương ứng <=> list[1] (Chỉ 1 phần tử) vì:
+        //- 1 phần tử ta sẽ ghi lại
+        //- next loop ta sẽ tính dựa trên phần từ đó --> Sau đó gán lại list[0]
+        //
+        //1.2,
         //Bài này chỉ cần dùng 1 list là đủ
         //Các giá trị được trung gian được lưu vào list temp --> Sẽ không thay đổi luôn các giá trị của list ==> Kết quả tính tiếp vẫn sẽ đúng
         //--> Chỉ dùng 1 list là được <-> Không cần list[2].
+        //
+        //Cách 2:
+        //
+        //
         getRow(n);
         getRowOptimized(n);
     }

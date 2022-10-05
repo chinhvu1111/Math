@@ -36,6 +36,11 @@ public class E30_FindTriangularSumOfnAArray {
 
     public static void main(String[] args) {
         int arr[]=new int[]{1,2,3,4,5};
+        //** Đề bài
+        //- Cho 1 array {1,2,3,4,5} phần tử xác định phần tử ở đỉnh tam giác
+        //- ===> Ta dùng tam giác ngược
+        //
+        //
         //Chú ý bài này:
         //Ta không cần create 2 array --> Chỉ cần 1 array assign trực tiếp là ok.
         //1, Bài này giúp ta có 1 cách để assign value cho array:

@@ -81,6 +81,14 @@ public class E65_CombinationSum {
     }
 
     public static void main(String[] args) {
+        //
+        //** Đề bài:
+        //- Tìm các tập có sum <=target
+        //- Không giới hạn số lần của mỗi phần tử
+        //- Các chuỗi khác nhau
+        //Input: candidates = [2,3,6,7], target = 7
+        //Output: [[2,2,3],[7]]
+        //
         //Bài này tư duy như say:
         //1, Bài này tìm tất cả các chuỗi số khác nhau
         //<-> Chỉ khác nhau về số lần xuất hiện của mỗi số trong dãy.
