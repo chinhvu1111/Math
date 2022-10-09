@@ -179,6 +179,12 @@ public class E96_MinimumNumberOfDaysToMakeMBouquets_binary {
 //        System.out.println(minDaysDynamic(bloomDay, m, k));
         //Binary search
         System.out.println(minDaysOptimize(bloomDay, m, k));
+        //
+        //** Đề bài:
+        //- m là số "bó hoa" cần chờ nỏ
+        //- k là số bông hoa (số bổng hoa để tạo thành "1 bó")
+        //==> Trả lại số ngày ít nhất để có thể có được m bó hoa <> không có return -1.
+        //
         //Bài này tư duy như sau:
         //Bài này có 2 cách giải
         //+ Dynamic programming O(n^2)

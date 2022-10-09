@@ -91,6 +91,10 @@ public class E69_FindFirstAndLastPositionOfElementInSortedArray {
         System.out.println();
         int rs1[]=searchRangeOptimize(arr, 8);
         System.out.println();
+        //
+        //** Đề bài:
+        //- Tìm điểm start và end của target (value == target)
+        //
         //Bài này tư duy như sau:
         //Ở đây ta có 2 cách để làm bài này:
         //Cách 1:

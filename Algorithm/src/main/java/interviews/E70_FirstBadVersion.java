@@ -66,7 +66,13 @@ public class E70_FirstBadVersion {
             arr[i]=false;
         }
         System.out.println(firstBadVersion(2126753390));
-        //Bài này tư duy như sau:
+
+        //** Đề bài
+        //- Tìm bad version đầu tiên
+        //VD: GGGGG(B)BBBBB : Cần tìm B đầu tiên
+        //---> Vì đã bị B --> Đằng sau bị bad hết
+        //
+        //**Bài này tư duy như sau:
         //Cách 1: Dùng trực tiếp binary search
         //1, Bài này là bài dạng dùng lại method của đề
         //--> Thực ra dạng này có thể fake được method
