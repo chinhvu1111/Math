@@ -83,6 +83,17 @@ public class E5_Kth_Largest_Element_In_An_Array {
         return tempNode.value;
     }
 
+    public int findKthLargest2(int[] nums, int k) {
+        return 0;
+    }
+
+    public int KthLargest(int[] nums, int left, int right, int k) {
+        if(left==right){
+            return nums[left];
+        }
+        return 0;
+    }
+
     public static void main(String[] args) {
         int arr[]=new int[]{3,2,3,1,2,4,5,5,6};
         int k=4;
