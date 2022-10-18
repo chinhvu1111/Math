@@ -1,11 +1,10 @@
 package interviews;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class E143_TopKFrequentElements {
+
+    public static Random random=new Random();
 
     public static int[] topKFrequent(int[] nums, int k) {
         int max=0;
@@ -42,9 +41,12 @@ public class E143_TopKFrequentElements {
     }
 
     public static int findTopKFrequent(HashMap<Integer,Integer> countHashMap, int[] nums, int left, int right, int k){
-        int pivot=right;
 
         //Các số < currentIndex (> count[pivot])
+        int swapIndex=left + random.nextInt(right-left+1);
+        swap(nums, right, swapIndex);
+
+        int pivot=right;
         int currentIndex=left;
 
         //arr   : 6(left),2,3,1,8,2,0(right)
@@ -69,7 +71,7 @@ public class E143_TopKFrequentElements {
         swap(nums, currentIndex, pivot);
 
         int numberElemenCountLessThan=0;
-        HashSet<Integer> visited =new HashSet();
+        HashSet visited =new HashSet();
 
         //### Đoạn này nên tính đến currentIndex
         for(int i=left;i<=currentIndex;i++){
@@ -162,5 +164,8 @@ public class E143_TopKFrequentElements {
         //1.3,
         //- if(number<k) : (currentIndex+1, k-number)
         //- if(number>k) : (currentIndex-1, k)
+        //
+        //Cách 2:
+        //
     }
 }
