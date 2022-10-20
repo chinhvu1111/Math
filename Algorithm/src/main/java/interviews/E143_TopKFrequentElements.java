@@ -165,6 +165,8 @@ public class E143_TopKFrequentElements {
         //- if(number<k) : (currentIndex+1, k-number)
         //- if(number>k) : (currentIndex-1, k)
         //
+        //*** Cần tối ưu ===> Vì bài này đang beat 5% (Rất thấp)
+        //
         //Cách 2:
         //
     }
