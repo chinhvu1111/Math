@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class E148_MajorityElementII {
+public class E148_MajorityElementII_sort {
 
     public static Random random=new Random();
     public static List<Integer> rs;

@@ -2,7 +2,7 @@ package interviews;
 
 import java.util.Random;
 
-public class E147_MajorityElement {
+public class E147_MajorityElement_sort {
 
     public static Random random=new Random();
 

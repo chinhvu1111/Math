@@ -1,10 +1,8 @@
 package interviews;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-public class E146_MostFrequentEvenElement {
+public class E146_MostFrequentEvenElement_sort {
 
     public static int mostFrequentEven(int[] nums) {
         HashMap<Integer, Integer> countMap=new HashMap<>();

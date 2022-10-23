@@ -1,6 +1,6 @@
 package interviews;
 
-public class E145_MergeKSortedLists {
+public class E145_MergeKSortedLists_sort {
 
 
     public static class ListNode {
