@@ -148,7 +148,64 @@ public class E178_MaximumSubarray {
         System.out.println(maxSubArrayBruteForce(arr));
         System.out.println(maxSubArrayDivideAndConquer(arr));
         //
+        //** Đề bài
+        //- Trả lại tổng lớn nhất liên tiếp của 1 array
+        //- Mảng có số âm ==> Nên không thể reset sum=0
         //
+        //** Bài này tư duy như sau:
+        //Cách 1:
+        //1,
+        //1.1,
+        //Ở đây nó chỉ xảy ra 2 case:
+        //- sum+nums[i]<=nums[i] : sum=nums[i]
+        //+ Tức là nếu sum cộng thêm nums[i] --> kết quả <= nums[i] : Nên lấy nums[i]
+        //- sum+nums[i]>nums[i] : sum+=nums[i]
+        //+ Tức là rs ta đã có thể tìm được MAX sẵn trước đó rồi --> sum + nums[i] > nums[i]
+        //==> Việc bắt đầu từ sum > bắt đầu từ (i) nums[i] ==> Ta sẽ update sum (Cover cả trường hợp sum < 0 )
+        //
+        //1.2, Sum sẽ lấy luôn số đầu tiên nums[0]
+        //
+        //Cách 2 : Brute force
+        //2,
+        //2.1, Ta sẽ xét (i) 0 --> n-1
+        //Có 2 cách lưu prefixSum:
+        //- Method 1:
+        //array: [-2, 1, -3, 4]
+        //prefix:[-2,-1, -4, 0]
+        //sum= prefix[i] - prefix[j] ( range: j+1 --> i
+        //
+        //# Time complexity: O(N)
+        //# Space : O(1)
+        //
+        //- Method 2:
+        //array: [-2, 1, -3, 4]
+        //prefix:[0(i), -2, -1(j), 4, 0]
+        //sum= prefix[i] - prefix[j] ( range: j --> i-1)
+        //
+        //- Tức là luôn có currentSum của array từ (i, j) = prefix[j+1] - prefix[i]
+        //- Sau đó ta sẽ xét tiếp tục bên (left,right)
+        //
+        //# Time complextity: N * N/2 * N/4 * N/8 = N^(Log(2) N)
+        //# Space : Log(2) N
+        //
+        //cách 3:
+        //3,
+        //3.1,
+        //- Tư tưởng chính ở đây là phân bài toàn thành nhiều cases khác nhau:
+        //Chia thành 2 case:
+        //- Có đi qua mid + đi ra cả 2 phía
+        //+ (left, right)
+        //- Không đi qua mid + nằm (trọn vẹn) 1 trong 2 phía ==> Cần phải cover hết cases.
+        //+ (left, mid), (mid+1, right)
+        //- Max lúc đó sẽ = Max(leftValue, RightValie, crossValue)
+        //
+        //3.2, Key chính của tư duy này là việc
+        //- Tính sum cho dựa trên vị trí (mid)
+        //+ leftSum : end at mid
+        //==> i (mid-1 --> left)
+        //+ rightSum : start at mid
+        //==> i (mid --> right)
+        //*** Cần 1 chú ý nữa là Cross ==> Thứ tự tính sum (left/ right) ==> Cần phải đúng so với (mid) (Như đã giải thích bên trên)
         //
         //# Reference:
         //- Best Time to Buy and Sell Stock
