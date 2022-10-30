@@ -129,6 +129,14 @@ public class E179_ConvertSortedListToBinarySearchTree {
         return leftTreeNode;
     }
 
+    public static void rotateLeft(ListNode listNode){
+
+    }
+
+    public static void rotateRight(ListNode listNode){
+
+    }
+
     public static void main(String[] args) {
         ListNode listNode=new ListNode(10);
         ListNode listNode1=new ListNode(-3);
