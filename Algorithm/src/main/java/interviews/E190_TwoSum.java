@@ -18,9 +18,35 @@ public class E190_TwoSum {
         return new int[]{-1, -1};
     }
 
+    public int[] twoSum2Pointers(int[] numbers, int target) {
+        int left=0;
+        int right=numbers.length-1;
+
+        while (left<=right){
+            if(target < numbers[left]+ numbers[right]){
+                right--;
+            }else if(target > numbers[left]+ numbers[right]){
+                left++;
+            }else{
+//                rs[0]=left+1;
+//                rs[1]=right+1;
+//                break;
+                return new int[]{left+1, right+1};
+            }
+        }
+//        System.out.printf("%s %s\n", rs[0], rs[1]);
+        return new int[]{-1,-1};
+    }
+
     public static void main(String[] args) {
         int[] arr=new int[]{2,7,11,15};
         //
+        //** Đề bài
+        //- Trả lại 2 index có tổng = sum
+        //
+        //** Bài này tư duy như sau:
+        //
+        //Cách 1:
         //
         //
         //#Reference:
