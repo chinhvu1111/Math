@@ -39,10 +39,18 @@ public class E192_AllNodesDistanceKInBinaryTree {
         }
         int result=solutionDFS(node.left, target, k, height+1);
         if(result!=-1){
+            if(k- result+height==0){
+                if(k- result+height==0){
+                    results.add(node.val);
+                }
+            }
             getNodesDepthK(node.right, results, k- result+height);
         }else{
             result=solutionDFS(node.right, target, k, height+1);
             if(result!=-1){
+                if(k- result+height==0){
+                    results.add(node.val);
+                }
                 getNodesDepthK(node.left, results, k- result+height);
             }
         }
@@ -58,21 +66,32 @@ public class E192_AllNodesDistanceKInBinaryTree {
 
     public static void main(String[] args) {
 //        Integer[] arr =new Integer[]{3,5,1,6,2,0,8,null,null,7,4};
-//        int k=2;
 //        TreeNode target=null;
 //        int valueTarget=5;
+//        int k=2;
 
-        Integer[] arr =new Integer[]{1};
-        int k=3;
+//        Integer[] arr =new Integer[]{1};
+//        TreeNode target=null;
+//        int valueTarget=1;
+//        int k=3;
+
+//        Integer[] arr =new Integer[]{0,1,null,3,2};
+//        TreeNode target=null;
+//        int valueTarget=2;
+//        int k=1;
+
+        Integer[] arr =new Integer[]{0,1,null,3,2,6,null,5,4};
         TreeNode target=null;
-        int valueTarget=1;
+        int valueTarget=3;
+        int k=1;
 
         TreeNode[] treeNodes=new TreeNode[arr.length];
         for(int i=0;i<treeNodes.length;i++) treeNodes[i]=new TreeNode(0);
 
         TreeNode root=null;
+        int j=1;
 
-        for(int i=arr.length-1;i>=0;i--){
+        for(int i=0;i<arr.length;i++){
             if(arr[i]==null){
                 continue;
             }
@@ -86,23 +105,29 @@ public class E192_AllNodesDistanceKInBinaryTree {
             }
 
             TreeNode treeNodeNext1=null;
-            if(2*i+1<arr.length&&arr[2*i+1]!=null){
-                treeNodeNext1=treeNodes[2*i+1];
-                treeNodeNext1.val=arr[2*i+1];
+            if(j<arr.length&&arr[j]!=null){
+                treeNodeNext1=treeNodes[j];
+                treeNodeNext1.val=arr[j];
             }
 
             TreeNode treeNodeNext2=null;
-            if(2*i+2<arr.length&&arr[2*i+2]!=null){
-                treeNodeNext2=treeNodes[2*i+2];
-                treeNodeNext2.val=arr[2*i+2];
+            if(j+1<arr.length&&arr[j+1]!=null){
+                treeNodeNext2=treeNodes[j+1];
+                treeNodeNext2.val=arr[j+1];
             }
+            j+=2;
             currentNode.left=treeNodeNext1;
             currentNode.right=treeNodeNext2;
         }
         System.out.println(distanceK(root, target, k));
         //
         //** Đề bài
+        //- Tìm các điểm cách điểm đã cho 1 khoảng k
+        //
+        //** Bài này tư duy như sau:
         //-
         //
+        //# Reference:
+        //- Amount of Time for Binary Tree to Be Infected
     }
 }
