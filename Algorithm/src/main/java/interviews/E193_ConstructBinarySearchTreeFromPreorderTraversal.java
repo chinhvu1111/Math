@@ -40,6 +40,7 @@ public class E193_ConstructBinarySearchTreeFromPreorderTraversal {
             while (!stack.isEmpty()){
                 if(stack.peek().val<preorder[i]){
                     tmp=stack.pop();
+
                 }else{
 
                 }
