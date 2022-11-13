@@ -2,7 +2,7 @@ package interviews;
 
 import java.util.Stack;
 
-public class E187_ValidateBinarySearchTree {
+public class E187_ValidateBinarySearchTree_BST {
 
     public static class TreeNode {
         int val;

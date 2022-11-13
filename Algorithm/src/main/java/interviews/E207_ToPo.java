@@ -2,12 +2,12 @@ package interviews;
 
 import java.util.*;
 
-public class E197_ToPo {
+public class E207_ToPo {
     public static int n;
     public static int[] degree;
     public static Map<Integer, Set<Integer>> map;
 
-    public E197_ToPo(int n, int[][] edges){
+    public E207_ToPo(int n, int[][] edges){
         this.n=n;
 
         for(int i=0;i<n;i++) {

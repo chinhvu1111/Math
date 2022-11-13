@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class E186_KthSmallestElementInABST {
+public class E186_KthSmallestElementInABST_BST {
 
 
     public class TreeNode {

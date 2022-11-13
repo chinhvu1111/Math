@@ -1,6 +1,6 @@
 package interviews;
 
-public class E189_TwoSumIVInputIsABST {
+public class E189_TwoSumIVInputIsABST_BST {
 
     public static class TreeNode {
         int val;

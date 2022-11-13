@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-public class E185_BinaryTreeInorderTraversal {
+public class E185_BinaryTreeInorderTraversal_BST {
 
     public static class TreeNode {
         int val;

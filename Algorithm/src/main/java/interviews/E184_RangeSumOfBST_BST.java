@@ -1,6 +1,6 @@
 package interviews;
 
-public class E184_RangeSumOfBST {
+public class E184_RangeSumOfBST_BST {
 
     public static class TreeNode {
         int val;

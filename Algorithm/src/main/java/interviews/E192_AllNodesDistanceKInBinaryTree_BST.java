@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class E192_AllNodesDistanceKInBinaryTree {
+public class E192_AllNodesDistanceKInBinaryTree_BST {
 
     public static class TreeNode {
         int val;

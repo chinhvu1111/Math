@@ -3,7 +3,7 @@ package interviews;
 import java.util.ArrayList;
 import java.util.List;
 
-public class E196_NumberOfIslandsII {
+public class E206_NumberOfIslandsII {
     public static int[][] offset={{0,1},{0,-1},{1,0},{-1,0}};
 
     public static List<Integer> numIslands2(int n, int m, int[][] positions) {
