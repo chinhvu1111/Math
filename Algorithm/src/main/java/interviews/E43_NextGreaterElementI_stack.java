@@ -4,13 +4,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Stack;
 
-public class E43_NextGreaterElementI {
+public class E43_NextGreaterElementI_stack {
 
     public static int[] nextGreaterElement(int[] nums1, int[] nums2) {
         Stack<Integer> stack=new Stack<>();
         int length=nums2.length;
         int max= Arrays.stream(nums2).max().getAsInt();
-        int dp[]=new int[max+1];
+        int dp[]=new int[max+1]
+                ;
         Arrays.fill(dp, -1);
 
         for(int i=length-1;i>=0;i--){

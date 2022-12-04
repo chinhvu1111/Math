@@ -2,7 +2,7 @@ package interviews;
 
 import java.util.Stack;
 
-public class E45_SumOfSubarrayRanges {
+public class E45_SumOfSubarrayRanges_stack {
 
     public static long subArrayRanges(int[] nums) {
         int length=nums.length;

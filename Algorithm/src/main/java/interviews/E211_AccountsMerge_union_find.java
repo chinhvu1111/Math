@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-public class E211_AccountsMerge {
+public class E211_AccountsMerge_union_find {
 
     public static int findParent(int[] parent, int u){
         while (u!=parent[u]){
@@ -75,7 +75,7 @@ public class E211_AccountsMerge {
         Set<Map.Entry<Integer, TreeSet<String>>> entries = indexToEmails.entrySet();
         List<List<String>> result=new ArrayList<>();
 
-        //- N time
+        //- O(N) time
         for(Map.Entry<Integer, TreeSet<String>> e: entries){
             String name=accounts.get(e.getKey()).get(0);
             List<String> currentList=new ArrayList<>();
@@ -85,6 +85,71 @@ public class E211_AccountsMerge {
             result.add(currentList);
         }
         return result;
+    }
+
+    public static List<List<String>> accountsMergeBFS(List<List<String>> accounts) {
+        Map<String, Set<String>> graph=new HashMap<>();
+        Map<String, String> emailToName=new HashMap<>();
+
+        //O(N) TIME
+        for(List<String> account: accounts){
+            String name=account.get(0);
+
+            for(int i=1;i<account.size();i++){
+                if(!graph.containsKey(account.get(i))){
+                    graph.put(account.get(i), new HashSet<>());
+                }
+                if(i!=1){
+                    graph.get(account.get(i)).add(account.get(i-1));
+                    graph.get(account.get(i-1)).add(account.get(i));
+                }
+                emailToName.put(account.get(i), name);
+            }
+        }
+        HashSet<String> visited=new HashSet<>();
+        List<List<String>> results=new ArrayList<>();
+
+        //O(N) TIME : N Là số người do M không đáng kể
+        for(String email:graph.keySet()){
+            List<String> currentList=new LinkedList<>();
+            TreeSet<String> treeSet=new TreeSet<>();
+
+            if(!visited.contains(email)){
+                //O(N) nhưng do nó duyệt hộ các node ở phần email --> O(1)
+                bfs(graph, treeSet, visited, email);
+//                Collections.sort(currentList);
+                currentList.add(0, emailToName.get(email));
+                //O(N*LOG(N))
+                currentList.addAll(treeSet);
+                results.add(currentList);
+            }
+        }
+
+        return results;
+    }
+
+    public static void bfs(Map<String, Set<String>> graph,
+                           TreeSet<String> rs, HashSet<String> visited, String email){
+        Queue<String> queue=new LinkedList<>();
+        queue.add(email);
+        visited.add(email);
+        rs.add(email);
+
+        while (!queue.isEmpty()){
+            String currentEmail=queue.poll();
+
+            if(currentEmail==null){
+                continue;
+            }
+            for(String s: graph.get(currentEmail)){
+                if(visited.contains(s)){
+                    continue;
+                }
+                rs.add(s);
+                queue.add(s);
+                visited.add(s);
+            }
+        }
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -140,7 +205,8 @@ public class E211_AccountsMerge {
             List<String> currentList = new ArrayList<>(Arrays.asList(s[i]));
             list.add(currentList);
         }
-        System.out.println(accountsMerge(inputFile));
+        System.out.println(accountsMerge(list));
+        System.out.println(accountsMergeBFS(list));
         //
         //** Đề bài:
         //- Bài này dùng để merge các mail của cùng 1 người lại
@@ -194,6 +260,21 @@ public class E211_AccountsMerge {
         //2.4,
         //- Time complexity : O(N + Nlog(N : sẽ có case gom hết) + N)
         // = Nlog(N)
+        //- Space complexity : O(N)
+        //
+        //Cách 3:
+        //3,
+        //3.1,
+        //- Dùng emails --> Thành lập tất cả các thành phần liên thông với nhau : Group các emails lại với nhau
+        //- Sau đó dùng BFS để traverse all các group
+        //- Để tránh trùng email đã được traverse rồi thì ta sẽ dùng visited để có thể check
+        //VD:
+        //- A --> B --> C ==> Sau đó traverse từng email một
+        //- Hash<Email, Set<Email>> : graph
+        //==> Chú ý graph.get(A).add(B) và graph.get(B).add(A) : Để có thể tạo graph mong muốn
+        //- Lấy name dựa trên mail Hash (Email to name)
+        //3.2,
+        //- Time complexity : N*N*LOG(N)
         //- Space complexity : O(N)
     }
 }

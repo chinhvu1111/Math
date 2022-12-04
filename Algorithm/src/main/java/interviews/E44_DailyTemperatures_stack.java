@@ -2,7 +2,7 @@ package interviews;
 
 import java.util.Stack;
 
-public class E44_DailyTemperatures {
+public class E44_DailyTemperatures_stack {
 
     public static int[] dailyTemperatures(int[] temperatures) {
         Stack<int[]> stack=new Stack<>();

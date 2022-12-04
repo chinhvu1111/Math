@@ -2,7 +2,7 @@ package interviews;
 
 import java.util.*;
 
-public class E35_JumpGameVI {
+public class E35_JumpGameVI_queue {
 
     public static int maxResult(int[] nums, int k) {
         int n=nums.length;

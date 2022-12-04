@@ -1,6 +1,6 @@
 package interviews;
 
-public class E32_MinStack_2 {
+public class E32_MinStack_2_stack {
 
     public class ListNode
     {
@@ -10,7 +10,7 @@ public class E32_MinStack_2 {
     }
 
     private ListNode node;
-    public E32_MinStack_2() {
+    public E32_MinStack_2_stack() {
         node = null;
     }
 
@@ -88,7 +88,7 @@ public class E32_MinStack_2 {
 //        System.out.println(minStack.top());
 //        System.out.println(minStack.getMin());
 
-        E32_MinStack_2 minStack = new E32_MinStack_2();
+        E32_MinStack_2_stack minStack = new E32_MinStack_2_stack();
 //        minStack.push(-2);
         minStack.push(-10);
         minStack.push(14);

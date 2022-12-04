@@ -2,7 +2,7 @@ package interviews;
 
 import java.util.*;
 
-public class E42_NextGreaterElementIII {
+public class E42_NextGreaterElementIII_stack {
 
     public static int nextGreaterElement(int n) {
         String s=String.valueOf(n);

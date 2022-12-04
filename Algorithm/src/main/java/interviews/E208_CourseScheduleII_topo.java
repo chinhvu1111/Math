@@ -2,7 +2,7 @@ package interviews;
 
 import java.util.*;
 
-public class E208_CourseScheduleII_topological_sort {
+public class E208_CourseScheduleII_topo {
 
     public static int[] findOrder(int numCourses, int[][] prerequisites) {
         int[] degrees=new int[numCourses];

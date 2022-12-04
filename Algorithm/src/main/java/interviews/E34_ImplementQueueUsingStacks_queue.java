@@ -1,12 +1,12 @@
 package interviews;
 
-public class E34_ImplementQueueUsingStacks {
+public class E34_ImplementQueueUsingStacks_queue {
 
     int front=-1;
     int rear=-1;
     int arr[]=null;
 
-    public E34_ImplementQueueUsingStacks() {
+    public E34_ImplementQueueUsingStacks_queue() {
         arr=new int[100];
     }
 
@@ -37,7 +37,7 @@ public class E34_ImplementQueueUsingStacks {
     public static void main(String[] args) {
         //Cần tối ưu lại code bài này:
         //Vì nó là dạng classic --> Cần partern
-        E34_ImplementQueueUsingStacks usingStacks=new E34_ImplementQueueUsingStacks();
+        E34_ImplementQueueUsingStacks_queue usingStacks=new E34_ImplementQueueUsingStacks_queue();
         usingStacks.push(1);
         usingStacks.push(2);
         System.out.println(usingStacks.peek());

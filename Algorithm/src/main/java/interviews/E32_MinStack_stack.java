@@ -1,13 +1,13 @@
 package interviews;
 
-public class E32_MinStack {
+public class E32_MinStack_stack {
 
     int arr[];
     int top=0;
     int min=Integer.MAX_VALUE;
     int mins[];
 
-    public E32_MinStack() {
+    public E32_MinStack_stack() {
         arr=new int[10000];
         mins=new int[10000];
     }
@@ -90,7 +90,7 @@ public class E32_MinStack {
 //        System.out.println(minStack.top());
 //        System.out.println(minStack.getMin());
 
-        E32_MinStack minStack = new E32_MinStack();
+        E32_MinStack_stack minStack = new E32_MinStack_stack();
 //        minStack.push(-2);
         minStack.push(-10);
         minStack.push(14);

@@ -2,7 +2,7 @@ package interviews;
 
 import java.util.*;
 
-public class E33_SlidingWindowMaximum {
+public class E33_SlidingWindowMaximum_queue {
 
     public static int[] maxSlidingWindow(int[] nums, int k) {
         int n=nums.length;
@@ -77,6 +77,18 @@ public class E33_SlidingWindowMaximum {
         //b2: 1, -3 (Add -3 và remove những số nhỏ hơn (-3) đứng đằng trước ===> MỤC ĐÍCH ĐỂ TẠO "DÃY SỐ GIẢM DẦN (KHÔNG TĂNG DẦN)"
         //---> Lúc đó số (lớn nhất/ nhỏ nhất) sẽ xuất hiện ở 2 biên của queue.
         //2, Chú ý bài này cần add element nums[i+k-1] vào last thay vì nums[i]
+        //
+        //1.1,
+        //- Ý tưởng: khi thêm 1 phần tủ vào queue --> Loại bỏ các phần tử nhỏ hơn nó:
+        //VD:
+        //3,4,5,5, 2
+        //add 3: 3
+        //add 4: 4
+        //add 5: 5
+        //add 5: 5,5
+        //add 2: 5,5,2
+        //==> Queue không tăng.
+        //==> Nên add duplicated vì như thế arr và queue sẽ gần giống nhau.
         maxSlidingWindowOptimized(arr, 3);
         System.out.println("");
     }
