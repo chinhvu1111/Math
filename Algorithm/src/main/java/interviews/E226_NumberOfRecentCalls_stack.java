@@ -3,7 +3,7 @@ package interviews;
 import java.util.Deque;
 import java.util.LinkedList;
 
-public class E226_NumberOfRecentCalls {
+public class E226_NumberOfRecentCalls_stack {
 
     public static class RecentCounter {
 
