@@ -6,3 +6,5 @@ build
 /target
 ${project.build.directory}/**
 ${project.build.directory}
+
+*.class
