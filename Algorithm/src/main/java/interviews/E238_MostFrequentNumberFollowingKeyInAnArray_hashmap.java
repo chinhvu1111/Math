@@ -91,5 +91,10 @@ public class E238_MostFrequentNumberFollowingKeyInAnArray_hashmap {
         //--> Thì ta sẽ check map.get(nums[i+1], value)
         //1.3, Optimization:
         //- Lưu nums[i+1] vào registration: Tối ưu query.
+        //
+        //#Reference
+        //2174. Remove All Ones With Row and Column Flips II
+        //864. Shortest Path to Get All Keys
+        //801. Minimum Swaps To Make Sequences Increasing
     }
 }

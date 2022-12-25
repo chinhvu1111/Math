@@ -49,5 +49,9 @@ public class E239_SortArrayByIncreasingFrequency_hash_sort {
 //        int[] arr=new int[]{1,1,2,2,2,3};
         int[] arr=new int[]{-1,1,-6,4,5,-6,1,4,1};
         println(frequencySort(arr));
+        //#Reference
+        //1637. Widest Vertical Area Between Two Points Containing No Points
+        //2374. Node With Highest Edge Score
+        //
     }
 }

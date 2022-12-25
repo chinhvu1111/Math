@@ -142,5 +142,11 @@ public class E237_SnapshotArray_hash_binary_search {
         // snapshot_id gần nhất (binary search)
         //--> Tìm điểm snapshot_id_lastest gần nhất với snapshot_id : treeset.floor(snapshot_id) : snapshot_id-x <= snapshot_id
         //** Note: TreeSet : Lưu thông tin snapshot id sắp xếp theo tăng dần
+        //
+        //#Reference
+        //1143. Longest Common Subsequence
+        //2114. Maximum Number of Words Found in Sentences
+        //1187. Make Array Strictly Increasing
+        //752. Open the Lock
     }
 }
