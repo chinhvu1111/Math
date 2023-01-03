@@ -57,5 +57,10 @@ public class E245_Finding3DigitEvenNumbers_without_notes {
 //        int[] arr=new int[]{2,1,3,0};
         int[] arr=new int[]{2,2,8,8,2};
         findEvenNumbers(arr);
+        //
+        //
+        //#Reference
+        //2095. Delete the Middle Node of a Linked List
+        //1295. Find Numbers with Even Number of Digits
     }
 }
