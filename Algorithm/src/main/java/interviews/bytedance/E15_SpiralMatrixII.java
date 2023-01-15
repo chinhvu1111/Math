@@ -61,6 +61,11 @@ public class E15_SpiralMatrixII {
 //        generateMatrix(2);
         generateMatrix(1);
         generateMatrixFaster(1);
+        //101
+        //
+        int a=5;
+        System.out.println(a&(a-1));
+        System.out.println(a|(a>>1));
         //
         //** Đề bài
         //- Bài này là fill số vào hình vuông sao cho nó chạy theo hình xoắn ốc + tăng dần

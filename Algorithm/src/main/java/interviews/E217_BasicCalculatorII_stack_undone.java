@@ -2,6 +2,7 @@ package interviews;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Stack;
 
 public class E217_BasicCalculatorII_stack_undone {
 
@@ -261,5 +262,20 @@ public class E217_BasicCalculatorII_stack_undone {
         //- Không nên replace + tạo string mới
         //- s= s.replaceAll() : slow
         //--> Loop all character + continue
+        //2.6, Refactor lại không dùng stack
+        //- 0(prevValue)(sign=='+')12[+]3/4*5
+        //+ Xét dấu + thật : rs+=preValue, prevvalue=0 --> preValue=12
+        //rs=0
+        //- 0(+)12(prevValue)(sign==+) 3 [/] 4 * 5
+        //+ Xét dấu + thật : rs+=preValue, prevvalue=12 --> preValue=3
+        //rs=12
+        //- 0(+)12(sign==+) 3(prevValue) (sign==/) 4 [*]
+        //+ Với trường hợp mà là phép nhân
+        //==> Chỉ update prevValue.
+        //
+        //*** Nó chỉ có 3 mức độ sâu:
+        //Rs ==> Gía trị trước đó
+        //prevValue : biểu thức hiện tại
+        //==> Update 3 cặp đôi một dần dần.
     }
 }
