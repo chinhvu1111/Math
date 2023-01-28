@@ -3,7 +3,7 @@ package interviews.bytedance;
 import java.util.ArrayList;
 import java.util.List;
 
-public class E18_Minimum_resistance {
+public class E18_Minimum_resistance_interview {
 
     public static int minimumResistence(List<List<Integer>> matrix) {
         // Write your code here

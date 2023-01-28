@@ -3,7 +3,7 @@ package interviews.bytedance;
 import java.util.ArrayList;
 import java.util.List;
 
-public class E19_Birthday {
+public class E19_Birthday_interview {
 
     public static List<Integer> junieBirthday(List<Integer> nums, List<List<Integer>> questions) {
         // Write your code here

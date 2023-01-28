@@ -1,10 +1,7 @@
 package interviews.paypay;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Stack;
 
-@Component
 public class StreamingExpressionAdvance {
     public int currentNumber=0;
     public Stack<Integer> stackNums;

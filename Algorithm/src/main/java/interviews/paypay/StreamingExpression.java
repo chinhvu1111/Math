@@ -1,8 +1,5 @@
 package interviews.paypay;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class StreamingExpression {
     public int preValue;
     public char sign;
