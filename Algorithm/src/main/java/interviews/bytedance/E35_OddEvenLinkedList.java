@@ -69,6 +69,17 @@ public class E35_OddEvenLinkedList {
         System.out.println();
     }
 
+    public static double myPow(double x, int n) {
+        double ans = 1;
+        long absN = Math.abs((long)n);
+        while(absN > 0) {
+            if((absN&1)==1) ans *= x;
+            absN >>= 1;
+            x *= x;
+        }
+        return n < 0 ?  1/ans : ans;
+    }
+
     public static void main(String[] args) {
 //        int[] arrL1=new int[]{7,2,4,3};
         int[] arrL1=new int[]{1,2,3,4,5};
@@ -88,6 +99,9 @@ public class E35_OddEvenLinkedList {
         }
         ListNode newNode=oddEvenList(l1Root);
         println(newNode);
+
+        //Test:
+        System.out.println(myPow(4, 6));
 
         //** Đề bài:
         //
