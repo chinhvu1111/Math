@@ -1,0 +1,48 @@
+Def fib(n):
+If n<=1: return n;
+Return fib(n-1) + fib(n-2);
+
+
+2^0				fib(5)
+                    /                  \
+2^1 			fib(4)              fib(3)
+                  /     \              /     \
+2^2             fib(3)  fib(2)      fib(2)   fib(1)
+                /         \           /    \
+2^3            fib(2)      fib(1)    fib(1)  fib(0)
+              /     \
+2^4/ bỏ quả: fib(1)   fib(0)
+
+Time complexity : O(2^n) = 2^0 + 2^1 + 2^2 + 2^3
+Space complexity : O(n) = stack mem
+
+
+1, Method top down DP
+Fibonacci
+
+2^0				fib(5)
+                    /                  \
+2^1 		     [fib(4) ]             fib(3)
+                  /     \              /     \
+2^2           [ fib(3) ] fib(2)      fib(2)   fib(1)
+                /         \           /    \
+2^3           [ fib(2) ]  fib(1)    fib(1)  fib(0)
+                /       \
+2^4/ bỏ quả:[ fib(1) ] [fib(0)]
+
+- Với mỗi phần tử sẽ call 1 layer lấy phần tử đã lấy rồi
+Time complexity : O(2*n) => O(n)
+Space complexity : O(n)
+
+2, Tabulation (Bottom up DP)
++ Phương pháp này có thể tối ưu space --> O(1)
+
+3, So sánh Top-down dp <-> bottom-up dp
+- Dùng array dễ cache memo thay vì hashtable (Nếu cài topdown dp dùng array thì không sao).
+- Tốn thêm bộ nhớ recursion stack (recursion depth * stack frame size).
+- Recursion Error : maximum recursion depth exceed ==> Có thể limit hoặc tìm cách out.
+- Dùng bottom up
++ Tối ưu space đc.
++ Phải chọn bài toán xử lý trước/ sau.
+
+- Ngoài ra 1 số case topdown --> Phải tính all số ==> Tệ hơn bottom down.
