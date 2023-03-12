@@ -1,0 +1,47 @@
+
+
+** Đề bài:
+- Founder --> Lead manager --> Senior manager --> Manager --> Employee
+-
+Given the table schemas below, write a query to print the
+company_code,
+founder name,
+total number of lead managers,
+total number of senior managers,
+total number of managers, and
+total number of employees. Order your output
+by ascending company_code.
+
+** Bài này tư duy như sau:
+
+Solution 1:
+Select
+    c.company_code, c.founder,
+    count( distinct lm.lead_manager_code),
+    count( distinct sm.senior_manager_code),
+    count( distinct m.manager_code),
+    count( distinct e.employee_code)
+from
+(Select distinct company_code, founder from Company) c
+join
+(Select distinct lead_manager_code,company_code from Lead_Manager) lm
+join
+(Select distinct senior_manager_code, lead_manager_code, company_code from Senior_Manager) sm
+join
+(Select distinct manager_code, senior_manager_code, lead_manager_code, company_code from Manager) m
+join
+(Select distinct employee_code, manager_code, senior_manager_code, lead_manager_code, company_code from Employee) e
+on
+c.company_code=lm.company_code and c.company_code=sm.company_code and c.company_code=m.company_code and c.company_code=e.company_code
+and lm.lead_manager_code=sm.lead_manager_code and lm.lead_manager_code=m.lead_manager_code and lm.lead_manager_code=e.lead_manager_code
+and sm.senior_manager_code=m.senior_manager_code and sm.senior_manager_code=e.senior_manager_code
+group by c.company_code, c.founder order by c.company_code;
+
+
+company_code    founder     lead_manager        senior_manager
+A                   B           C                   E
+A                   B           C                   F
+A                   B           D                   G
+
+Solution 2:
+- Tách riêng ra xong union all.

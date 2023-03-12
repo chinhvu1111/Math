@@ -2,7 +2,7 @@ package interviews;
 
 import java.util.*;
 
-public class E131_3Sum {
+public class E131_3Sum_TwoPointers {
 
     public static List<List<Integer>> threeSumConfuse(int[] nums) {
         int n = nums.length;

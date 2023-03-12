@@ -1,0 +1,3 @@
+
+- Floor/ ceil function in mysql
+Select floor(avg(population)) from city;

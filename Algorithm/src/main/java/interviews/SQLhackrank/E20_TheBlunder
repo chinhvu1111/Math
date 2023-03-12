@@ -1,0 +1,4 @@
+
+-- Nếu muốn case text --> int ==> Dùng signed.
+-- replace(text/number, char, char) ==> Nó tự case dùng char hay num đều được.
+Select ceil(avg(salary) - avg(CAST(REPLACE(salary, "0", "") as SIGNED))) from EMPLOYEES;
