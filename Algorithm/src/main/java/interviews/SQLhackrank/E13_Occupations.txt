@@ -1,0 +1,43 @@
+
+** Đề bài:
+- Hiện thị thông tin theo cột dạng:
+Doctor, Professor, Singer or Actor
++ Value chính là name.
+
+Select * from OCCUPATIONS;
+
+** Bài này tư duy như sau:
+1.
+1.1,
+Ta lật ngược ra để tách ra thành từng column tương ứng với value
++ Columns có thể được fix (Doctor, Professor, Singer or Actor)
++ Value thì mỗi cột có số lượng values riêng rẽ ==> nếu cell có row_id < max(row_id) thì ta sẽ fill NULL value vào.
+- Cần phải tìm cách fill NULL value vào các cell thừa?
+
+Select name as Doctor, row_number() over(order by name) as rn from OCCUPATIONS where occupation='Doctor'
+Select name as Professor, row_number() over(order by name) as rn from OCCUPATIONS where occupation='Professor'
+Select name as Singer, row_number() over(order by name) as rn from OCCUPATIONS where occupation='Singer'
+Select name as Actor, row_number() over(order by name) as rn from OCCUPATIONS where occupation='Actor'
+- Ta tách view + join theo row_numer giống nhau
+- Nếu tư duy theo dạng table độc lập thì rất khó có thể fill NULL vào các cell không có data
++ Mysql không hỗ trợ full outer join
+
+- Ta sẽ dùng cách partition trong cùng 1 table ==> Sau đó join row_number() trong cùng 1 table
+a   Doctor  1
+b   Doctor  2
+c   Doctor  3
+d   Professor   1
+e   Professor   2
+f   Professor   3
+- Lựa chọn group rn ==> thì mình sẽ gộp được các row có cùng row_number với nhau.
+- Còn việc sắp xếp thì chỉ cần lấy MAX là được.
+** Chú ý:
+- Nếu group by theo id (Lúc nào cũng unique) --> lúc select ra mặc dù map 1:1 ==> Vẫn phải dùng MAX function để SELECT.
+
+Select
+MAX(IF( Occupation='Doctor', name, null)) as Doctor,
+MAX(IF( Occupation='Professor', name, null)) as Professor,
+MAX(IF( Occupation='Singer', name, null)) as Singer,
+MAX(IF( Occupation='Actor', name, null)) as Actor
+FROM
+(Select Occupation, name, row_number() over(partition by Occupation order by name) as rn from OCCUPATIONS) s group by rn;

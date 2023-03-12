@@ -1,0 +1,45 @@
+Select N, 'Root' as type from BST where P is null
+UNION ALL
+Select N, 'Leaf' as type from BST where P is not null and N not in (Select b1.P as N from BST b1)
+UNION ALL
+Select N, 'Inner' as type from BST where P is not null and N in (Select P from BST) order by N;
+
+1 2
+3 2
+5 6
+7 6
+2 4
+6 4
+4 15
+8 9
+10 9
+12 13
+14 13
+9 11
+13 11
+11 15
+15 NULL
+
+1 Leaf
+2 Inner
+3 Leaf
+4 Inner
+5 Leaf
+6 Inner
+7 Leaf
+8 Leaf
+9 Inner
+10 Leaf
+11 Inner
+12 Leaf
+13 Inner
+14 Leaf
+15 Root
+
+Solution:
+Select N, 'Root' as type from BST where P is null
+UNION ALL
+Select b.N, 'Leaf' as type from BST b
+left join BST b1 on b.N=b1.P where b.P is not null and b1.N is Null
+UNION ALL
+Select N, 'Inner' as type from BST where P is not null and N in (Select P from BST) order by N;
