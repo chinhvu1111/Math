@@ -1,0 +1,15 @@
+Limit (offset, row_count):
+- The offset specifies the offset of the first row to return. The offset of the first row is 0, not 1.
+- The row_count specifies the maximum number of rows to return.
+
+- Wrong solution:
++ Không viết (where condition order by limit 1) ==> Nó sẽ ăn limit trước khi ăn condition.
+Select round(LONG_W, 4) from STATION where LAT_N<137.2345 order by LAT_N asc limit 1,1;
+
+Select round(long_w,4) from station where lat_n=(select max(lat_n) from station where lat_n<137.2345);
+-- 117.2465
+
+- Solution:
+- Chú ý offset tính từ 0 ==> 1 row (limit 0,1)
+- Nếu có order by limit --> Thì cần có ngoặc.
+Select round(long_w, 4) from (Select LAT_N, long_w from STATION where LAT_N<137.2345 ) a order by LAT_N desc limit 0,1;

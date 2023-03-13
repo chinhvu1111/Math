@@ -1,0 +1,3 @@
+
+
+Select round(long_w, 4) from (Select LAT_N, long_w from STATION where LAT_N>38.778 ) a order by LAT_N asc limit 0,1;

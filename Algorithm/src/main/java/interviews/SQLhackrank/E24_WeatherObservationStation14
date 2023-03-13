@@ -1,0 +1,5 @@
+
+
+Select round((MAX(LAT_N),4) from STATION where LAT_N<137.2345;
++ Không được để max trong round()
+Select MAX(round(LAT_N, 4)) from STATION where LAT_N<137.2345;

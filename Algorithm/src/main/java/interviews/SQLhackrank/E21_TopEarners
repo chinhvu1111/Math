@@ -1,0 +1,9 @@
+
+1.
+1.1,
+- Viết như thế này thì sẽ bị sai:
++ Không được dùng alias khi gán = kiểu này.
+Select count(1) from Employee e where (e.months * e.salary) = (Select max(salary * months) from Employee) e;
++ Nếu muốn select count(1)+value ==> Group by value trước.
+Select e.months * e.salary, count(1) from Employee e where (e.months * e.salary) = (Select max(salary * months) from Employee)
+group by e.months, e.salary;

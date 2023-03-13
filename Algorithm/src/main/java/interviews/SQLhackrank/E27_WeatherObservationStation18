@@ -1,0 +1,3 @@
+- ABS() : abs funtion in mysql
+Select round(ABS(a-c)+ABS(b-d), 4) from(
+Select MIN(LAT_N) as a, MIN(LONG_W) as b, MAX(LAT_N) as c, MAX(LONG_W) as d from STATION) a;
