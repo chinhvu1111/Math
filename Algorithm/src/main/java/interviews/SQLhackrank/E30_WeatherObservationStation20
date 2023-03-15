@@ -1,0 +1,27 @@
+
+
+** Đề bài:
+- Tìm median của dãy số:
+Median là:
+- n is odd, median = x(n+1)/2
+- n is even, median = ( x(n/2) + x((n/2)+1) )/2
+1, 2, 2, 3, 4, 7, 9
++ median =3
+1, 2, 2, 3, 4, 7,
++ median = (2+3)/2
+
+** Bài này tư duy như sau:
+- Ở đây ta cần có id dạng từ (1 --> n)
+
+** Solution:
+- 1 --> 5 ==>
+- Chú ý:
++ Không select được max(row_number() over(order by LAT_N) luôn.
+Select max(row_number() over(order by LAT_N) as rn) from STATION
+
+SELECT round(s1.LAT_N, 4)
+FROM
+(SELECT if(rn%2=1, (rn+1)/2, (2*rn+1)/2) as rn FROM(Select MAX(rn) as rn FROM (Select row_number() over(order by LAT_N) as rn from STATION) a) b) s
+JOIN
+(Select LAT_N, row_number() over(order by LAT_N) as rn from STATION) s1
+on s.rn=s1.rn;

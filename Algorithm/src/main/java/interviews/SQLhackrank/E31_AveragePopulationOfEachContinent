@@ -1,0 +1,3 @@
+
+
+Select co.Continent, floor(avg(ci.population)) from COUNTRY co JOIN CITY ci ON co.code=ci.CountryCode group by co.Continent;

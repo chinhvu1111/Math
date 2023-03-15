@@ -1,0 +1,13 @@
+
+
+** Bài này tư duy như sau:
+- Cần tìm challenge_id --> difficult_level --> score ==> Check xem ngừoi đó có hoàn thành full score hay không ==> Nếu có thì tính là 1.
+- Có case submit nhiều lần cùng 1 challenge --> Ta sẽ lấy max score của từng hacker trên từng challenge
+
+Select s.hacker_id, s.name from
+(Select sum(if(d.score=s.score, 1, 0)) total_full_score_challenge , s.hacker_id, h.name from
+(Select hacker_id, challenge_id, max(score) as score from Submissions s group by hacker_id, challenge_id) s
+join Challenges c join Difficulty d join Hackers h
+on s.challenge_id = c.challenge_id and c.difficulty_level = d.difficulty_level and s.hacker_id = h.hacker_id group by s.hacker_id, h.name) s
+where s.total_full_score_challenge>1
+order by s.total_full_score_challenge desc, hacker_id asc;

@@ -1,0 +1,4 @@
+
+
+Select round(SQRT((s.a-s.b)*(s.a-s.b)+(s.c-s.d)*(s.c-s.d)), 4)
+from (Select MIN(LAT_N) as a, MAX(LAT_N) as b, MIN(LONG_W) as c, MAX(LONG_W) as d from STATION) s;
