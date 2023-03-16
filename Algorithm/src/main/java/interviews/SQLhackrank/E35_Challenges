@@ -1,0 +1,29 @@
+
+
+** Đề bài:
+- print hacker_id, name, tổng số challenges được tạo ra của mỗi students
+- Nếu students nào tạo ra cùng số lượng challenges --> sort by hacker_id
+- Nếu students nào tạo ra cùng số lượng challenges + challenge đó < max(number_challengs) --> exclude
+** Bài này tư duy như sau:
+-- Tư duy hơi rườm rà cần chữa lại
+
+=======================
+
+Select h.hacker_id, h.name, b.number_challenges
+from
+(Select number_challenges from
+(Select c.hacker_id, count(1) as number_challenges from hackers h join challenges c
+on h.hacker_id=c.hacker_id group by c.hacker_id) a group by number_challenges having count(1)=1
+or
+(count(1) >= 2 and number_challenges =
+(Select max(b.number_challenges) from (Select count(1) as number_challenges from hackers h join challenges c on h.hacker_id=c.hacker_id group by c.hacker_id) b))) a
+JOIN
+(Select c.hacker_id, count(1) as number_challenges from hackers h join challenges c on h.hacker_id=c.hacker_id group by c.hacker_id) b
+JOIN
+hackers h
+ON a.number_challenges=b.number_challenges and h.hacker_id=b.hacker_id order by b.number_challenges desc, h.hacker_id asc;
+
+=======================
+
+Select hacker_id, count(1) as number_challenges from hackers h join challenges c
+on h.hacker_id=c.hacker_id group by hacker_id

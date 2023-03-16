@@ -1,0 +1,43 @@
+
+** Đề bài:
+- Tìm min(coins_need) group by ==> và cũng phải lấy id từ wands table ==> Bài này không dùng row_number() dc (Vì mysql version không support)
+** Bài này tư duy như sau:
+1,
+1.1,
+- Bài này cần lấy id --> Cùng cấp với coins_needs : Mà ta cần lấy cả id nữa ==> Thế nên ta sẽ phải row_number() partition trước
+--> Sau đó lấy row_number()=1
+** Chú ý:
+- Nếu dùng row_number() thì nên hiểu rằng không phải version mysql nào cũng cho dùng
+--> Ta nên dùng cách khác thay thế.
+
+====Wrong code dùng row_number()
+Select w.code, wp.age, w.power, row_number() over(partition by w.code,wp.age, w.power order by w.coins_needed) as rn
+from Wands w join Wands_Property wp on w.code=wp.code where wp.is_evil=0;
+
+order by wp.power desc, wp.age desc
+====
+
+
+Select b.id, a.age, a.coins_needed, a.`power` from
+(Select w.code, wp.age, w.power, min(w.coins_needed) as coins_needed
+ from Wands w join Wands_Property wp on w.code=wp.code where wp.is_evil=0 group by w.code, wp.age, w.power) a
+join
+(Select * from Wands) b on a.code=b.code and a.coins_needed=b.coins_needed order by a.power desc, a.age desc;
+
+===== Reference
+select
+W.id,
+P.age,
+W.coins_needed,
+W.power
+from wands as W
+JOIN wands_property as P on W.code = P.code
+where P.is_evil = 0
+and W.coins_needed = (
+                        select min(a.coins_needed)
+                        from wands a
+                        join wands_property b on a.code = b.code
+                        where a.code = W.code and
+                        a.power = W.power
+                      )
+order by W.power desc, P.age desc;
