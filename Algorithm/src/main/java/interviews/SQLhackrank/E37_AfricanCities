@@ -1,0 +1,3 @@
+
+Select ct.name from
+city ct join COUNTRY c on c.code=ct.CountryCode where c.CONTINENT='Africa';

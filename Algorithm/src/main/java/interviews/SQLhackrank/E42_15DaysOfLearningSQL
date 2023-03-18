@@ -1,0 +1,191 @@
+
+
+** Đề bài: (Bài này không hỗ trợ cte/ row_number)
+- Bài này cái đầu tiên là cần clear đầu bài:
++ Write a query to print total number of unique hackers who made at least  submission each day (starting on the first day of the contest), and find the hacker_id and name of the hacker who made maximum number of submissions each day.
+==> Tức là đến ngày đó --> thì số người mà submit ít nhất 1 submission mỗi ngày là ai
+VD:
+day 1: join, ethan : có 2 người
+day 2: ethan, duc : có 1 người chỉ ethan
+day 3: ethan, duc1, duc : có 1 người chỉ ethan
++ Để tìm được
+2016-03-01 : có 3 người unique
+2016-03-02 : có 2 người unique
+--> Thì cần mỗi ngày submission_date sẽ group nhóm các ngày (submission_date1 < submission_date)
+--> Tìm số lượng hacker submit ít nhất 1 lần trong các ngày đó.
+
+** Bài này tư duy như sau:
+1.
+1.1, Đầu tiên cần tìm số lượng người unique có trên từng days
+VD:
+2016-03-12 2016-03-11 hacker_id_1
+2016-03-12 2016-03-11 hacker_id_2
+2016-03-12 2016-03-10
+2016-03-12 2016-03-09
+2016-03-12 2016-03-08
+2016-03-12 2016-03-07
+......
+2016-03-02 2016-03-02 hacker_id_1
+2016-03-02 2016-03-01 hacker_id_2
+
+- Cần taọ 1 table dạng:
+2016-03-15 12
+2016-03-14 14
+2016-03-13 13
+......
++ Mục đích để count số hacker từ <=submission_date ==> nếu date đó >= (số lượng ngày)
+--> Hacker đó là người submisssion mỗi ngày.
+Select cast(SUBSTRING(submission_date, length(submission_date)-1, 2) as SIGNED) as rn from Submissions s;
+
+2016-03-02 2016-03-01 533 2
+2016-03-02 2016-03-01 650 2
+2016-03-02 2016-03-01 1050 2
+2016-03-02 2016-03-01 2764 2
+2016-03-02 2016-03-01 3162 2
+2016-03-02 2016-03-01 4413 2
+2016-03-02 2016-03-01 5333 2
+2016-03-02 2016-03-02 533 2
+2016-03-02 2016-03-02 5333 2
+Result:
+533, 5333 ==> Chỉ có cái này xuất hiện trong cả 2 ngày (2016-03-01, 2016-03-02)
++ Chú ý:
+VD:
++ Sau khi join submission_date>= submission_date1 (sub_date)
+Ta có 3 columns:
+submission_date, sub_date, hacker_id
++ Muốn kiểm tra hacker_id có đi full các ngày hay không ==> ta sẽ group theo (submission_date, hacker_id) + count(distinct sub_date) [ cái này để đếm số sub_date]
++ Chú ý : hacker_id này phải là của s1 [sub_date] ==> Nếu dùng của s thì sẽ bị lặp lại all[sub_date] của (submission_date) sẽ có cùng hacker_id sẽ dẫn đến sai.
++ Và ta cũng cần biết số lượng rn 2016-03-14 ==> rn=14 để so sánh với count(distinct sub_date)
+** Solution:
+Select submission_date, count(distinct hacker_id) from
+(
+Select a.submission_date, a.rn, a.hacker_id
+from
+(Select s.submission_date, s1.submission_date as sub_date, s1.hacker_id, cast(SUBSTRING(s.submission_date, length(s.submission_date)-1, 2) as SIGNED) as rn
+from Submissions s join Submissions s1 on s.submission_date>=s1.submission_date
+group by s.submission_date,rn, s1.submission_date, s1.hacker_id) a group by a.submission_date, a.rn, a.hacker_id having count(distinct sub_date)=a.rn
+) a group by a.submission_date;
+
+1.2,
+- Bài yêu cầu print ra người có số lượng submit nhiều nhất trên từng ngày nhưng phải thuộc nhóm submit mỗi ngày
+- Các người hacker có cùng số submit thì lấy min(hacker_id)
+--> Mỗi ngày ta phải chọn ra list (hacker submit mỗi ngày)
+1.2.1,
++ Tìm số lượng submit của từng hacker trên từng ngày + các hacker phải là hacker submit all days cho đến submission_day.
+Select s.submission_date, b.hacker_id, count(1) as num_submit from Submissions s
++ Solution:
+JOIN
+(
+Select a.submission_date, a.rn, a.hacker_id
+from
+(Select s.submission_date, s1.submission_date as sub_date, s1.hacker_id, cast(SUBSTRING(s.submission_date, length(s.submission_date)-1, 2) as SIGNED) as rn
+from Submissions s join Submissions s1 on s.submission_date>=s1.submission_date
+group by s.submission_date,rn, s1.submission_date, s1.hacker_id) a group by a.submission_date, a.rn, a.hacker_id having count(distinct sub_date)=a.rn
+) b
+on s.submission_date=b.submission_date and s.hacker_id=b.hacker_id group by s.submission_date, b.hacker_id;
+
+1.2.2,
++ Tìm max submit của từng ngày
++ --> Chú ý là tính all chứ không chỉ tính những người submit all days.
++ Solution:
+Select c.submission_date, max(num_submit) as num_submit
+from
+(
+Select a.submission_date, a.hacker_id, count(1) as num_submit
+from Submissions a group by a.submission_date, a.hacker_id
+) c group by c.submission_date;
+
+1.2.3,
+- Các người hacker có cùng số submit thì lấy min(hacker_id)
+--> Cần tìm min(hacker_id) trên từng count(submit)
+- Nhớ rằng max sumission mỗi ngày ==> Không phải chỉ tính những người submit each day cho đến submission_day
+--> Bài toán trở nên dễ dàng hơn 1 chút.
++ Solution:
+
+Select c.submission_date, c.num_submit, min(c.hacker_id) as hacker_id from
+(
+Select a.submission_date, a.hacker_id, count(1) as num_submit
+from Submissions a group by a.submission_date, a.hacker_id
+) c group by c.submission_date, c.num_submit;
+
+1.2,4,
+- Tổng hợp để tìm ra thông tin cụ thể:
+
+Select s1.submission_date, s1.hacker_id, s1.num_submit from
+(
+Select c.submission_date, max(num_submit) as num_submit
+from
+(
+Select a.submission_date, a.hacker_id, count(1) as num_submit
+from Submissions a group by a.submission_date, a.hacker_id
+) c group by c.submission_date
+) s
+join
+(
+Select c.submission_date, c.num_submit, min(c.hacker_id) as hacker_id from
+(
+Select a.submission_date, a.hacker_id, count(1) as num_submit
+from Submissions a group by a.submission_date, a.hacker_id
+) c group by c.submission_date, c.num_submit
+)s1
+on s.submission_date=s1.submission_date and s.num_submit=s1.num_submit;
+
+1.2.5,
+- Gắn thêm thông tin unique số lượng mỗi ngày:
+
+Select s2.submission_date, s3.num_unique, s2.hacker_id, h.name from
+(
+Select s1.submission_date, s1.hacker_id, s1.num_submit from
+(
+Select c.submission_date, max(num_submit) as num_submit
+from
+(
+Select a.submission_date, a.hacker_id, count(1) as num_submit
+from Submissions a group by a.submission_date, a.hacker_id
+) c group by c.submission_date
+) s
+join
+(
+Select c.submission_date, c.num_submit, min(c.hacker_id) as hacker_id from
+(
+Select a.submission_date, a.hacker_id, count(1) as num_submit
+from Submissions a group by a.submission_date, a.hacker_id
+) c group by c.submission_date, c.num_submit
+)s1
+on s.submission_date=s1.submission_date and s.num_submit=s1.num_submit
+)s2
+JOIN
+(
+Select submission_date, count(distinct hacker_id) as num_unique from
+(
+Select a.submission_date, a.rn, a.hacker_id
+from
+(Select s.submission_date, s1.submission_date as sub_date, s1.hacker_id, cast(SUBSTRING(s.submission_date, length(s.submission_date)-1, 2) as SIGNED) as rn
+from Submissions s join Submissions s1 on s.submission_date>=s1.submission_date
+group by s.submission_date,rn, s1.submission_date, s1.hacker_id) a group by a.submission_date, a.rn, a.hacker_id having count(distinct sub_date)=a.rn
+) a group by a.submission_date
+) s3
+JOIN hackers h
+on s2.submission_date=s3.submission_date and h.hacker_id=s2.hacker_id order by s2.submission_date;
+
+2, Tham khảo thêm các cách làm khác?
+-
+
+========
+
+** Expected result:
+======
+2016-03-01 112 81314 Denise
+2016-03-02 59 39091 Ruby
+2016-03-03 51 18105 Roy
+2016-03-04 49 533 Patrick
+2016-03-05 49 7891 Stephanie
+2016-03-06 49 84307 Evelyn
+2016-03-07 35 80682 Deborah
+2016-03-08 35 10985 Timothy
+2016-03-09 35 31221 Susan
+2016-03-10 35 43192 Bobby
+2016-03-11 35 3178 Melissa
+2016-03-12 35 54967 Kenneth
+
+======

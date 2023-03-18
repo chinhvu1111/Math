@@ -1,0 +1,13 @@
+** Đề bài:
+- Chỉ là thống kê hacker_id, name, sum(score) : Với mỗi hacker thì liệt kê ra số hacker có (total of score) > 0
+- Score với mỗi challenge là max(score) của hacker trên challenge đó.
+- Sắp xếp theo sum(score) desc, hacker_id asc.
+
+** Bài anyf tư duy như sau:
+- Làm 1 cách bình thường, group by...
+
+Select a.hacker_id, a.name, sum(a.score) as total_score from
+(
+Select h.hacker_id, h.name, s.challenge_id, max(score) as score from Submissions s join Hackers h on
+h.hacker_id=s.hacker_id group by h.hacker_id, h.name, s.challenge_id) a group by a.hacker_id, a.name having sum(a.score)>0
+order by sum(a.score) desc, a.hacker_id;

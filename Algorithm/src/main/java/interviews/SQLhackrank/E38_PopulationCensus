@@ -1,0 +1,3 @@
+
+Select sum(ct.population) from
+city ct join COUNTRY c on c.code=ct.CountryCode where c.CONTINENT='Asia';

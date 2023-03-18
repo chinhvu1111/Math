@@ -27,3 +27,23 @@ ON a.number_challenges=b.number_challenges and h.hacker_id=b.hacker_id order by 
 
 Select hacker_id, count(1) as number_challenges from hackers h join challenges c
 on h.hacker_id=c.hacker_id group by hacker_id
+
+** Chữa
+
+With cte1 as(
+Select h.hacker_id, h.name, count(c.challenge_id) as counter from hackers h join challenges c on h.hacker_id= c.hacker_id
+group by h.hacker_id, h.name
+order by count(1) desc, h.hacker_id
+),
+cte2 as(
+Select counter, count(1) from cte1
+group by counter having count(1)=1
+)
+
+Select
+*
+from cte1 where cte1.counter= (Select max(counter) from cte1)
+or cte1.counter in (select counter from cte2);
+
+
+

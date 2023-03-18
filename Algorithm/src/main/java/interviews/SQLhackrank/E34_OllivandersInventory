@@ -14,7 +14,8 @@
 Select w.code, wp.age, w.power, row_number() over(partition by w.code,wp.age, w.power order by w.coins_needed) as rn
 from Wands w join Wands_Property wp on w.code=wp.code where wp.is_evil=0;
 
-order by wp.power desc, wp.age desc
+1.2,
+- Chú ý trong (left join) không thể viết (on) predicate chung với (inner join) ==> Nên viết riêng ra.
 ====
 
 

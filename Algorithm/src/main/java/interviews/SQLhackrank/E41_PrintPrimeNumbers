@@ -1,0 +1,38 @@
+
+
+DELIMITER //
+CREATE PROCEDURE PRIMEFUNC(OUT foutput VARCHAR(1200))
+BEGIN
+  DECLARE num INT;
+  DECLARE counter INT;
+  DECLARE isprime INT;
+  SET num = 3;
+  SET foutput = "2";
+  outerlabel : LOOP
+    SET counter = 2;
+    SET isprime = 1;
+    innerlabel : LOOP
+      IF counter <= sqrt(num) THEN
+        IF num mod counter = 0
+         THEN SET isprime =0;
+         LEAVE innerlabel;
+        END IF;
+        SET counter = counter + 1;
+        ITERATE innerlabel;
+      ELSE
+        LEAVE innerlabel;
+      END IF;
+    END LOOP innerlabel;
+    IF isprime = 1
+      THEN SET foutput = CONCAT(foutput,"&",num);
+    END IF;
+    SET num = num + 1;
+    IF num <= 1000 THEN ITERATE outerlabel;
+    ELSE LEAVE outerlabel;
+    END IF;
+  END LOOP outerlabel;
+END//
+
+CALL PRIMEFUNC(@fop);
+
+SELECT @fop
