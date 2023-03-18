@@ -1,0 +1,261 @@
+
+
+** Đề bài:
+- Write a query to print the
+(contest_id, hacker_id, name, and the sums of total_submissions, total_accepted_submissions, total_views, and total_unique_views) for each contest sorted by contest_id.
+- Mỗi contest có thể được interview nhiều candidates đến từ nhiều colleges.
+- Mỗi college chỉ có thể dùng 1 contest.
+
+VD:
+contest_id, hacker_id
+123         1
+123         2
+==> Sẽ không có case này vì hacker_id ở đây là id của a person created contest (Chứ không phải là người thi contest)
+- Vì 1 contest có thể dùng nhiều lần trên các collegs nên:
+contest_id  college_id
+123         11
+123         12
+==> không phải hacker_id nằm trên 2 colleges là (11,12)
+--> Không join hacker_id nữa
++ Result:
+
+** Chú ý:
+- Không phải lúc nào cũng inner join được --> Cần để ý relationship giữa các tables.
+- Left join khi --> Bảng left là bảng dạng thống kê ==> Có 1 số attributes không có thống kê đó --> Ta cần liệt kê hết ==> sum thống kê kể cả =0
+VD:
++ Ở đây submission_stats và view_stats thống kê có thể không đầy đủ với các challenges.
++ Kế cả predicate cũng không điền linh tinh được ==> Nếu dùng left join thì (left table) phải luôn gắn với field của (right table)
+
+- Cần phải check mối quan hệ 2 tables có phụ thuộc vào nhau không:
+VD:
+contest --> Không nhất thiết phải được gắn với college nào đó ==> colleges join với contest --> Chỉ là left join.
+
+
+** Bài này tư duy như sau:
+1.
+1.1,
+- Đầu tiên là tính sum all trên từng colleges
+
+** Tư duy sai:
+- Do left join nhiều lần mà (left table) không unique
+
+
+1.2, Kinh nghiệm left join
+- Left join thì số lượng bản tin vẫn x lên bình thường
+VD:
+table a
+A   B
+1   2
+2   3
+table b
+B   C
+1   3
+1   4
+a left join b
+=
+A   B   D
+1   2   3
+1   2   4
+2   3   NULL
+** ==>
+- Số lượng records vẫn X lên bình thường giống inner join
+- Chỉ là left --> Giữ nguyên được các row bên (left table mà thôi)
+** Nếu muốn left join mà số rows giữ nguyên ==> Với trường hợp mà map (id) lấy value (key,value)
+- Thì left table bắt buộc phải unique
+--> Hoặc là ta cần làm cho nó unique ==> bằng cách group by count/ sum (tổng hợp trước)
+** Nếu left join nhiều lần --> Số lượng records sẽ bị x lên nhiều lần
+==> Trừ khi 2 (left tables) đều là dạng unique.
+
+VD:
+- Bài này mình đã bị sai khi left join quá nhiều mà table không unique(id)
+
+1.3, Các error khi submit sql
+Errors:
+- Không biết table 'cn' : thường do điền sai tên table / hoặc có dấu ; ==> Sai syntax khiến compiler không đọc được đến đoạn alias
+
+-- all 500
+-- college: 500
+-- contest_id: 155
+Select count(distinct contest_id) from colleges;
+
+1.4,
+-- Solution:
+-- Slow
+Select a.contest_id, a.hacker_id, a.name, total_submissions, total_accepted_submissions, total_views, total_unique_views
+from
+(
+Select
+cn.contest_id, cn.hacker_id, cn.name,
+sum(if(ss.total_submissions is null, 0, ss.total_submissions)) as total_submissions,
+sum(if(ss.total_accepted_submissions is null, 0, ss.total_accepted_submissions)) as total_accepted_submissions
+from
+contests cn
+join colleges cl
+on cn.contest_id=cl.contest_id
+join challenges ca
+on ca.college_id=cl.college_id
+left join Submission_Stats ss
+on ca.challenge_id=ss.challenge_id
+group by cn.contest_id, cn.hacker_id, cn.name
+) a
+join
+(
+Select
+cn.contest_id, cn.hacker_id, cn.name,
+sum(if(vs.total_views is null, 0, vs.total_views)) as total_views,
+sum(if(vs.total_unique_views is null, 0, vs.total_unique_views)) as total_unique_views
+from
+contests cn
+join colleges cl
+on cn.contest_id=cl.contest_id
+join challenges ca
+on ca.college_id=cl.college_id
+left join view_stats vs
+on ca.challenge_id=vs.challenge_id
+group by cn.contest_id, cn.hacker_id, cn.name
+) b
+on a.contest_id=b.contest_id and a.hacker_id=b.hacker_id;
+
+-- Optimization
+Select * from challenges a left join
+
+==== Wrong debug result
+845 579 96 1317 451 1354 468
+845 579 191 1249 390 1093 401
+====
+
+845 579 Rose 96 40 21 22 22
+845 579 Rose 96 29 9 NULL NULL
+845 579 Rose 191 97 25 24 15
+845 579 Rose 191 17 14 79 17
+845 579 Rose 191 17 14 17 16
+845 579 Rose 191 17 14 22 18
+845 579 Rose 191 17 14 17 10
+845 579 Rose 191 23 21 31 18
+845 579 Rose 191 23 21 32 23
+845 579 Rose 191 70 8 35 17
+845 579 Rose 191 70 19 98 11
+845 579 Rose 191 70 19 31 22
+845 579 Rose 96 73 21 22 22
+845 579 Rose 96 31 16 33 25
+845 579 Rose 96 31 16 39 16
+845 579 Rose 191 25 21 35 17
+845 579 Rose 96 14 10 NULL NULL
+845 579 Rose 96 94 13 22 22
+845 579 Rose 96 77 8 NULL NULL
+845 579 Rose 96 48 25 33 25
+845 579 Rose 96 48 25 46 10
+845 579 Rose 96 48 25 22 12
+845 579 Rose 96 48 25 85 12
+845 579 Rose 191 67 14 98 11
+845 579 Rose 191 67 14 31 22
+845 579 Rose 96 95 9 NULL NULL
+845 579 Rose 96 41 16 80 24
+845 579 Rose 96 41 16 98 17
+845 579 Rose 96 41 16 41 17
+845 579 Rose 96 41 16 82 17
+845 579 Rose 96 26 14 33 25
+845 579 Rose 96 26 14 39 16
+845 579 Rose 191 86 25 NULL NULL
+845 579 Rose 96 73 6 33 25
+845 579 Rose 96 73 6 46 10
+845 579 Rose 96 73 6 22 12
+845 579 Rose 96 73 6 85 12
+845 579 Rose 96 49 20 80 24
+845 579 Rose 96 49 20 98 17
+845 579 Rose 96 49 20 41 17
+845 579 Rose 96 49 20 82 17
+845 579 Rose 96 55 25 NULL NULL
+845 579 Rose 191 96 20 24 15
+845 579 Rose 96 93 19 NULL NULL
+845 579 Rose 96 38 17 38 19
+845 579 Rose 96 38 17 65 12
+845 579 Rose 96 38 17 50 14
+845 579 Rose 96 38 17 17 7
+845 579 Rose 191 42 25 NULL NULL
+845 579 Rose 96 92 16 NULL NULL
+845 579 Rose 191 85 23 31 18
+845 579 Rose 191 85 23 32 23
+845 579 Rose 191 27 17 91 25
+845 579 Rose 191 38 25 98 11
+845 579 Rose 191 38 25 31 22
+845 579 Rose 191 52 7 56 12
+845 579 Rose 191 52 7 22 19
+845 579 Rose 191 52 7 29 6
+845 579 Rose 96 25 16 NULL NULL
+845 579 Rose 96 46 20 NULL NULL
+845 579 Rose 96 81 6 NULL NULL
+845 579 Rose 191 72 9 98 11
+845 579 Rose 191 72 9 31 22
+845 579 Rose 96 NULL NULL 40 25
+845 579 Rose 96 NULL NULL 84 17
+845 579 Rose 191 NULL NULL 20 20
+845 579 Rose 191 NULL NULL 63 19
+845 579 Rose 191 NULL NULL 93 7
+
+
+    ====
+Expected result
+845 579 Rose 1987 580 1635 566
+858 1053 Angela 703 160 1002 384
+883 1055 Frank 1121 319 1217 338
+1793 2655 Patrick 1337 360 1216 412
+2374 2765 Lisa 2733 815 3368 904
+2963 2845 Kimberly 4306 1221 3603 1184
+3584 2873 Bonnie 2492 652 3019 954
+4044 3067 Michael 1323 449 1722 528
+4249 3116 Todd 1452 376 1767 463
+4269 3256 Joe 1018 372 1766 530
+4483 3386 Earl 1911 572 1644 477
+4541 3608 Robert 1886 516 1694 504
+4601 3868 Amy 1900 639 1738 548
+4710 4255 Pamela 2752 639 2378 705
+4982 5639 Maria 2705 759 2558 711
+5913 5669 Joe 2646 790 3181 835
+5994 5713 Linda 3369 967 3048 954
+6939 6550 Melissa 2842 859 3574 1004
+7266 6947 Carol 2758 665 3044 835
+7280 7030 Paula 1963 554 886 259
+7484 7033 Marilyn 3217 934 3795 1061
+7734 7386 Jennifer 3780 1015 3637 1099
+7831 7787 Harry 3190 883 2933 1012
+7862 8029 David 1738 476 1475 472
+8812 8147 Julia 1044 302 819 266
+8825 8438 Kevin 2624 772 2187 689
+9136 8727 Paul 4205 1359 3125 954
+9613 8762 James 3438 943 3620 1046
+10568 8802 Kelly 1907 620 2577 798
+11100 8809 Robin 1929 613 1883 619
+12742 9203 Ralph 1523 413 1344 383
+12861 9644 Gloria 1596 536 2089 623
+12865 10108 Victor 2076 597 1259 418
+13503 10803 David 924 251 584 167
+13537 11390 Joyce 1381 497 1784 538
+13612 12592 Donna 1981 550 1487 465
+14502 12923 Michelle 1510 463 1830 545
+14867 13017 Stephanie 2471 676 2291 574
+15164 13256 Gerald 2570 820 2085 607
+15804 13421 Walter 1454 459 1396 476
+15891 13569 Christina 2188 710 2266 786
+16063 14287 Brandon 1804 580 1621 521
+16415 14311 Elizabeth 4535 1366 3631 1071
+18477 14440 Joseph 1320 391 1419 428
+18855 16973 Lawrence 2967 1020 3371 1011
+19097 17123 Marilyn 2956 807 2554 750
+19575 17562 Lori 2590 863 2627 760
+
+
+=====
+Refer:
+SELECT c.contest_id, c.hacker_id, c.name,
+SUM(ss.ts), SUM(ss.tas), SUM(vs.tv), SUM(vs.tuv)
+FROM Contests c
+LEFT JOIN Colleges col ON c.contest_id = col.contest_id
+LEFT JOIN Challenges ch ON col.college_id = ch.college_id
+LEFT JOIN ( SELECT challenge_id, SUM(total_views) as tv, SUM(total_unique_views) as tuv
+FROM View_Stats GROUP BY challenge_id ) vs ON ch.challenge_id = vs.challenge_id
+LEFT JOIN ( SELECT challenge_id, SUM(total_submissions) as ts, SUM(total_accepted_submissions) as tas
+FROM Submission_Stats GROUP BY challenge_id ) ss ON ch.challenge_id = ss.challenge_id
+GROUP BY 1,2,3
+HAVING(SUM(vs.tv) + SUM(vs.tuv) + SUM(ss.ts) + SUM(ss.tas)) > 0
+ORDER BY 1;
