@@ -1,0 +1,56 @@
+
+
+** Đề bài:
+Table: SurveyLog
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| id          | int  |
+| action      | ENUM |
+| question_id | int  |
+| answer_id   | int  |
+| q_num       | int  |
+| timestamp   | int  |
++-------------+------+
+
+There is no primary key for this table. It may contain duplicates.
+action is an ENUM of the type: "show", "answer", or "skip".
+Each row of this table indicates the user with ID = id has taken an action with the question (question_id) at time timestamp.
++ If the action taken by the user is "answer", answer_id will contain the id of that answer, otherwise, it will be null.
++ q_num is the numeral order of the question in the current session.
+
+
++ The (answer rate) for a question is the number of times (a user answered the question) by (chia) the number of times (a user showed the question).
+- Write an SQL query to report the question that has the highest answer rate.
++ If multiple questions have the same maximum answer rate, report the question with the smallest (question_id).
+
+** Bài này tư duy như sau:
+** Solution-1:
+- Group question_id và count(if(answer is not null,1,0)) ==> tìm ra số câu trả lời của mỗi question.
+- order by num desc, question_id asc ==> rn=1 (Để chọn)
+======
+Select question_id as survey_log from
+(
+  Select question_id, row_number() over(order by num desc, question_id asc) as rn from
+(
+  Select question_id, sum(if(answer_id is not null, 1, 0)) as num
+  from SurveyLog s group by question_id
+) a ) b where b.rn=1;
+
+** Solution-2:
+- Ngoài ra ta có thể tính :
+answer rate = a user answered the question) / the number of times (a user showed the question)
+======
+SELECT  question_id as survey_log
+FROM SurveyLog
+GROUP BY question_id
+ORDER BY ( count(answer_id) / count(case when action = 'show' then question_id ELSE null end ) ) desc, 1 asc
+LIMIT 1
+
+#Reference:
+579. Find Cumulative Salary of an Employee
+More challenges
+1831. Maximum Transaction Each Day
+1364. Number of Trusted Contacts of a Customer
+2020. Number of Accounts That Did Not Stream

@@ -86,5 +86,44 @@ public class E16_MaximizeGreatnessOfAnArray {
         //1,3,5,2,1,3,1
         //2,5,-1,3,3,-1
         System.out.println(maximizeGreatness(arr));
+        //** Đề bài:
+        //- Tìm hoán vị của array sao cho
+        //perm[I]>arr[i] nhiều nhất
+        //
+        //** Bài này tư duy như sau:
+        //1.
+        //1.1, Ý tưởng
+        //- Ta sẽ sắp xếp nums1[] --> copy từ nums[]
+        //- Để tìm phần tử mà lớn hơn nó để tổi ưu nhất
+        //VD:
+        //a, b, c, d
+        //c>a, b>a nhưng c>d còn b<d
+        //==> Để ghép (a, b), (c, d)
+        //- Ta cần sắp xếp tăng dần: [a,b,d,c]
+        //==> Phần tử bên trái gần nhất của (a) chính là (b) sẽ được ghép gặp với (a)
+        //
+        //1.2, Bài này thành bài toán dạng (tìm phần tử min > value)
+        //- Với dạng này ta cần nhớ format:
+        //if(nums[mid]>value){
+        //    rs=mid;
+        //    high=mid-1;
+        //}else{
+        //    low=mid+1;
+        //}
+        //- nums[mid]>value : mid có thể là kết quả --> ta tạm gắn rs=mid
+        //- Sau đó sẽ recursively tìm index có giá trị tốt hơn: ==> nếu (low>=high) ==> Nếu if(nums[low]>value) return low <> -1
+        //==> Dựa trên (index, mid) ==> Ta sẽ có kết quả.
+        //
+        //1.3, Cấu trúc data structure
+        //- Nếu phần tử tại index đã đi rồi --> thì ta cần traverse ra 2 phía (left, right)
+        //--> Để tìm phần tử khác
+        //- Left
+        //+ (Left--, Left>=0, visited[left]==true, nums1[left]>value) [nếu đã đi rồi mà (nums1[left]>value) [value vẫn thoả mãn] ==> left--; duyệt tiếp
+        //- Right
+        //+ (Right++, Right<n, visited[right]==true, nums1[right]>value) [nếu đã đi rồi mà (nums1[right]>value) [value vẫn thoả mãn] ==> left++; duyệt tiếp
+        //
+        //1.4, Complexity:
+        //- Time complexity : O(n) log(n)
+        //- Space complexity : O(n).
     }
 }

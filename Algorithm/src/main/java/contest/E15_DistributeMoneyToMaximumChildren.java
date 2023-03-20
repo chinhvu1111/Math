@@ -73,5 +73,41 @@ public class E15_DistributeMoneyToMaximumChildren {
         money = 17;
         children = 4;
         System.out.println(distMoney(money, children));
+        //** Đề bài
+        //- Chia số lượng money cho children sao cho :
+        //+ Tiền được chia hết
+        //+ children nào cũng nhận tiền ít nhất 1 và không = 4
+        //- Trả lại số lần nhiều nhất để children có thể nhận được 8 tiền
+        //
+        //** Bài này tư duy như sau:
+        //1.
+        //1.1,
+        //- Bài này đơn thuần là ta dùng while để chia 8 money nhiều nhất có thể.
+        //1.2, Tránh các trường hợp đặc biệt:
+        //1.2.1,
+        //money = 20;
+        //children = 3;
+        //==> Trường hợp này thì chia bình thường
+        //1.2.2,
+        //money = 1;
+        //children = 2;
+        //==> Trường hợp không chia được -1
+        //1.2.3,
+        //money = 8;
+        //children = 3;
+        //==> Trường hợp chia số lần nhận 8 money = 0 khi money = 8 ==> mà còn tận 2 childrent sau khi chia 8 lần 1
+        //1.2.4,
+        //money = 9;
+        //children = 2;
+        //==> Trường hợp chia được duy nhất 1 lần nhận 8 money
+        //1.2.5,
+        //money = 9;
+        //children = 3;
+        //==> Trường hợp hợp chia xong 8 thì còn tận 2 children --> Không chia 8 được ==> nhận 0 nếu (money >= children)
+        //1.2.6,
+        //money = 17;
+        //children = 4;
+        //==> 8,(money=9, child= 4) ==> Chỉ có thể nhận được 1 lần money khi (money=9, child= 4) không chia được nhận 8 money nào
+        //
     }
 }

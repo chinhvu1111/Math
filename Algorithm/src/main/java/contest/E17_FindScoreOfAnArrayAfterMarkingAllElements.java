@@ -52,5 +52,19 @@ public class E17_FindScoreOfAnArrayAfterMarkingAllElements {
 //        int[] arr=new int[]{2,1,3,4,5,2};
         int[] arr=new int[]{2,3,5,1,3,2};
         System.out.println(findScore(arr));
+        //** Đề bài:
+        //- Bài này tìm số lần đánh dấu từ phẩn tử min --> max
+        //- Nếu index của phần tử đánh dấu là (i) --> thì ta sẽ đánh dấu thêm 2 phần tử bên cạnh là (i-1), (i+1)
+        //- Nếu có nhiều phần tử value=min --> lấy smallest index.
+        //
+        //** Bài này tư duy như sau:
+        //1.
+        //1.1, Xây dựng data structure
+        //- Nếu muốn đánh dấu phần tử đã traverse ta dùng boolean visited[]
+        //- Nếu muốn tìm smallest index --> HashMap<Value, TreeSet<Index>> ==> Các index sẽ được sắp xếp tương ứng với từng value
+        //+ Nếu muốn dùng value nào ta sẽ lấy index đó ra + remove + mark nó.
+        //1.2, Complexity:
+        //- Time complexity: O(n)log(n)
+        //- Space complexity : O(n)
     }
 }
