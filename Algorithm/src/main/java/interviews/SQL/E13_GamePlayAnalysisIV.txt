@@ -1,0 +1,55 @@
+
+
+** Đề bài:
+Table: Activity
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| player_id    | int     |
+| device_id    | int     |
+| event_date   | date    |
+| games_played | int     |
++--------------+---------+
+(player_id, event_date) is the primary key of this table.
+This table shows the activity of players of some games.
+Each row is a record of a player who logged in and played a number of games (possibly 0) before logging out on someday using some device.
+
+Write an SQL query to report the fraction of players that logged in again on the day after the day they first logged in,
+rounded to 2 decimal places.
+In other words, you need to count the number of players that logged in for at least two consecutive days starting from their first login date,
+then divide that number by the total number of players.
+
+** Bài này tư duy như sau:
+with cte as(
+Select a.player_id, event_date, row_number() over(partition by a.player_id order by event_date) as rn from Activity a
+),
+cte1 as
+(
+Select a.player_id, a1.player_id as map_player_id from cte a left join cte a1
+on a.player_id=a1.player_id and STR_TO_DATE(a.event_date, '%Y-%m-%d') = STR_TO_DATE(a1.event_date, '%Y-%m-%d') + INTERVAL 1 DAY and a.rn<=2 and a1.rn<=2
+),
+ct2 as(
+Select count(distinct c.player_id) as num from cte1 c where c.map_player_id is not null
+),
+ct3 as(
+Select count(distinct c.player_id) as num_all from cte1 c
+)
+Select round(((select num from ct2)/(select num_all from ct3)), 2) as fraction;
+
+
+- Ở đây có các bước tư duy như:
++ Select first_day, seconday bằng cách dùng row_number().
++ Select join theo date=date1+1 ==> Thực ra còn 1 cách nữa là join theo (rn=2 và rn=1) && cùng player_id ==> left join.
++ Select count(distinct các phần tử thoả mãn) : loại null.
++ Select count(distinct all).
++ Chia 2 tables cho nhau.
+
+** Kinh nghiệm:
+- format date : '%Y-%m-%d'
+- Convert string to date : STR_TO_DATE(dt, '%Y-%m-%d');
+- chia 2 table cho nhau:
+- Select round(((select num from ct2)/(select num_all from ct3)), 2) as fraction;
+
+#Reference:
+1097. Game Play Analysis V
