@@ -1,0 +1,42 @@
+
+** Đề bài:
+Table: RequestAccepted
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| requester_id   | int     |
+| accepter_id    | int     |
+| accept_date    | date    |
++----------------+---------+
+(requester_id, accepter_id) is the primary key for this table.
+This table contains the ID of the user who sent the request, the ID of the user who received the request, and the date when the request was accepted.
+
+- Write an SQL query to find the people who have the most friends and the most friends number.
+
+The test cases are generated so that only one person has the most friends.
+The query result format is in the following example.
+
+** Bài này tư duy như sau:
+1.
+1.1,
+Solution-1:
+
+with cte1 as(
+Select requester_id, count(1)as num from RequestAccepted r group by requester_id
+),
+cte2 as(
+Select accepter_id, count(1) as num from RequestAccepted r group by accepter_id
+),
+cte3 as(
+Select c1.requester_id, (if(c1.num is null, 0, c1.num) + if(c2.num is null, 0, c2.num)) as num
+from cte1 c1 left join cte2 c2 on c1.requester_id=c2.accepter_id
+)
+
+Select requester_id as id, num from cte3 order by num desc limit 1;
+
+#Reference:
+603. Consecutive Available Seats
+1517. Find Users With Valid E-Mails
+597. Friend Requests I: Overall Acceptance Rate
+2356. Number of Unique Subjects Taught by Each Teacher

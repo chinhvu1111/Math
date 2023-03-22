@@ -1,0 +1,81 @@
+
+** Đề bài:
+Table: Insurance
+
++-------------+-------+
+| Column Name | Type  |
++-------------+-------+
+| pid         | int   |
+| tiv_2015    | float |
+| tiv_2016    | float |
+| lat         | float |
+| lon         | float |
++-------------+-------+
+pid is the primary key column for this table.
+Each row of this table contains information about one policy where:
+pid is the policyholder's policy ID.
+tiv_2015 is the total investment value in 2015 and tiv_2016 is the total investment value in 2016.
+lat is the latitude of the policy holder's city. It's guaranteed that lat is not NULL.
+lon is the longitude of the policy holder's city. It's guaranteed that lon is not NULL.
+===========================================================================
+
+Write an SQL query to report the sum of all total investment values in 2016 tiv_2016, for all policyholders who:
+
+have the same tiv_2015 value as one or more other policyholders, and
+are not located in the same city like any other policyholder (i.e., the (lat, lon) attribute pairs must be unique).
+Round tiv_2016 to two decimal places.
+
+===========================================================================
+
+** Bài này tư duy như sau:
+1.
+1.1,
+- Về cơ bản lưu ý:
++ Điều kiện tìm pid có field a giống field a của 1 trong các row có trong table --> ta dùng left join.
++ Điều kiện tìm pid có field a không giống bất cứ field nào ==> group by a count(1)=1 là được ==> Có 1 field duy nhất
+==> Sau đó join lại với bảng chung là được.
+
+** Solution 1:
+
+with cte1 as(
+Select lat, lon from Insurance group by lat, lon having count(1)=1
+)
+Select round(sum(tiv_2016), 2) as tiv_2016
+from
+(Select i.pid, i.tiv_2016 from Insurance i join Insurance i1 join cte1 i2
+on i.tiv_2015=i1.tiv_2015 and i.pid!=i1.pid and i.lat=i2.lat and i.lon=i2.lon group by i.pid, i.tiv_2016) a;
+
+** Solution 2:
+- Ở đây ta có thể dùng concat(lat, lot) --> Để gộp trường.
+- group by TIV_2015 having count(1) >1 thay vì left join.
+
+SELECT
+    ROUND(SUM(insurance.TIV_2016),2) AS TIV_2016
+FROM
+    insurance
+WHERE
+    insurance.TIV_2015 IN
+    (
+      SELECT
+        TIV_2015
+      FROM
+        insurance
+      GROUP BY TIV_2015
+      HAVING COUNT(*) > 1
+    )
+    AND CONCAT(LAT, LON) IN
+    (
+      SELECT
+        CONCAT(LAT, LON)
+      FROM
+        insurance
+      GROUP BY LAT , LON
+      HAVING COUNT(*) = 1
+    )
+;
+
+#Reference:
+586. Customer Placing the Largest Number of Orders
+1412. Find the Quiet Students in All Exams
+2372. Calculate the Influence of Each Salesperson
+614. Second Degree Follower

@@ -21,6 +21,9 @@ In other words, you need to count the number of players that logged in for at le
 then divide that number by the total number of players.
 
 ** Bài này tư duy như sau:
+
+** Solution-1
+
 with cte as(
 Select a.player_id, event_date, row_number() over(partition by a.player_id order by event_date) as rn from Activity a
 ),
@@ -50,6 +53,9 @@ Select round(((select num from ct2)/(select num_all from ct3)), 2) as fraction;
 - Convert string to date : STR_TO_DATE(dt, '%Y-%m-%d');
 - chia 2 table cho nhau:
 - Select round(((select num from ct2)/(select num_all from ct3)), 2) as fraction;
+
+** Solution-2
+
 
 #Reference:
 1097. Game Play Analysis V
