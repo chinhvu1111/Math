@@ -1,0 +1,37 @@
+
+
+** Đề bài:
+Table: Follow
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| followee    | varchar |
+| follower    | varchar |
++-------------+---------+
+(followee, follower) is the primary key column for this table.
+Each row of this table indicates that the user follower follows the user followee on a social network.
+There will not be a user following themself.
+
+
+A second-degree follower is a user who:
+
+follows at least one user, and
+is followed by at least one user.
+Write an SQL query to report the second-degree users and the number of their followers.
+
+Return the result table ordered by follower in alphabetical order.
+
+** Bài này tư duy như sau:
+1.
+1.1,
+Solution-1
+Select f.followee as follower, count(1) as num
+from Follow f where f.follower is not null and f.followee in (Select follower from Follow) group by
+f.followee order by f.followee;
+
+#Reference:
+626. Exchange Seats
+1747. Leetflex Banned Accounts
+595. Big Countries
+1741. Find Total Time Spent by Each Employee

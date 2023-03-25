@@ -1,0 +1,112 @@
+
+** Đề bài:
+Table: Seat
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| student     | varchar |
++-------------+---------+
+id is the primary key column for this table.
+Each row of this table indicates the name and the ID of a student.
+id is a continuous increment.
+
+- Write an SQL query to swap the seat id of every two consecutive students. If the number of students is odd, the id of the last student is not swapped.
+Return the result table ordered by id in ascending order.
+==> Tức là swap 2 consecutive students.
+Example:
+1,2,3,4
+swap(1,2), swap(3,4)
+
+Example:
+Example 1:
+
+Input:
+Seat table:
++----+---------+
+| id | student |
++----+---------+
+| 1  | Abbot   |
+| 2  | Doris   |
+| 3  | Emerson |
+| 4  | Green   |
+| 5  | Jeames  |
++----+---------+
+Output:
++----+---------+
+| id | student |
++----+---------+
+| 1  | Doris   |
+| 2  | Abbot   |
+| 3  | Green   |
+| 4  | Emerson |
+| 5  | Jeames  |
++----+---------+
+Explanation:
+Note that if the number of students is odd, there is no need to change the last one's seat.
+
+** Bài này tư duy như sau:
+1.
+1.1,
+- Select lẻ ra trước --> Join với chẳn <=> chẵn = lẻ +1.
+Seat table:
++----+---------+
+| id | student |
++----+---------+
+| 1  | Abbot   | 2  | Abbot   |
+| 2  | Abbot   | 1  | Abbot   |
+| 3  | Emerson | 4  | Emerson |
+| 4  | Emerson | 3  | Emerson |
+| 5  | Jeames  |
++----+---------+
+==> Sau đó sẽ chọn 2 trường 2 phía dựa trên id (lẻ/ chẵn)
+
+with cte1 as (
+Select * from Seat where (id % 2)=1
+),
+cte2 as(
+Select * from Seat where (id%2)=0
+),
+cte3 as(
+Select c1.id, c1.student, c2.id as id1, c2.student as student1
+from cte1 c1 left join cte2 c2 on c1.id+1=c2.id
+),
+cte4 as(
+Select c2.id, c2.student, c1.id as id1, c1.student as student1
+from cte2 c2 join cte1 c1 on c2.id=c1.id+1
+),
+cte5 as(
+Select * from
+(
+Select id, student, if(id1 is null, id, id1) as id1, if(student1 is null, student, student1) as student1 from cte3
+union all
+Select id, student, id1, student1 from cte4) a order by a.id
+),
+cte6 as(
+Select c5.id, c5.student1 as student
+from cte5 c5
+)
+Select * from cte6;
+
+- Solution-2:
+SELECT
+    (CASE
+        WHEN MOD(id, 2) != 0 AND counts != id THEN id + 1
+        WHEN MOD(id, 2) != 0 AND counts = id THEN id
+        ELSE id - 1
+    END) AS id,
+    student
+FROM
+    seat,
+    (SELECT
+        COUNT(*) AS counts
+    FROM
+        seat) AS seat_counts
+ORDER BY id ASC;
+
+#Reference:
+1045. Customers Who Bought All Products
+1741. Find Total Time Spent by Each Employee
+2339. All the Matches of the League
+2494. Merge Overlapping Events in the Same Hall

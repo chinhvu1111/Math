@@ -1,0 +1,77 @@
+
+
+** Đề bài:
+Table: Books
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| book_id        | int     |
+| name           | varchar |
+| available_from | date    |
++----------------+---------+
+book_id is the primary key of this table.
+
+
+Table: Orders
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| order_id       | int     |
+| book_id        | int     |
+| quantity       | int     |
+| dispatch_date  | date    |
++----------------+---------+
+order_id is the primary key of this table.
+book_id is a foreign key to the Books table.
+
+
+- Write an SQL query that reports:
++ the books that have sold less than 10 copies in the last year, excluding books that have been available for less than one month from today. Assume today is 2019-06-23.
+- Tức là liệt kê sách được bán ít hơn 10 copies ở năm cuối Max(year), loại bỏ sách có (available_from) < 1 tháng (Chưa đầy 1 tháng) so với hiện tại (2019-06-23)
+** Bài này tư duy như sau:
+1.
+1.1,
+- Loại bỏ sách có (available_from) >= 1 tháng so với hiện tại (2019-06-23 - 1 month) ==> Chỉ lấy các cuốn sách cũ hơn 1 tháng.
+- Liệt kê sách được order mỗi year ==> SAI : LAST YEART --> Năm ngoái ==> 2018
+Predicate : dispatch_date >= '2018-06-23'
+- Filter sách bán được < 10 copies last year.
+
+- Solution-1:
+
+with cte1 as(
+Select * from Books b where available_from<='2019-05-23'
+),
+cte3 as(
+Select book_id, name, quantity from (
+    Select b.book_id, b.name, dispatch_date, if(o.quantity is null or dispatch_date < '2018-06-23', 0 ,o.quantity) as quantity, o.book_id as map_book_id
+    from cte1 b left join Orders o on b.book_id=o.book_id
+) a
+),
+cte4 as(
+Select book_id, name, sum(quantity) as quantity from cte3 group by book_id
+),
+cte5 as(
+Select * from cte4 where quantity <10
+)
+
+Select book_id, name from cte5;
+
+- Solution-2:
+SELECT
+    b.book_id,
+    b.name
+FROM Books b
+LEFT JOIN Orders o
+ON b.book_id = o.book_id
+WHERE
+    b.available_from < date_add('2019-06-23', INTERVAL -1 MONTH)
+GROUP BY 1, 2
+HAVING sum(CASE WHEN dispatch_date >= date_add('2019-06-23', INTERVAL -1 YEAR) THEN quantity ELSE 0 END) < 10
+
+#Reference:
+1107. New Users Daily Count
+2298. Tasks Count in the Weekend
+2082. The Number of Rich Customers
+511. Game Play Analysis I

@@ -1,0 +1,50 @@
+
+** Đề bài:
+Table: Customer
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| customer_id | int     |
+| product_key | int     |
++-------------+---------+
+There is no primary key for this table. It may contain duplicates. customer_id is not NULL.
+product_key is a foreign key to Product table.
+
+
+Table: Product
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| product_key | int     |
++-------------+---------+
+product_key is the primary key column for this table.
+
+- Write an SQL query to report the customer ids from the Customer table that bought all the products in the Product table.
+
+- In ra customer mua tất cả các sản phẩm trong table product.
+
+** Bài này tư duy như sau:
+1.
+1.1,
+Các bước:
+- Distinct Customer table trước ==> Tìm ra các cặp mua duy nhất
+- Sau đó tìm ra số lượng sản phẩm của Product ==> Select count(1)
+- group by customer_id + count(1) : Để tính ra số sản phẩm mà mỗi customer mua
+- Match tương ứng.
+
+Solution-1:
+with cte1 as(
+Select distinct customer_id, product_key from Customer
+),
+cte2 as (
+Select count(1) as num from Product
+)
+Select c1.customer_id from cte1 c1 group by c1.customer_id having count(1) = (Select num from cte2);
+
+#Reference:
+1070. Product Sales Analysis III
+1241. Number of Comments per Post
+1934. Confirmation Rate
+1142. User Activity for the Past 30 Days II

@@ -1,0 +1,49 @@
+
+** Đề bài:
+Table: Project
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| project_id  | int     |
+| employee_id | int     |
++-------------+---------+
+(project_id, employee_id) is the primary key of this table.
+employee_id is a foreign key to Employee table.
+Each row of this table indicates that the employee with employee_id is working on the project with project_id.
+
+
+Table: Employee
+
++------------------+---------+
+| Column Name      | Type    |
++------------------+---------+
+| employee_id      | int     |
+| name             | varchar |
+| experience_years | int     |
++------------------+---------+
+employee_id is the primary key of this table.
+Each row of this table contains information about one employee.
+
+- Write an SQL query that reports the most experienced employees in each project. In case of a tie, report all employees with the maximum number of experience years.
+- Report ra employees có số exp nhiều nhất ở mỗi project. ==> Nếu nhiều hơn 1 nhân viên có nhiều năm kn ==> Report all.
+
+** Bài này tư duy như sau:
+1.
+1.1,
+
+with cte1 as(
+Select p.project_id, e.employee_id, e.experience_years from Project p left join Employee e on p.employee_id=e.employee_id
+),
+cte2 as(
+Select project_id, employee_id, dense_rank() over(partition by project_id order by experience_years desc) as rn from cte1 c1
+),
+cte3 as(
+Select * from cte2 where rn=1
+)
+
+Select project_id, employee_id from cte3;
+
+#Reference:
+1082. Sales Analysis I
+1076. Project Employees II

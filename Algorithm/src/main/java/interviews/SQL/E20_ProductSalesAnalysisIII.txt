@@ -1,0 +1,66 @@
+
+** Đề bài:
+Table: Sales
+
++-------------+-------+
+| Column Name | Type  |
++-------------+-------+
+| sale_id     | int   |
+| product_id  | int   |
+| year        | int   |
+| quantity    | int   |
+| price       | int   |
++-------------+-------+
+(sale_id, year) is the primary key of this table.
+product_id is a foreign key to Product table.
+Each row of this table shows a sale on the product product_id in a certain year.
+Note that the price is per unit.
+
+
+Table: Product
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| product_id   | int     |
+| product_name | varchar |
++--------------+---------+
+product_id is the primary key of this table.
+Each row of this table indicates the product name of each product.
+
+
+- Write an SQL query that selects the product id, year, quantity, and price for the first year of every product sold.
+- Tức là liệt kê ra (product id, year, quantity, and price) của từng product trong năm đầu tiên.
+** Bài này tư duy như sau:
+1.
+1.1,
+- Join sang để chuyển product_id chính là key để dựa trên ==> Sẽ có những sản phẩm không ra sản lượng ==> Cần left join <=> Tuy nhiên với bài này JOIN là được r
+- Bài này có case N sales 1 năm bán ra cùng 1 product ==> Không group by được
+- Vì có nhiều product_id có cùng year --> ta cần dùng dense_rank() để đánh số:
+dense_rank()
+1 : 1
+1 : 1
+2 : 2
+2 : 2
+2 : 2
+4 : 3
+- Select rn=1 là được.
+
+Solution-1:
+
+With cte1 as(
+Select * from
+(Select s.sale_id, s.product_id, s.year, s.quantity, s.price from Product p join Sales s on s.product_id=p.product_id) s
+),
+cte2 as(
+Select * from
+(Select product_id, year as first_year, quantity, price, dense_rank() over(partition by product_id order by year) as rn from cte1) s where s.rn=1
+)
+
+Select product_id, first_year, quantity, price from cte2;
+
+#Reference:
+1077. Project Employees III
+1069. Product Sales Analysis II
+2324. Product Sales Analysis IV
+2329. Product Sales Analysis V
