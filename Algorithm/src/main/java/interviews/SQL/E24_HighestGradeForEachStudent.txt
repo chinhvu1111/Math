@@ -1,0 +1,35 @@
+
+
+** Đề bài:
+Table: Enrollments
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| student_id    | int     |
+| course_id     | int     |
+| grade         | int     |
++---------------+---------+
+(student_id, course_id) is the primary key of this table.
+grade is never NULL.
+
+
+- Write a SQL query to find the highest grade with its corresponding course for each student.
+In case of a tie, you should find the course with the smallest course_id.
+- Return the result table ordered by student_id in ascending order.
+- Tức là tìm highest grade với mỗi student --> nếu nhiều courses thì lấy smallest(course_id)
+
+** Bài này tư duy như sau:
+1.
+1.1,
+
+Select student_id, course_id, grade from
+(
+Select student_id, course_id, grade, row_number() over(partition by student_id order by grade desc,course_id asc) as rn from Enrollments
+) a where a.rn=1;
+
+#Reference:
+1126. Active Businesses
+2308. Arrange Table by Gender
+607. Sales Person
+627. Swap Salary

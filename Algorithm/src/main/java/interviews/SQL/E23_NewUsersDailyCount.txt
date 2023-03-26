@@ -1,0 +1,60 @@
+
+** Đề bài:
+Table: Traffic
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| user_id       | int     |
+| activity      | enum    |
+| activity_date | date    |
++---------------+---------+
+There is no primary key for this table, it may have duplicate rows.
+The activity column is an ENUM type of ('login', 'logout', 'jobs', 'groups', 'homepage').
+
+- Write an SQL query to reports for every date within at most 90 days from today, the number of users that logged in for the first time on that date.
+Assume today is 2019-06-30.
+- Tức là báo cáo trong vòng 90 days trước, số người mà log in mới tinh --> new users trong 90 days and events là (logged in).
+
+** Bài này tư duy như sau:
+1.
+1.1,
+- Solution-1:
+- Ta sẽ lọc ra các events logged in và tìm lần logged in cũ nhất của từng người.
+==> Nếu lần logged in cũ nhất nằm trong khoảng 90 days trước --> Coi như là new users.
++ Chú ý: Làm row_number() --> Full scan table sẽ không tốt
+
+with cte1 as(
+Select * from
+(
+Select user_id, activity, activity_date, row_number() over(partition by user_id order by activity_date) as rn from Traffic where activity='login'
+)a where a.rn=1
+),
+cte2 as(
+Select activity_date as login_date, count(1) as user_count from cte1
+where activity_date >=STR_TO_DATE('2019-06-30', '%Y-%m-%d') - INTERVAL 90 day group by activity_date
+)
+Select * from cte2;
+
+- Solution-2:
+- Ta sẽ scan filter 2 segment logig-in trước
+- Sau đó sẽ dùng phép select in để check tồn tại --> Sẽ có thông tin users đã login cũ ==> Bỏ đi là được.
+
+with cte1 as(
+Select distinct user_id, activity_date from Traffic where activity='login' and activity_date >=STR_TO_DATE('2019-06-30', '%Y-%m-%d') - INTERVAL 90 day
+),
+cte2 as(
+Select distinct user_id from Traffic where activity='login' and activity_date <STR_TO_DATE('2019-06-30', '%Y-%m-%d') - INTERVAL 90 day
+),
+cte3 as(
+Select activity_date as login_date, count(distinct user_id) as user_count
+from cte1 where cte1.user_id not in (Select user_id from cte2) group by activity_date
+)
+
+Select * from cte3;
+
+#Reference:
+1112. Highest Grade For Each Student
+1783. Grand Slam Titles
+2372. Calculate the Influence of Each Salesperson
+1741. Find Total Time Spent by Each Employee
