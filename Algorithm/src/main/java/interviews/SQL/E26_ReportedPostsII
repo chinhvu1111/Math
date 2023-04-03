@@ -1,0 +1,55 @@
+
+** Đề bài:
+Table: Actions
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| user_id       | int     |
+| post_id       | int     |
+| action_date   | date    |
+| action        | enum    |
+| extra         | varchar |
++---------------+---------+
+There is no primary key for this table, it may have duplicate rows.
+The action column is an ENUM type of ('view', 'like', 'reaction', 'comment', 'report', 'share').
+The extra column has optional information about the action, such as a reason for the report or a type of reaction.
+
+
+Table: Removals
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| post_id       | int     |
+| remove_date   | date    |
++---------------+---------+
+post_id is the primary key of this table.
+Each row in this table indicates that some post was removed due to being reported or as a result of an admin review.
+
+- Write an SQL query to find the average daily percentage of posts that got removed after being reported as spam, rounded to 2 decimal places.
+- Liệt kê % posts mà bị removed
+
+** Bài này tư duy như sau:
+1.
+1.1,
+- Solution-1 : slow
+
+with cte1 as(
+Select * from Actions where action='report' and extra='spam'
+),
+cte2 as(
+Select distinct action_date, c1.post_id, if(r.post_id is not null or r.remove_date >= c1.action_date, 1, 0) as num from cte1 c1 left join Removals r on c1.post_id=r.post_id
+),
+cte3 as(
+Select (sum(num)/count(1)) as percent
+from cte2 c2 group by action_date
+)
+
+Select round(avg(percent)*100, 2) as average_daily_percent from cte3;
+
+#Reference:
+1149. Article Views II
+1468. Calculate Salaries
+1068. Product Sales Analysis I
+603. Consecutive Available Seats

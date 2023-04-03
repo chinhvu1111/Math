@@ -549,7 +549,7 @@ public class E131_3Sum_TwoPointers {
         //---> Mố mà ta đã xét trước đó thì có thể bỏ qua.
         //
         //2.6,Refactor:
-        //- Sau khi gộp các điều kiện ta có công thức tổng quan như sau:
+        //- Sau khi gộp các điều kiện ta có công thức tổng quan như sau: [ Tư duy khi sắp xếp array + đặt hệ quy chiếu i<j<k ==> Mọi thứ trở nên dễ dàng hơn rất nhiều]
         //+ currentSum>-1*nums[j] : k--
         //+ currentSum<-1*nums[j] : j++
         //VD:

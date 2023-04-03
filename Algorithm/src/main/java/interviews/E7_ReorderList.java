@@ -112,8 +112,13 @@ public class E7_ReorderList {
         //- Tư duy là add các node vào array list --> Ta sẽ xác định được vị trí (0 --> (n-1)/2 | n/2)
         //- Sau đó ta nối theo pair (i, n-i)
         //Cách làm tối ưu như sau:
-        //1, Chạy vòng từ trong ra ngoài (Lúc đó mũi tên sẽ bị ngược)
-        //2, Reverse vòng đó --> ta sẽ ra đúng chiều
+        //1, Tìm middle node trước:
+        //VD: 1->2->3->(4)->5->6->null
+        //--> Reverse second part:
+        //VD:
+        //- 1->2->3
+        //- null<-(4)<-5<-6
+        //2. Sau đó nối lần lượt.
 
     }
 }

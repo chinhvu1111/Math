@@ -51,6 +51,23 @@ public class E8_CountingBits {
         return setBits;
     }
 
+    public static int[] countBitsDynamicPrograming(int n) {
+        int[] countBit = new int[n + 1];
+        int m=1;
+        int currentValue=1;
+
+        for(int i=1;i<=n;i++){
+            if(i-currentValue>=0){
+                countBit[i]=countBit[i-currentValue]+1;
+            }
+//            System.out.printf("%s %s %s\n", i, countBit[i],  currentValue);
+            if(i+1>=currentValue*2){
+                currentValue*=2;
+            }
+        }
+        return countBit;
+    }
+
     public static void main(String[] args) {
 //        int n=5;
 //        int n=1;
@@ -107,6 +124,58 @@ public class E8_CountingBits {
         //1.1, Dynamic ở đây được xác định là chỉ có hiệu lực trong 1 cycle nhất định
         //+ cycleCount=4
         //
+        //Cách 2:
+        //2.
+        //2.1, Idea
+        //0:0
+        //1: (1) : m=1
+        //2: 10 : (1) : m=1
+        //3: 11 : 2 : m=1
+        //4: 100 (1)
+        //5: 101 : 2
+        //6: 110 : 2
+        //7: 111 : 3
+        //8:1000 : (1)
+        //9: 1001 : 2
+        //10: 1010 : 2
+        //11: 1011 : 3
+        //12: 1100 : 2
+        //13: 1101 : 3
+        //14: 1110 : 3
+        //15: 1111 : 3
+        //15: 10000 : (1)
+        //- Ta có:
+        //+ (2,3) = 1 + (0,1)
+        //<->
+        // 10= 1 - 0
+        // 11= 1 - 1
+        //--> (2,3) = 2^1 + (0,1)
+        //+ (4,7) = 1 + (0,3)
+        //<->
+        //100 = 2^2 + 0
+        //1011 = 2^2 + 3
+        //==> Đây là việc ta đặt 1 đằng trước ==> Tăng số lượng số 1 lên 1
+        //VD:
+        //5 : 101 = 2^1 + 1
+        //(5) = (1) + 1
+        //2.2, Ta tư duy như sau:
+        //- Công thức truy hồi như sau:
+        //
+        //m : 1 --> n ==>
+        //- count_bit(x) = count_bit(x-2^m) + 1 vs (2^m >x)
+        //2.3,
+        //- Chú ý: ta chỉ tăng m (2^m) khi:
+        //+ i+1>= 2^m *2 ==> Next loop có thể tính được.
+        //2.4, Complexity:
+        //- Time complexity: O(n)
+        //- Space complexity : O(n)
+//        Arrays.stream(arr).forEach(i -> System.out.print(i+","));
+        arr=countBitsDynamicPrograming(n);
         Arrays.stream(arr).forEach(i -> System.out.print(i+","));
+        //#Reference:
+        //339. Nested List Weight Sum
+        //1916. Count Ways to Build Rooms in an Ant Colony
+        //1521. Find a Value of a Mysterious Function Closest to Target
+        //847. Shortest Path Visiting All Nodes
     }
 }

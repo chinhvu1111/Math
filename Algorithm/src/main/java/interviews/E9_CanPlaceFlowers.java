@@ -33,7 +33,7 @@ public class E9_CanPlaceFlowers {
         //- Trả lại kết quả liệu có trồng được không (true/ false)
         //Bài này tư duy như sau:
         //1, Bài này plant từ đầu đến cuối rs++, if (rs> n) return false,
-        //<> ut of loop : return true.
+        //<> out of loop : return true.
         System.out.println(canPlaceFlowers(arr, 2));
     }
 }
