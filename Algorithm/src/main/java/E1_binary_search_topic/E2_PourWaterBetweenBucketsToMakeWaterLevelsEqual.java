@@ -93,5 +93,9 @@ public class E2_PourWaterBetweenBucketsToMakeWaterLevelsEqual {
 //        int loss = 0;
 //        System.out.println(sumAlls(buckets, 2, loss));
         System.out.println(equalizeWater(buckets, loss));
+        //#Reference:
+        //2154. Keep Multiplying Found Values by Two
+        //162. Find Peak Element
+        //453. Minimum Moves to Equal Array Elements
     }
 }
