@@ -92,6 +92,8 @@ public class E10_WalkingRobotSimulationII {
 //        robot.step(32038);  // It moves two steps East to (2, 0), and faces East.
 
         //Đề bài:
+        //- Cho (width, height) của vùng robot cần đi
+        //- Robot bắt đầu từ (0, 0)
         //- Implement robot theo từng step
         //- return thông tin của robot với các method ( get dirction, get position,...)
         //Bài này tư duy như sau:
@@ -100,7 +102,7 @@ public class E10_WalkingRobotSimulationII {
         //---> Dùng công thức toán sẽ là phương pháp tối ưu hơn.
         //1.2, Dùng 1 variable có 4 giá trị để xác định hướng của robot --> reset lại (0,1,2,3)
         //1.3,
-        //Case đặc biệt với:
+        //+ Case đặc biệt với:
         //Start =(0,0) Hướng east --> Quay n vòng --> Chuyển qua south
         System.out.println(robot.getPos()); // return [1, 2]
         System.out.println(robot.getDir()); // return "West"
