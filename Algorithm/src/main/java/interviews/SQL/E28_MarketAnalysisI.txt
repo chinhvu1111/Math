@@ -1,0 +1,23 @@
+
+** Đề bài
+- Viết sql để tìm mỗi user, ngày tham gia và số lượng orders mà họ đặt vào 2019
+
+** Bài này tư duy như sau:
+1.
+1.1,
+- Tìm số đơn vào 2019 --> count order table là được.
+- Sau đó join sang
+
+with cte1 as(
+Select count(1) as orders_in_2019, buyer_id from Orders o where order_date like '%2019%' group by o.buyer_id
+),
+cte2 as(
+Select u.user_id as buyer_id, u.join_date, if(orders_in_2019 is null,0, orders_in_2019) as orders_in_2019 from users u left join cte1 c on u.user_id=c.buyer_id
+)
+Select * from cte2;
+
+#Reference
+1164. Product Price at a Given Date
+1495. Friendly Movies Streamed Last Month
+1795. Rearrange Products Table
+595. Big Countries

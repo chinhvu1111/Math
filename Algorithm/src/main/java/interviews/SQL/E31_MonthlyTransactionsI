@@ -1,0 +1,35 @@
+
+** Đề bài:
+- Tìm each year, country:
++ Số lượng transactions và tổng amount
++ Số lượng transactions được approved và tổng amount
++ --> tạo ra các column mới thôi.
+
+** Bài này tư duy như sau:
+
+
+with cte1 as(
+Select
+    substring(trans_date, 1,7) as month,
+    country,
+    if(state="approved", amount, 0) as amount_approved,
+    if(state="approved", 1, 0) as count_approved,
+    amount
+from Transactions
+),
+cte2 as(
+Select
+    month,
+    country,
+    count(1) as trans_count,
+    sum(count_approved) as approved_count,
+    sum(amount) as trans_total_amount,
+    sum(amount_approved) as approved_total_amount
+from cte1 group by month, country
+)
+
+Select * from cte2;
+
+#Reference:
+1204. Last Person to Fit in the Bus
+1205. Monthly Transactions II

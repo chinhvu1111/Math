@@ -2,7 +2,7 @@ package mock;
 
 import java.util.Arrays;
 
-public class Test_1_amazone {
+public class Test_4_amazone {
 
     public static int firstUniqChar(String s) {
         int[] chars=new int[26];
