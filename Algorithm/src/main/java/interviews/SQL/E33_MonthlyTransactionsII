@@ -1,0 +1,43 @@
+
+** Đề bài:
+- Bài này tương tư dạng bài transaction E31 + thêm việc join
+
+** Bài này tư duy như sau:
+1.
+1.1,
+- Cần join ra all trước
+- Tính kết quả charge back
+- Sau đó lấy join all union all với table (charge back)
+
+with cte1 as(
+Select count(1) as total_approved, sum(amount) as amount_approved
+from
+    (
+        Select substring(trans_date, 1,7) as month, country,
+        id, state, amount from Transactions
+    ) t
+    where state='approved' group by country, month
+),
+with cte2 as(
+Select
+    substring(trans_date, 1,7) as month, country,
+    id, state, amount
+from Transactions where state='declined'
+),
+with cte3 as(
+Select
+    c2.country, c2.month,
+    count(1) as total_approved, sum(c2.amount) as amount_approved
+from
+cte2 c2 join Chargebacks c
+where c2.id=c.trans_id group by c2.country, c2.month
+),
+with cte4 as(
+Select * from cte3 c3 left join cte2 c2 on
+c3.month=c2.month and c3.country=c2.country where c2.country is not null
+),
+with cte5 as(
+Select * from cte2 c2 left join cte3 c3 on
+c3.month=c2.month and c3.country=c2.country where c3.country is not null
+)
+

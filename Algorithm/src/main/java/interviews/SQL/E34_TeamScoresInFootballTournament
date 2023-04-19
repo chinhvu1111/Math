@@ -1,0 +1,33 @@
+
+
+** Đề bài:
+- Tính all scores cho all team dựa trên Matches table
+- Rule tính điểm dựa trên win(3), hoà(1), lose(0)
+
+** Bài này tư duy như sau:
+1.
+1.1,
+- left join + group by sum thôi.
+- Sẽ if hơi nhiều.
+
+WITH cte1 AS
+  (SELECT t.team_id,
+          t.team_name,
+          sum(if(m.host_team IS NULL , 0 , if(t.team_id=m.host_team, if(m.host_goals>m.guest_goals, 3, if(m.host_goals=m.guest_goals, 1, 0)), if(m.host_goals<m.guest_goals, 3, if(m.host_goals=m.guest_goals, 1, 0))))) AS num_points
+   FROM Teams t
+   LEFT JOIN Matches m ON t.team_id=m.host_team
+   OR t.team_id=m.guest_team
+   GROUP BY t.team_id,
+            t.team_name)
+SELECT team_id,
+       team_name,
+       num_points
+FROM cte1
+ORDER BY num_points DESC,
+         team_id ASC;
+
+#Reference:
+1264. Page Recommendations
+1459. Rectangles Area
+2205. The Number of Users That Are Eligible for Discount
+1321. Restaurant Growth
