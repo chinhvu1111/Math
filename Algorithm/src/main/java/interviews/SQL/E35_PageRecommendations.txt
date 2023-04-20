@@ -10,6 +10,8 @@
 - Tìm all các pages mà friends của user_id=1 like
 - Sau đó exclude những pages trùng đi (not in) là xong.
 
+* Method-1:
+
 with cte1 as(
 Select distinct
 if(user2_id=1, user1_id, user2_id) as friend_id
@@ -23,6 +25,24 @@ Select page_id from cte2 where page_id not in(Select page_id from Likes where us
 )
 
 Select page_id as recommended_page from cte3;
+
+* Tối ưu:
+- Không nên distict trung gian nếu không cần thiết
+------------
+with cte1 as(
+Select
+if(user2_id=1, user1_id, user2_id) as friend_id
+from Friendship where user1_id=1 or user2_id=1
+),
+cte2 as(
+Select page_id from cte1 c1 join Likes l where c1.friend_id=l.user_id
+),
+cte3 as(
+Select page_id from cte2 where page_id not in(Select page_id from Likes where user_id=1)
+)
+
+Select distinct page_id as recommended_page from cte3;
+------------
 
 #Reference:
 1270. All People Report to the Given Manager

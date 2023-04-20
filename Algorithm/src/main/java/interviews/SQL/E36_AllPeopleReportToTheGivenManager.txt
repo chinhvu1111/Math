@@ -1,0 +1,53 @@
+
+** Đề bài:
+- Tìm employee_id của all employees mà (trực tiếp/ không trực tiếp) report công việc cho head của company
+- Mỗi quan hệ giữa những người managers (Indirection) không vượt quá 3 managers vì là công ty nhỏ
+VD: Tức là phân cấp không sâu qua 3 level.
+- head của company là employee với employee_id=1
+
+** Bài này tư duy như sau:
+1.
+1.1,
+- Số lượng level hữu hạn =3
+--> Nên ta hoàn toàn có thể dùng phép join để thử
+
+* Method-1 : Level limitation
+- Ta có thể dùng 3 table để thể hiện 4 relationships.
+- Phép join thứ nhất là giữa:
++ Employees e join Employees e1 on e.manager_id = e1.employee_id --> Để employee ít nhất có 1 parent.
++ Phép join thứ 2 là left join vì nó có thể xảy ra or không xảy ra.
++ Điều kiện: parent phép join 1 ==1 hoặc 1 trong 2 parents của phép join sau=1
+
+Select distinct e.employee_id
+from
+Employees e join Employees e1
+on e.manager_id = e1.employee_id
+left join Employees e2
+on e1.manager_id = e2.employee_id
+where e.employee_id!=1 and (e.manager_id=1 or e1.manager_id=1 or e2.manager_id=1);
+
+* Method-2 : Recursive
+
+WITH RECURSIVE CTE AS (
+SELECT employee_id, 1 AS level
+FROM Employees
+WHERE manager_id=1 AND employee_id!=1
+UNION
+SELECT e.employee_id, level+1
+FROM CTE c JOIN Employees e
+ON c.employee_id=e.manager_id)
+
+SELECT employee_id
+FROM CTE
+WHERE level<=3;
+
+- Trường hợp này ta đi lùi
+VD: a (a!=1), 1 (parent=1 cuối) ==> ta sẽ đi lùi 3 levels để
+tiếp tục union thêm những thằng ở level 2 --> b (b!=1), c (c==a)
+===> Phân level <=3 Để tìm những relation đúng.
+
+#Reference:
+1285. Find the Start and End Number of Continuous Ranges
+610. Triangle Judgement
+1777. Product's Price for Each Store
+2230. The Users That Are Eligible for Discount
