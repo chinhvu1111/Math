@@ -1,0 +1,73 @@
+
+
+** Đề bài:
+- Nói về việc customer visited_on (Date mà customer đến được restaurant)
+- Viết SQL average mà customer paid trong 7 days (current day + 6 days trước đó)
+- round(number, 2)
+
+** Bài này tư duy như sau:
+1.
+1.1,
+- Để tính được 6 ngày trước --> cần row_number() as rn
+- Cần join để >= rn-6.
+- Sau đó tính average.
+
+* Method-1:
+
+with cte1 as(
+Select
+    customer_id, name, visited_on, amount,
+    dense_rank() over(order by visited_on) as rn
+    from Customer
+),
+cte2 as(
+Select
+    c.visited_on,
+    sum(c1.amount) as amount,
+    round(sum(c1.amount)/7, 2) as average_amount
+    from
+    (Select distinct rn, visited_on from cte1) c join cte1 c1
+    on c.rn>6 and c1.rn >= c.rn-6 and c1.rn <= c.rn
+    group by c.visited_on
+    order by c.visited_on
+),
+cte3 as(
+Select
+    c.visited_on, c1.visited_on as visited_on1, c1.amount, c.rn
+    from
+    (Select distinct rn, visited_on from cte1) c join cte1 c1
+    on c.rn>6 and c1.rn >= c.rn-6 and c1.rn <= c.rn
+    where c.visited_on='2019-01-10'
+    order by c.visited_on, c1.visited_on
+)
+
+Select * from cte2;
+
+Select * from cte2;
+// 130 + 110 + 140 + 150 + 80 + 110 + 130 + 150
+
+* Method-2:
+- Cách làm này là đang join với nhau/ a,b và filtẻ những cặp ( 0<= diff(date1, date2) <= 6)
+- count(c1.visited_on) = 7 --> Tức là ít nhất là có 7 ngày.
+
+with cte1 as(
+Select visited_on, sum(amount) as amount from customer group by visited_on
+),
+cte2 as(
+Select
+    c1.visited_on,
+    sum(c2.amount) as amount,
+    round(sum(c2.amount)/7, 2) as average_amount
+from cte1 c1, cte1 c2 where datediff(c1.visited_on, c2.visited_on) between 0 and 6
+group by c1.visited_on
+having count(c1.visited_on)=7
+order by c1.visited_on
+)
+
+Select * from cte2;
+
+#Reference:
+1341. Movie Rating
+2020. Number of Accounts That Did Not Stream
+1978. Employees Whose Manager Left the Company
+1341. Movie Rating

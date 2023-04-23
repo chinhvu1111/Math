@@ -48,5 +48,10 @@ public class Test_8_meta {
 
     public static void main(String[] args) {
         //https://leetcode.com/problems/intersection-of-two-arrays-ii/editorial/
+        //#Reference:
+        //351. Android Unlock Patterns
+        //349. Intersection of Two Arrays
+        //1002. Find Common Characters
+        //2215. Find the Difference of Two Arrays
     }
 }

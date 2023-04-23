@@ -1,0 +1,48 @@
+
+** Đề bài:
+- Tìm name của all activities không là max/ min số participants.
+
+** Bài này tư duy như sau:
+1.
+1.1,
+- Ta sẽ tìm min max ==> Sau đó where giá trị = (select max(x) from cte1) là được
+- Cần cover cả các cases mà activity không được tham gia bởi ai
+
+* Method-1
+
+with cte1 as(
+Select
+    a.name, sum(if(f.name is null, 0, 1)) as sum
+from Activities a left join Friends f
+on a.name=f.activity group by a.name
+),
+cte2 as(
+select * from cte1 c1
+where sum <> (Select sum from cte1 order by sum limit 1) and sum <> (Select sum from cte1 order by sum desc limit 1)
+)
+
+Select name as activity from cte2;
+
+* Tối ưu:
+- Ta có thể tìm min, max cùng trên 1 process.
+- Ta có thể tính chúng trên cùng 1 SQL command : MAX(column) over(), MIN(column) over(), count(1)
+
+with cte1 as(
+Select
+    activity,
+    count(1) as count, MAX(count(1)) over() as max_act,
+    MIN(count(1)) over() as min_act
+    from Friends
+group by activity
+),
+cte2 as(
+Select activity from cte1 c1 where count not in(max_act, min_act)
+)
+
+Select activity from cte2;
+
+#Reference:
+1364. Number of Trusted Contacts of a Customer
+1693. Daily Leads and Partners
+1205. Monthly Transactions II
+1939. Users That Actively Request Confirmation Messages

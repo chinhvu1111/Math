@@ -1,0 +1,39 @@
+
+
+** Đề bài:
+- Tìm user người rated số lượng film lớn nhất.
+    + Nếu trong trường hợp tie --> sắp xếp theo user name.
+- Tìm name movie với highest average rating in febuary 2020.
+    + Nếu trong trường hợp tie --> sắp xếp theo movie name.
+
+** Bài này tư duy như sau:
+1.
+1.1,
+- User : Group by user_id, username + order by count(1), name
+- Movie : group by movie name + order by sum(rate), name movie
+
+with cte1 as(
+Select u.user_id, u.name, count(1) as num_rate from Users u join MovieRating mr on u.user_id=mr.user_id group by u.user_id, u.name
+),
+cte2 as(
+Select name as results from cte1 c1 order by num_rate desc, name asc limit 1
+),
+cte3 as(
+Select
+    m.movie_id, m.title, avg(rating) as avg_rating
+from Movies m join MovieRating mr on m.movie_id=mr.movie_id where created_at like '2020-02%'
+group by m.movie_id, m.title
+),
+cte4 as(
+Select title as results from cte3 c3 order by c3.avg_rating desc, title limit 1
+)
+
+Select * from cte2
+UNION ALL
+select * from cte4;
+
+#Reference:
+1355. Activity Participants
+2292. Products With Three or More Orders in Two Consecutive Years
+2377. Sort the Olympic Table
+1555. Bank Account Summary

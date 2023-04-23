@@ -1,0 +1,63 @@
+
+** Đề bài
+- Tìm thông tin mỗi invoice_id
+    + Name của customer liên quan
+    + Price của invoice
+    + Số lượng contacts liên quan đến customer
+    + Số lượng contacts liên quan đến customer + chúng là customer đến shop (Mail của họ tồn tại trong customer table)
+    Email của people liên quan tồn tại trong Customer table --> Trust
+    VD:
+    Nếu contacts liên quan là 2 --> contacts_cnt=2, 1 trong số đó có email tồn tại trong Customers table => trusted_contacts_cnt=1
+
+** Bài này tư duy như sau
+1.
+1.1, Idea
+- Tìm danh sách all user_id trong contacts mà được trusted : Join sang customers table
++ group by user_id --> Tìm được số trusted của mỗi user_id
+- Invoices left join contacts --> group count.
+
+* Method-1
+
+with cte1 as(
+Select user_id, count(1) as trusted_contacts_cnt
+from Contacts ct join Customers cu on ct.contact_email=cu.email group by ct.user_id
+),
+cte2 as(
+Select user_id, count(1) as contacts_cnt  from Contacts group by user_id
+),
+cte3 as(
+Select
+    i.invoice_id,
+    cu.customer_name,
+    i.price,
+    if(c2.contacts_cnt is null, 0 , c2.contacts_cnt) as contacts_cnt,
+    if(c1.trusted_contacts_cnt is null, 0, c1.trusted_contacts_cnt) as trusted_contacts_cnt
+from
+Invoices i
+join Customers cu on i.user_id=cu.customer_id
+left join cte2 c2 on i.user_id=c2.user_id
+left join cte1 c1 on i.user_id=c1.user_id
+)
+Select * from cte3 order by invoice_id;
+
+* Method-2:
+- Ta sẽ pass phép in vào trong predicate để tính trusted_contacts_cnt
+
+Select invoice_id, customer_name, price,
+    ifnull(contacts_cnt, 0) as contacts_cnt,
+    ifnull(trusted_contacts_cnt, 0) as trusted_contacts_cnt
+from invoices left join customers on user_id = customer_id
+left join
+(
+    Select user_id, count(user_id) contacts_cnt,
+    count(if(contact_name in (Select customer_name from customers),1, null)) trusted_contacts_cnt
+    from contacts group by user_id
+) a on invoices.user_id = a.user_id
+order by invoice_id;
+
+
+#Reference:
+1393. Capital Gain/Loss
+1484. Group Sold Products By The Date
+1939. Users That Actively Request Confirmation Messages
+1527. Patients With a Condition

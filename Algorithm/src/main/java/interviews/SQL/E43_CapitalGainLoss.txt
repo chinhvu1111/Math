@@ -1,0 +1,31 @@
+
+** Đề bài
+- Viết SQL để report Capital gain/losxs của mỗi stock
+    + Là tổng gain or loss sau khi buying và selling 1 stock nhiều lần.
+
+** Bài này tư duy như sau
+1.
+1.1, Idea
+- Đơn thuần ta đổi dấu:
+    + Buy : -1000
+    + Sell : 9000
+- Sau đó group by stock_name sum(all)
+
+With cte1 as(
+Select
+    stock_name,
+    if(operation='Buy', price*-1, price) as cal_price
+from Stocks s
+),
+cte2 as(
+Select stock_name, sum(cal_price) as capital_gain_loss
+from cte1 group by stock_name
+)
+
+Select * from cte2;
+
+#Reference:
+1398. Customers Who Bought Products A and B but Not C
+1205. Monthly Transactions II
+1767. Find the Subtasks That Did Not Execute
+1435. Create a Session Bar Chart

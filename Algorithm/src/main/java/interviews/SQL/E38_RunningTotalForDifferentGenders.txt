@@ -1,0 +1,32 @@
+
+
+** Đề bài
+- Tính tổng score của mỗi gender của mỗi day
+
+** Bài này tư duy như sau:
+1.
+1.1,
+
+* Method-1:
+- Bài này ta chỉ cần group by sum nhưng --> Cần sum từ những ngày cũ hơn nữa.
+- Cách này cần join
+
+with cte1 as(
+Select s.gender, s.day, sum(s1.score_points) as total from Scores s join Scores s1 on
+s.day>=s1.day and s.gender=s1.gender
+group by s.gender, s.day
+)
+
+Select * from cte1 order by gender, day;
+
+* Method-2:
+- Có thể dùng sum(score) + partition by (gender)
+- Có thể sum lần lượt vào.
+select gender,day,sum(score_points)over(partition by gender order by day) as total
+from scores
+
+#Reference:
+1321. Restaurant Growth
+1445. Apples & Oranges
+1693. Daily Leads and Partners
+618. Students Report By Geography
