@@ -1,0 +1,37 @@
+
+
+** Đề bài:
+-
+
+** Tư duy
+1.
+1.1,
+- Cần tìm all danh sách người mua C
+- Sau đó tìm customer mà id không có trong (danh sách người mua C)
+==> Nếu làm theo cách này thì mình cần tạo cả 2 view A và B nữa --> slow
+- Ta sẽ group by theo user_id và tính tổng số sản phẩm A, B, C mà mỗi customer_id mua + filter là được.
+* Method-1:
+
+with cte1 as(
+Select
+    sum(if(product_name='A', 1,0)) as num_a,
+    sum(if(product_name='B', 1,0)) as num_b,
+    sum(if(product_name='C', 1,0)) as num_c,
+    o.customer_id,
+    customer_name
+    from Orders o join Customers cu on o.customer_id=cu.customer_id group by customer_id, customer_name
+),
+cte2 as(
+Select
+    customer_id,
+    customer_name
+from cte1 where num_c=0 and num_a>0 and num_b>0
+)
+
+Select * from cte2;
+
+#Reference:
+1440. Evaluate Boolean Expression
+1211. Queries Quality and Percentage
+2329. Product Sales Analysis V
+1511. Customer Order Frequency

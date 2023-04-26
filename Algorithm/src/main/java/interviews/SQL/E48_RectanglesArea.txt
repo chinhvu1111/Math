@@ -1,0 +1,40 @@
+
+** Đề bài:
+- Viết sql để liệt kê tất cả các rectangles có area>0 được tạo bằng 2 points sắp xếp theo area giảm dần.
+
+** Tư duy
+1.
+1.1,
+
+* Method-1:
+
+- Ta cần nối 2 point --> bằng cách join chính nó.
+- Sau đó tính area là được --> Lọc ra mấy cái =0
+- Để tránh xảy ra case:
+a | b
+b | a --> Same area ==> Ta cần điều kiện p1.id < p2.id
+
+with cte1 as(
+Select p1.id as P1, p2.id as P2, abs(p1.x_value-p2.x_value)*abs(p1.y_value-p2.y_value) as AREA
+from Points p1, Points p2
+where p1.x_value!=p2.x_value and p1.y_value != p2.y_value and p1.id <p2.id
+)
+
+Select * from cte1 order by area desc, P1, P2;
+
+* Method-2:
+- Tương tụ nhưng dùng cross join.
+SELECT DISTINCT
+   CASE WHEN P1.id<P2.id THEN P1.id ELSE P2.id END as P1,
+   CASE WHEN P1.id<P2.id THEN P2.id ELSE P1.id END as P2,
+   ABS(P1.x_value-P2.x_value) * ABS(P1.y_value-P2.y_value) AS AREA
+FROM Points P1
+CROSS JOIN Points P2
+WHERE P1.x_value != P2.x_value AND P1.y_value != P2.y_value
+ORDER BY AREA DESC, p1 ASC, P2 ASC
+
+#Reference:
+1468. Calculate Salaries
+610. Triangle Judgement
+569. Median Employee Salary
+1336. Number of Transactions per Visit

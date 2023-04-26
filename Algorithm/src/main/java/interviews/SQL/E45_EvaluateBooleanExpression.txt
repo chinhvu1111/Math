@@ -1,0 +1,72 @@
+
+
+** Đề bài:
+- Tính giá trị của expression dựa trên values và operators.
+Input:
+Variables table:
++------+-------+
+| name | value |
++------+-------+
+| x    | 66    |
+| y    | 77    |
++------+-------+
+Expressions table:
++--------------+----------+---------------+
+| left_operand | operator | right_operand |
++--------------+----------+---------------+
+| x            | >        | y             |
+| x            | <        | y             |
+| x            | =        | y             |
+| y            | >        | x             |
+| y            | <        | x             |
+| x            | =        | x             |
++--------------+----------+---------------+
+Output:
++--------------+----------+---------------+-------+
+| left_operand | operator | right_operand | value |
++--------------+----------+---------------+-------+
+| x            | >        | y             | false |
+| x            | <        | y             | true  |
+| x            | =        | y             | false |
+| y            | >        | x             | true  |
+| y            | <        | x             | false |
+| x            | =        | x             | true  |
++--------------+----------+---------------+-------+
+
+** Tư duy
+1.
+1.1,
+- Bài này đơn giản chỉ là left join để lấy value của x, y
+- Dựa trên operator --> if return result
+
+* Case when trong MYSQL:
+case
+  when e.operator=">" then if(v1.value>v2.value, 'true', 'false')
+  when e.operator="<" then if(v1.value<v2.value, 'true', 'false')
+  else if(v1.value=v2.value, 'true', 'false')
+End as value
+- Else không cần compare
+- Start bởi CASE và end bởi END
+- 1=1 : return 1/0 <=> true/ false.
+
+with cte1 as(
+Select
+e.*,
+case
+  when e.operator=">" then if(v1.value>v2.value, 'true', 'false')
+  when e.operator="<" then if(v1.value<v2.value, 'true', 'false')
+  else if(v1.value=v2.value, 'true', 'false')
+End as value
+from
+Expressions e
+left join Variables v1 on e.left_operand=v1.name
+left join Variables v2 on e.right_operand=v2.name
+)
+
+Select * from cte1;
+
+#Reference:
+1445. Apples & Oranges
+1777. Product's Price for Each Store
+1454. Active Users
+1831. Maximum Transaction Each Day

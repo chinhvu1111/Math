@@ -1,0 +1,43 @@
+
+** Đề bài:
+- Tìm salary của employee sau khi apply tax (thuế).
+- round salary --> int
+Rate tax được tính như sau chọn max salary của employee:
+- 0% If the max salary of any employee in the company is less than $1000.
+- 24% If the max salary of any employee in the company is in the range [1000, 10000] inclusive.
+- 49% If the max salary of any employee in the company is greater than $10000.
+
+** Tư duy
+1.
+1.1,
+- Dùng when --> tìm rate tax của mỗi công ty chỉ áp dụng với max salary của employees thuộc cty đó.
+- Sau khi có rate --> Join lại tính salary của từng employees
+#Function:
+- round() : Để làm tròn đến số gần nhất.
+
+with cte1 as(
+Select
+    company_id,
+    case
+        when max(salary) <1000 then 1
+        when 1000< max(salary) and max(salary) <10000 then 0.76
+        else 0.51
+    end as rate_tax
+    from Salaries group by company_id
+),
+cte2 as(
+Select
+s.company_id,
+s.employee_id,
+s.employee_name,
+round(s.salary*c1.rate_tax) as salary
+from Salaries s left join cte1 c1 on c1.company_id=s.company_id
+)
+
+Select * from cte2;
+
+#Reference:
+1501. Countries You Can Safely Invest In
+1225. Report Contiguous Dates
+601. Human Traffic of Stadium
+2026. Low-Quality Problems

@@ -1,0 +1,24 @@
+
+
+** Đề bài:
+- Viết sql đề tìm sự khác biệt giữa apples và oranges
+
+** Tư duy
+1.
+1.1,
+- Ta sẽ group by mỗi day và sum --> Sau đó lấy sum trừ đi là được.
+
+
+with cte1 as(
+Select
+    sale_date,
+    sum(if(fruit='apples', sold_num, 0)) - sum(if(fruit='oranges', sold_num, 0)) as diff from Sales group by sale_date
+)
+
+Select * from cte1;
+
+#Reference:
+1454. Active Users
+1623. All Valid Triplets That Can Represent a Country
+1934. Confirmation Rate
+2041. Accepted Candidates From the Interviews

@@ -1,0 +1,56 @@
+
+
+** Đề bài:
+- Active users là những người logged into vào account của họ 5 hoặc nhiều hơn các ngày liên tiếp
+
+** Tư duy
+1.
+1.1,
+- Tư tưởng là ta cần cố định 1 đầu là login_date --> kết thúc là login_date- 5 days
+- Sau đó join Logins với điều kiện ngày nằm cùng trong khoảng đó + cùng id
+- group by theo id và count(1) =5 ==> lấy id đó.
+- Cần group theo id và login_date --> Vì cần map 1 login_date ra 5 login date trong khoảng having count(1)=5
++ phải = 5 Không được > hơn
+
+Logins table:
++----+------------+
+| id | login_date |
++----+------------+
+| 7  | 2020-05-30 |
+| 1  | 2020-05-30 |
+| 7  | 2020-05-31 |
+| 7  | 2020-06-01 |
+| 7  | 2020-06-02 |
+| 7  | 2020-06-02 |
+| 7  | 2020-06-03 |
+| 1  | 2020-06-07 |
+| 7  | 2020-06-10 |
++----+------------+
+
+with cte1 as(
+Select distinct id, login_date from Logins
+),
+cte2 as(
+Select l.id
+# , l.login_date, l1.login_date as login_date1, DATE_ADD(l.login_date, interval -5 day) as a
+# l.login_date, l1.id as id1
+from cte1 l join cte1 l1 on
+l1.login_date >= DATE_ADD(l.login_date, interval -4 day)
+and l1.login_date <= l.login_date
+and l.id=l1.id
+group by l.id, l.login_date having count(1)=5
+),
+cte3 as(
+  Select distinct id from cte2
+),
+cte4 as(
+Select c3.id, a.name from cte3 c3 join Accounts a on c3.id=a.id
+)
+
+Select * from cte4 order by id;
+
+#Reference:
+1459. Rectangles Area
+1479. Sales by Day of the Week
+181. Employees Earning More Than Their Managers
+1789. Primary Department for Each Employee
