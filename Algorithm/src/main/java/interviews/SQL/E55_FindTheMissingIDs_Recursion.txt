@@ -1,0 +1,52 @@
+
+
+** Đề bài:
+- Tìm missing customer id
+- Missing IDs là những cái mà không có trong Customer table nhưng mà nó trong khoảng từ 1 --> max(customer_id)
+- customer_id không >100
+VD:
+1,2,5,6
+--> Missing chính là 3,4
+
+** Tư duy
+1.
+1.1,
+- Tư tưởng là tạo thêm 1 column dạng id tăng dần ==> Sai vì ta phải tạo dựa trên max
+- Lấy column đó đi join lại chính table hiện tại ==> Tư duy trên sai.
+- Bài này cần sử dụng recursion:
+- Ta cần tăng dần các giá trị từ 0 --> sau đó ta select cte ta sẽ có value <= max là được
+VD:
+1   |   1
+2   |   2
+5   |   3
+6   |   4
+
+=========================
+With recursive cte as(
+Select 1 as value
+UNION
+Select value+1 from cte
+)
+Select * from cte where value <=3
+=========================
+--> Làm kiểu cte recursion này bắt buộc phải có where để out recursion
+==> Nếu ta select theo độ sâu (depth) của recursion : Nó cũng là 1 kiểu level
+Or
+là where parent, children cho đến khi chúng == null + select level sau đó : Cũng là 1 kiểu limit recursion.
+
+* Method-1:
+With recursive cte as(
+Select 1 as value
+UNION
+Select value+1 from cte where value+1 <= (Select max(customer_id) from Customers)
+),
+cte1 as(
+  Select c.value as ids from cte c left join Customers cu on cu.customer_id=c.value where cu.customer_id is null
+)
+
+Select * from cte1 order by ids;
+
+#Reference:
+1699. Number of Calls Between Two Persons
+1225. Report Contiguous Dates
+1336. Number of Transactions per Visit
