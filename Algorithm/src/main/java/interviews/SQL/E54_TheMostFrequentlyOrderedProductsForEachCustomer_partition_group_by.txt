@@ -1,0 +1,70 @@
+
+** Đề bài:
+- Tìm các product_id được đặt (ordered) (thường xuyên nhất) của mỗi customer
+
+** Tư duy
+1.
+1.1,
+- Chỉ cần group theo customer_id, product_id + sum bảng orders để tìm ra số đơn đặt hàng mỗi product
+- Sau đó cần partition by mỗi customer + rank để chọn ra các product_id được đặt thường xuyên nhất.
+--> Sau đó chỉ xét rn=1
+
+* Method-1:
+
+with cte1 as(
+Select count(1) as num_product, customer_id, product_id from
+Orders o group by customer_id, product_id
+),
+cte2 as(
+Select * from(
+Select
+    customer_id,
+    product_id,
+    dense_rank() over(partition by customer_id order by num_product desc) as rn
+from cte1
+) a where a.rn=1
+),
+cte3 as(
+Select
+    c2.customer_id,
+    c2.product_id,
+    p.product_name
+from
+cte2 c2 join Products p on c2.product_id=p.product_id
+)
+
+Select * from cte3;
+
+** Tối ưu:
+- Ta có thể kết hợp giữa
+partition by + order by count(1) và group by a,b để:
++ Order theo count các phần tử b tương ứng với mỗi phần tử a
+
+VD:
+select customer_id,
+b.product_id,
+product_name,
+rank() over (partition by customer_id order by count(*) desc) as rnk
+from orders a
+join products b using (product_id)
+group by customer_id, product_id, product_name;
+
+select
+    customer_id,
+    product_id,
+    product_name
+from
+(select customer_id,
+b.product_id,
+product_name,
+rank() over (partition by customer_id order by count(*) desc) as rnk
+from orders a
+join products b using (product_id)
+group by customer_id, product_id, product_name) x
+where rnk = 1
+
+#Reference:
+1613. Find the Missing IDs
+1127. User Purchase Platform
+183. Customers Who Never Order
+2010. The Number of Seniors and Juniors to Join the Company II

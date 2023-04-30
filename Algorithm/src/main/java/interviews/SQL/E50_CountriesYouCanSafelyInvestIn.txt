@@ -1,0 +1,54 @@
+
+** Đề bài:
+- Công ty viễn thông muốn đầu tư các countries mới và nó chỉ đầu tư những countries khi thời lượng cuộc gọi trung bình > average thời gian gọi của tất cả.
+
+** Tư duy
+1.
+1.1,
+- Đầu tiên phải tính được mức average của all.
+- Sau đó tính average của từng countries + filter > average all.
++ Có thể có các cuộc gọi quốc tế nên --> Ta cần phải dùng callee_id
+
+* Method-1:
+
+# Trích country code từ sdt:
+
+with cte1 as(
+Select id, substring(phone_number, 1, 3) as country_code from Person
+),
+cte2 as(
+Select c1.country_code, co.name, c.duration from
+cte1 c1 join Calls c join Country co
+on c1.country_code=co.country_code and (c1.id=c.caller_id or c1.id=c.callee_id)
+),
+cte3 as(
+Select avg(duration) as avg_duration from cte2
+),
+cte4 as(
+Select country_code, name from cte2 group by country_code, name
+having avg(duration) > (select avg(duration) from calls)
+)
+
+Select name as country from cte4;
+
+* Method-2:
+
+SELECT
+ co.name AS country
+FROM
+ person p
+ JOIN
+     country co
+     ON SUBSTRING(phone_number,1,3) = country_code
+ JOIN
+     calls c
+     ON p.id IN (c.caller_id, c.callee_id)
+GROUP BY
+ co.name
+HAVING
+ AVG(duration) > (SELECT AVG(duration) FROM calls)
+
+
+#Reference:
+1532. The Most Recent Three Orders
+615. Average Salary: Departments VS Company

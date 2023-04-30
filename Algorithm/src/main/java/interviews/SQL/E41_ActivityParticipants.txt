@@ -30,7 +30,8 @@ Select name as activity from cte2;
 with cte1 as(
 Select
     activity,
-    count(1) as count, MAX(count(1)) over() as max_act,
+    count(1) as count,
+    MAX(count(1)) over() as max_act,
     MIN(count(1)) over() as min_act
     from Friends
 group by activity

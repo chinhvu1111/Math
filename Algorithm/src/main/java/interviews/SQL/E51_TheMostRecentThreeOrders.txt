@@ -1,0 +1,28 @@
+
+** Đề bài:
+- Trả lại 3 đơn đặt hàng gần đây nhất của mỗi user
+
+** Tư duy
+1.
+1.1, Tư duy
+- Ta sẽ row_number theo thời gian --> desc + limit 3
+
+with cte1 as(
+Select c.name, o.* from
+Customers c join Orders o on c.customer_id=o.customer_id
+),
+cte2 as(
+Select
+name, customer_id, order_id, order_date,
+row_number() over(partition by customer_id order by order_date desc) as rn
+from cte1
+),
+cte3 as(
+Select
+    name as customer_name, customer_id, order_id, order_date
+from cte2 where rn<=3
+)
+Select * from cte3 order by customer_name, customer_id, order_date desc;
+
+#Rerference:
+1549. The Most Recent Orders for Each Product

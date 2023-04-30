@@ -1,0 +1,42 @@
+
+
+** Đề bài:
+- Write an SQL query to find the most recent order(s) of each product.
+Return the result table ordered by product_name in ascending order and
+in case of a tie by the product_id in ascending order.
+If there still a tie, order them by order_id in ascending order.
+
+- Tìm sản phẩm mới nhất của mỗi product
+
+** Tư duy
+1.
+1.1,
+- Ta dùng orders table để row_number() partition theo product_id
+
+With cte1 as(
+Select * from
+(
+Select
+    order_id,
+    customer_id,
+    order_date,
+    product_id,
+    dense_rank() over(partition by product_id order by order_date desc) as rn
+from Orders o) a
+where a.rn=1
+),
+cte2 as(
+Select
+    p.product_name,
+    p.product_id,
+    c1.order_id,
+    c1.order_date
+from cte1 c1 join Products p
+on c1.product_id=p.product_id
+)
+
+Select * from cte2 order by product_name, product_id, order_id;
+
+#Reference:
+1555. Bank Account Summary
+1596. The Most Frequently Ordered Products for Each Customer

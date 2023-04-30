@@ -1,0 +1,73 @@
+
+** Đề bài:
+- Kiểm tra số dư hiện tại của từng user
+- credit ban đầu ==> Tiền có ban đầu
+- Trạng thái cuối là trạng thái sau khi thanh toán
+- Return trạng thái credit đang vượt qua limit hay không
++ <0 : Yes
++ >=0 : No
+
+** Tư duy
+1.
+1.1,
+- Đầu tiên ta sẽ tính số dư dựa trên.
++ PayBy : trừ tiền
++ PayTo : Cộng tiền
++ Ta sẽ group payBy và PayTo + tính tổng amount (từng cases) --> Sau đó trừ lẫn nhau là xong
+- Sau đó join qua Users table để lấy thông tin credit.
+
+* Method-1:
+
+with cte1 as(
+Select sum(amount) as money, paid_by as user_id
+from Transactions t group by paid_by
+),
+cte2 as(
+Select sum(amount) as money, paid_to as user_id
+from Transactions t group by paid_to
+),
+cte3 as(
+Select u.user_id, u.user_name, (credit - if(c1.money is null, 0, c1.money) + if(c2.money is null, 0, c2.money) ) as credit
+from Users u left join cte1 c1
+on u.user_id=c1.user_id
+left join cte2 c2
+on u.user_id=c2.user_id
+),
+cte4 as(
+Select user_id, user_name, credit, if(credit<0, 'Yes', 'No') as credit_limit_breached from cte3
+)
+
+Select * from cte4;
+
+* Method-2:
+- Với cách này thì ta sẽ gộp row --> Duplicate lên với
++ pay_by as user_id : amount<0
++ pay_to as user_id : amount>0
+--> Lúc đó group by 1 lượt thì sẽ ok ---> slow hơn so với group by lần lượt ==> Không chắc.
+
+with cte as (
+select paid_by as user_id, -amount as amount from transactions
+union all
+select paid_to as user_id, amount as amount from transactions),
+
+cte2 as (
+select user_id, sum(amount) as total from cte
+group by user_id
+union
+select user_id,  0 as total from users
+where user_id not in (select user_id from cte))
+
+select u.user_id, user_name,
+sum(credit+total) as credit,
+(case when sum(credit+total) >= 0 then 'No'
+when sum(credit+total) < 0 then 'Yes' end) as credit_limit_breached
+from users u left join cte2 c
+on u.user_id = c.user_id
+group by u.user_id
+
+#Reference:
+1596. The Most Frequently Ordered Products for Each Customer
+2356. Number of Unique Subjects Taught by Each Teacher
+1757. Recyclable and Low Fat Products
+1141. User Activity for the Past 30 Days I
+
