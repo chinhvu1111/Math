@@ -43,6 +43,7 @@ Select
 from cte4 group by user_id order by user_id
 
 * Method-2:
+
 - The LAG() function is used to get value from row that precedes the current row (Lấy row ngay đằng trước row hiện tại).
 - The LEAD() function is used to get value from row that succeeds the current row (Lấy row ngày sau row hiện tại).
 Ex: Ta có thể truyền column để lấy value của column trên row (trước/sau) đó.
