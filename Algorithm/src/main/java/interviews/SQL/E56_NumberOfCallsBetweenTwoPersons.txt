@@ -1,0 +1,89 @@
+
+** Đề bài:
+- Viết query để để report số lượng calls và tổng duration giữa 2 people (person1, person2) khác nhau
+- person1 < person2
+
+** Tư duy
+1.
+1.1,
+
+* Method-1:
+
+- Filter Calles để lấy những row (from_id<to_id)
+- Để xét 2 chiều ta Filter Calles để lấy những row (from_id>to_id)
+- Sau đó tìm cách left join c1 với c2 --> Để lấy các cases của c1 + cả việc kết hợp c1 với c2
+- Tuy nhiên sẽ vẫn còn các cases không có c1 mà có c2 --> Ta cần join lại c2 to c1 : Lấy ra các case chỉ xuất hiện ở c2 mà không
+ở c1
+- Sau đó sum/count lại
+
+with cte1 as(
+Select
+    from_id, to_id,
+    sum(duration) as duration,
+    count(1) as num_call
+from Calls where from_id<to_id group by from_id, to_id
+),
+cte2 as(
+Select
+    from_id, to_id,
+    sum(duration) as duration,
+    count(1) as num_call
+from Calls where from_id>to_id group by from_id, to_id
+),
+cte3 as(
+Select
+    c1.from_id as person1,
+    c1.to_id as person2,
+    (c1.num_call+ ifnull(c2.num_call, 0)) as call_count,
+    (c1.duration+ ifnull(c2.duration,0)) as total_duration
+from
+cte1 c1 left join cte2 c2 on c1.from_id=c2.to_id and c1.to_id=c2.from_id
+),
+cte4 as(
+Select
+    c2.to_id as person1,
+    c2.from_id as person2,
+    c2.num_call as call_count,
+    c2.duration as total_duration
+from
+cte2 c2 left join cte1 c1 on c1.from_id=c2.to_id and c1.to_id=c2.from_id where c1.from_id is null
+),
+cte5 as(
+Select * from cte3
+UNION ALL
+Select * from cte4
+)
+Select * from cte5;
+
+* Method-2:
+- Cách này sẽ thông minh hơn:
+VD:
+1   |   2   | 200
+2   |   1   | 300
+--> Để có thể thành
+1   |   2   | 200
+1   |   2   | 300 ==> Sau đó group by + count, sum là xong
+==> Thì ta cần biến đổi các row (from_id> to_id) ==> Đảo lại là được + union lại.
+- Tuy nhiên ở đây ta có 1 cách dễ hơn là
++ LEAST(from_id, to_id) as person1
++ GREATEST(from_id, to_id) as person2
+
+With cte1 as(
+Select
+least(from_id, to_id) as person1,
+greatest(from_id, to_id) as person2,
+duration
+from Calls
+)
+select
+person1,
+person2,
+count(1) as call_count,
+sum(duration) as total_duration
+from cte1 group by person1, person2;
+
+#Reference:
+1709. Biggest Window Between Visits
+2026. Low-Quality Problems
+196. Delete Duplicate Emails
+1543. Fix Product Name Format

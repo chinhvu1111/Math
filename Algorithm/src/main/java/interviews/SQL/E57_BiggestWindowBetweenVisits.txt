@@ -1,0 +1,71 @@
+
+** Đề bài:
+- Tìm khoảng window lớn nhất giữa 2 lần visit của từng user_id.
+- Nếu đang xét last day --> Sẽ tính đến (2021-1-1) ==> Khoảng ngày không visit cho đến hiện tại
+
+** Tư duy
+1.
+1.1,
+- Đầu tiên ta sẽ partitiob by user_id và order by visit_date
+- Sau đó sẽ dùng phép self join để join (rn với rn+1) + cùng user_id
++ Ta join + tính range days giữa 2 visit_dates
++ Với rn=max ==> Vì dùng max ==> Ta sẽ order by visit_date desc (rn=1) ==> chuyển sang (rn join rn-1)
++ Với các case rn=1 : Ta sẽ tách riêng ra và tính window theo ngày hiện tại (2021-1-1)
+
+with cte1 as(
+Select
+user_id,
+visit_date,
+row_number() over(partition by user_id order by visit_date desc) as rn
+from UserVisits
+),
+cte2 as(
+Select
+    user_id,
+    datediff('2021-1-1', visit_date) as biggest_window
+    from cte1 where rn=1
+),
+cte3 as(
+Select
+    c1.user_id,
+    datediff(c2.visit_date, c1.visit_date) as biggest_window
+from cte1 c1 join cte1 c2 on c1.user_id=c2.user_id and c1.rn-1=c2.rn
+),
+cte4 as(
+Select * from cte2
+UNION ALL
+Select * from cte3
+)
+
+Select
+    user_id,
+    max(biggest_window) as biggest_window
+from cte4 group by user_id order by user_id
+
+* Method-2:
+- The LAG() function is used to get value from row that precedes the current row (Lấy row ngay đằng trước row hiện tại).
+- The LEAD() function is used to get value from row that succeeds the current row (Lấy row ngày sau row hiện tại).
+Ex: Ta có thể truyền column để lấy value của column trên row (trước/sau) đó.
+- N : Truyền để chỉ row thứ Nth trước đó
+- Ta có thể truyền thêm giá trị default nếu đằng (trước/sau) nó không có row nào
+* Thường dùng kết hợp với order by/ over (partition by + order by) : Để lấy value của column của row (trước/sau) đó
+
+# Write your MySQL query statement below
+
+with cte1 as(
+    Select
+        user_id,
+        visit_date,
+        lead(visit_date, 1, '2021-1-1') over (partition by user_id order by visit_date) as visit_date1 from UserVisits
+),
+cte2 as(
+    Select
+        user_id,
+        datediff(visit_date1, visit_date) as biggest_window
+    from cte1
+)
+
+Select
+    user_id,
+    max(biggest_window) as biggest_window
+from cte2 group by user_id order by user_id;
