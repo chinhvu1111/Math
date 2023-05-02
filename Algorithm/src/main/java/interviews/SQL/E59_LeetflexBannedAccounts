@@ -1,0 +1,52 @@
+
+** Đề bài:
+- Tìm những account_id cho những accounts nên banned bởi Leetflex.
+- Tài khoản bị banned nếu nó được login vào 1 thời điểm nào đó bằng 2 ips
++ Tức là (login, logout) sẽ giao nhau cùng active vào 1 thời điểm nào đó.
+** Tư duy
+1.
+1.1, Idea
+- Ta dùng phép self join + group by (account_id, ip_address) + count + filter những count >=2
+---> Sửa lại filter count>=1 (Vì combine trong cùng 1 row đã có 2 rows nối nhau rồi)
+- distinct account_id sẽ là result
++ Tuy nhiên nếu làm cách này thì sẽ bị join thừa thãi.
+- Để (login, logout) và (login1, logout1) giao nhau:
++ login, login1, logout, logout1
++ login, login1, logout1, logout
+==> ta thấy rằng để giao (login <=login1 <=logout)
+--> Ở đây ta sẽ chỉ xét 1 case vì kiểu gì cũng có cases lặp lại (login1 sẽ giống login)
+
+* Method-1:
+
+with cte1 as(
+Select
+l.account_id,
+l.ip_address
+from
+LogInfo l join LogInfo l1 on
+l.account_id=l1.account_id and (l.login <= l1.login and l.logout >= l1.login) and l.ip_address <> l1.ip_address
+),
+cte2 as(
+Select distinct c1.account_id
+from cte1 c1
+group by c1.account_id, c1.ip_address having count(1)>=1
+)
+
+Select * from cte2;
+
+* Tối ưu lại:
+- Count>=1 : Thì không cần count ==> Where có exists + distinct là được.
+
+select
+distinct a.account_id
+from LogInfo a, LogInfo b
+where a.login between (b.login) and (b.logout)
+and a.account_id = b.account_id
+and a.ip_address !=b.ip_address
+
+#Reference:
+
+1783. Grand Slam Titles
+2314. The First Day of the Maximum Recorded Degree in Each City
+1934. Confirmation Rate
+610. Triangle Judgement

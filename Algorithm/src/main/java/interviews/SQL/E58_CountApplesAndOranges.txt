@@ -1,0 +1,49 @@
+
+** Đề bài:
+- Report số lượng oranges và apples mỗi box
+- Nếu mỗi box bao gồm cả chest --> Include luôn số oranges và apples
+
+** Tư duy
+1.
+1.1, Idea
+- Mỗi box có 1 list các chest, ta cần tính sum cả cá trái trong box + trong chest.
+- Ta cần tính tổng các trái trong box trước
+- Sau đó lấy đó cộng với các trái trong chest khi join ra là được.
+
+* Method-1:
+
+with cte1 as(
+Select
+    sum(apple_count) as apple_count, sum(orange_count) as orange_count
+    from Boxes
+),
+cte2 as(
+Select
+    sum(c.apple_count) as apple_count,
+    sum(c.orange_count) as orange_count
+    from Boxes b join Chests c on b.chest_id = c.chest_id
+),
+cte3 as(
+Select
+    (ifnull(c1.apple_count, 0)+ifnull(c2.apple_count, 0)) as apple_count,
+    (ifnull(c1.orange_count, 0)+ifnull(c2.orange_count, 0)) as orange_count
+    from cte1 c1, cte2 c2
+)
+
+Select * from cte3;
+
+* Method-2:
+- Vì nó nói rằng mỗi box chỉ gồm 1 chest --> nên left join là xong
+
+SELECT
+    SUM(b.apple_count + IFNULL(c.apple_count,0)) AS apple_count,
+    SUM(b.orange_count + IFNULL(c.orange_count,0)) AS orange_count
+FROM Boxes AS b
+LEFT JOIN Chests AS c
+USING(chest_id)
+
+#Reference:
+1747. Leetflex Banned Accounts
+1645. Hopper Company Queries II
+197. Rising Temperature
+1661. Average Time of Process per Machine

@@ -25,26 +25,6 @@ public class E4_SameTree {
         }
     }
 
-    //** Đề bài:
-    //- Kiểm tra 2 tree xem chúng có giống nhau hay không
-    //- Giống khi:
-    //+ Value các node giống nhau
-    //+ structure của tree giống nhau
-    //
-    //** Tư duy
-    //1.
-    //1.1, Idea
-    //- Ta sẽ build array dựa trên structure của tree --> Vì nếu recursive thì sẽ khó vì là 1 tree khác nhau.
-    //+ Ta không thể build array tăng dần theo inorder traverse vì như thế thì sẽ bị thiếu cases.
-    //- Case đặc biệt:
-    //VD:
-    //          1
-    //       1
-    //arr={1, 1, null,null,null}
-    //VD:
-    //          1
-    //             1
-    //arr={1, null, 1,null,null}
     public static void inorder(TreeNode node, List<Integer> listValues){
         if(node==null){
             return;
@@ -87,6 +67,27 @@ public class E4_SameTree {
     }
 
     public static void main(String[] args) {
+        //** Đề bài:
+        //- Kiểm tra 2 tree xem chúng có giống nhau hay không
+        //- Giống khi:
+        //+ Value các node giống nhau
+        //+ structure của tree giống nhau
+        //
+        //** Tư duy
+        //1.
+        //1.1, Idea
+        //- Ta sẽ build array dựa trên structure của tree --> Vì nếu recursive thì sẽ khó vì là 1 tree khác nhau.
+        //+ Ta không thể build array tăng dần theo inorder traverse vì như thế thì sẽ bị thiếu cases.
+        //- Case đặc biệt:
+        //VD:
+        //          1
+        //       1
+        //arr={1, 1, null,null,null}
+        //VD:
+        //          1
+        //             1
+        //arr={1, null, 1,null,null}
+        //
         //#Reference
         //101. Symmetric Tree
         //1382. Balance a Binary Search Tree

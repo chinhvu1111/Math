@@ -1,0 +1,46 @@
+
+** Đề bài:
+- Report số lượng grand slam thắng bỏi mỗi player.
+- Ignore những player không win.
+
+** Tư duy
+1.
+1.1, Idea
+- Championships p join sang players để lấy thông tin + group by player_id ==> count(1) để tính số lượng.
+- Vì mỗi row được tổ chức theo all các champion nên cần join all OR predicates
++ Tuy nhiên vẫn sẽ có cases là 1 ngừoi win nhiều giải --> cần sum hết các giải năm đó lại.
++ Ta sẽ sum all chi khi p.player_id = c.US_open...
+
+* Method-1:
+
+With cte1 as(
+Select
+    p.player_id, p.player_name,
+    sum( if(c.Wimbledon=p.player_id, 1, 0) + if(c.Fr_open=p.player_id, 1, 0) + if(c.US_open=p.player_id, 1, 0)
+    + if(c.Au_open=p.player_id, 1, 0) ) as grand_slams_count
+from Championships c join Players p on
+c.Wimbledon=p.player_id or c.Fr_open=p.player_id
+or c.US_open=p.player_id or c.Au_open=p.player_id
+group by p.player_id, p.player_name
+)
+
+Select * from cte1;
+
+* Method-2:
+- Tối ưu hơn bằng cách sum(a=b)
++ Vì a=b sẽ return 1 ==> sum vào luôn.
+
+# Write your MySQL query statement below
+SELECT player_id,player_name,
+SUM(player_id=Wimbledon)+SUM(player_id=Fr_open)+SUM(player_id=US_open)+SUM(player_id=Au_open)
+as grand_slams_count
+FROM Players
+JOIN Championships
+ON player_id=Wimbledon or player_id=Fr_open or player_id=US_open or player_id=Au_open
+GROUP BY player_id;
+
+#Reference:
+1811. Find Interview Candidates
+2041. Accepted Candidates From the Interviews
+1949. Strong Friendship
+2298. Tasks Count in the Weekend
