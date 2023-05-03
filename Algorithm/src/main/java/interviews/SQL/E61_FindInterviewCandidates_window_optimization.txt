@@ -1,0 +1,162 @@
+
+** Đề bài:
+- Report name và mail của tất cả các interview candidates mà thoả mãn 1 trong 2 điều kiện sau:
++ User chiến thắng bất kỳ huy chương nào trong 3 hoặc >3 các contests liên tiếp
++ User chiến thắng huy chương vàng trong 3 or > 3 các contests khác nhau
+
+** Tư duy
+1.
+1.1, Idea
+- Ta sẽ tìm những user_id đạt số huy chương vàng >=3 của all --> Tách ra trước.
++ Vì Contest table được tổ chức theo dạng column -> Ta sẽ join sang Users table để lấy thông tin.
+- Với tìm các user có medal với số contests liên tiếp >=3:
++ Sắp xếp theo contest_id trước (Vì cái này thể hiện sự liên tiếp)
++ Ta sẽ table đó join sang Users theo trường user_id
++ Sau đó khi có thông tin dạng user_id map to contest (Thông tin contest nó có huy chương)
+--> Ta sẽ self join group by user_id để và count(1) >=3 là được.
+
+# Lỗi sai:
+- Vì consecutive theo contest_id --> nên cần row_number() all table theo contest_id trước.
+- Sau đó mới đêm đi join User
+
+* Method-1:
+
+With cte1 as(
+Select
+    *,
+    row_number() over(order by contest_id) as rn
+from Contests c
+),
+cte2 as(
+Select
+    c1.contest_id,
+    u.user_id,
+    u.name,
+    u.mail,
+    c1.rn
+from cte1 c1 join Users u
+on (c1.gold_medal=u.user_id) or (c1.silver_medal=u.user_id) or (c1.bronze_medal=u.user_id)
+),
+cte3 as(
+Select
+    distinct
+    # c1.user_id,
+    c1.name,
+    c1.mail
+from cte2 c1 join cte2 c2
+on c1.user_id=c2.user_id and c1.rn>=c2.rn and c1.rn<=c2.rn+2
+group by c1.user_id, c1.contest_id
+having count(1)>=3
+),
+cte4 as(
+Select
+    # u.user_id,
+    u.name,
+    u.mail
+from Contests c join Users u
+on c.gold_medal=u.user_id group by u.user_id, u.mail having count(1) >=3
+),
+cte5 as(
+Select * from cte3
+UNION
+Select * from cte4
+)
+Select * from cte5;
+
+** Tối ưu:
+- Không cần row_number() vì contest_id đã tương tự như row_number() rồi.
+
+cte2 as(
+Select
+    c1.contest_id,
+    u.user_id,
+    u.name,
+    u.mail
+from Contests c1 join Users u
+on (c1.gold_medal=u.user_id) or (c1.silver_medal=u.user_id) or (c1.bronze_medal=u.user_id)
+),
+cte3 as(
+Select
+    distinct
+    # c1.user_id,
+    c1.name,
+    c1.mail
+from cte2 c1 join cte2 c2
+on c1.user_id=c2.user_id and c1.contest_id>=c2.contest_id and c1.contest_id<=c2.contest_id+2
+group by c1.user_id, c1.contest_id
+having count(1)>=3
+),
+cte4 as(
+Select
+    # u.user_id,
+    u.name,
+    u.mail
+from Contests c join Users u
+on c.gold_medal=u.user_id group by u.user_id, u.mail having count(1) >=3
+),
+cte5 as(
+Select * from cte3
+UNION
+Select * from cte4
+)
+Select * from cte5;
+
+* Method-2:
+- Với những bài dạng column nối thành 1 row dạng:
++ a | b | c
+--> Ta sẽ tìm cách union chúng thành dạng:
++ id |  a
++ id |  b
++ id |  c
+==> Để dễ dàng xử lý hơn.
+
+- Ta sẽ tách contests table thành các row khác nhau bằng cách union all.
++ user_id, contest_id
+- Sau đó row_number() partition by by user_id order by contest_id
++ Tại sao lại cần phải row_number() trong khi đó ta đã có contest_id tăng dần với mỗi user_id
+** Một tính chất quan trọng để có thể lấy được window liên tiếp là:
+120 - 3 = 119 - 2 = contest_id - rn ==> thế nên lợi ích của việc tính row_number() là để có thể:
++ Group by theo (contest_id-rn) thay vì áp dụng :
++ <> self join (c.contest_id>c1.contest_id and c.contest_id<=c1.contest_id + window_size) ==> slow hơn khá nhiều.
+
+With cte1 as(
+Select gold_medal as user_id, contest_id from contests
+UNION ALL
+Select silver_medal as user_id, contest_id from contests
+UNION ALL
+Select bronze_medal as user_id, contest_id from contests
+),
+cte2 as(
+Select
+    user_id,
+    contest_id,
+    row_number() over (partition by user_id order by contest_id) as rn
+from cte1
+),
+cte3 as(
+Select
+    # u.user_id,
+    u.name,
+    u.mail
+from Contests c join Users u
+on c.gold_medal=u.user_id group by u.user_id, u.mail having count(1) >=3
+),
+cte4 as(
+Select
+    u.name,
+    u.mail
+from cte2 c2 join Users u on u.user_id=c2.user_id group by c2.user_id, (c2.contest_id-c2.rn) having count(1)>=3
+UNION
+Select
+    name,
+    mail
+from cte3
+)
+
+Select * from cte4;
+
+#Reference:
+1831. Maximum Transaction Each Day
+2346. Compute the Rank as a Percentage
+1142. User Activity for the Past 30 Days II
+577. Employee Bonus
