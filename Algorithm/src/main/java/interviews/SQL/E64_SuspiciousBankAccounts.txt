@@ -1,0 +1,96 @@
+
+** Đề bài:
+- 1 tài khoản ngân hàng đáng ngờ là:
++ Tổng income >=2 tháng liên tiếp vượt quá (max_income/ 1 account trên tháng)
++ Tổng income của 1 account trong vài tháng là tổng tất cả tiền gửi trong những tháng đó (transactionc có type là Creditor)
+
+- Viết SQL report ids của all tài khoản đáng ngờ.
+
+** Tư duy
+1.
+1.1, Idea
+- window ở đây sẽ là 2 tháng liên tiếp
+VD:
+12  | 2000
+11  | 3000
+10  | 2000
+- Áp dụng tư duy dạng group by (month -rn)
+- Ta cần lọc ra những (tháng trên từng (user/ từng account_id)) có income bất thường trước
+- Chú ý --> Cần sum amount của mỗi accoun trên mỗi tháng --> Mới lọc
+- Lọc ra các điều kiện transaction có type là 'Creditor'
+- Sau đó row_number() group by (month-rn) having count(1)>=2 là được.
+
+#Chú ý:
+- Làm dạng bài kiểu mỗi account_id có n tháng liên tiếp
+--> Cần partition by user_id --> order by month mới đúng:
+VD:
+Nêú partition all
+user_1  | 2021-06     |   1
+user_1  | 2021-08     |   3 ==> Khi vào user_1 thì group nó vẫn giữ nguyên group by (month - rn)= 2021-04
+user_3  | 2021-09     |   4
+--> Như nhau ==>Sai
+
+- Cần partition theo user
+user_1  | 2021-06     |   1
+user_1  | 2021-08     |   2 ==> Khi vào user_1 thì group nó 1 cái là (2021-05 và 2021-06) --> Không đều nhau ==> k liên tiếp
+user_3  | 2021-09     |   4
+
+#Thao tác với date
+- Để convert từ '2021-06' --> Date cần:
++ concat
++ Dùng str_to_date
+STR_TO_DATE(concat(month, '-01'), '%Y-%m-%d')
+
+- Date to string
++ DATE_FORMAT(dt, '%Y-%m-%d')
+
+- Sub date:
++ Trừ interval n month, day, year
++ DATE_ADD : SELECT DATE_ADD("2017-06-15", INTERVAL 10 DAY);
++ DATE_SUB : SELECT DATE_SUB("2017-06-15", INTERVAL 10 DAY);
+==> Kiểu gì thì vẫn là đơn vị (interval).
+
+=====================
+
+With cte1 as(
+Select
+transaction_id,
+t.account_id,
+t.amount,
+a. max_income,
+day
+from
+Transactions t join Accounts a
+on t.account_id = a.account_id
+where type='Creditor'
+),
+cte2 as(
+Select
+    transaction_id,
+    account_id,
+    substring(day,1,7) as month,
+    max_income,
+    amount
+from cte1
+),
+cte3 as(
+Select
+    account_id,
+    month,
+    dense_rank() over (partition by account_id order by month) as rn
+    from cte2 group by account_id,month, max_income having sum(amount) > max_income
+),
+cte4 as(
+Select
+    distinct
+    account_id
+    # rn,
+    # month,
+    # DATE_FORMAT(STR_TO_DATE(concat(month, '-01'), '%Y-%m-%d') - Interval rn month, '%Y-%m-%d') as m
+from cte3
+group by account_id, DATE_FORMAT(STR_TO_DATE(concat(month, '-01'), '%Y-%m-%d') - Interval rn month, '%Y-%m-%d') having count(1)>=2
+)
+
+Select * from cte4;
+
+=====================

@@ -194,6 +194,8 @@ public class E3_SymmetricTree {
         //572. Subtree of Another Tree
         //513. Find Bottom Left Tree Value
         //1430. Check If a String Is a Valid Sequence from Root to Leaves Path in a Binary Tree
-        //
+        //529. Minesweeper
+        //687. Longest Univalue Path
+        //1650. Lowest Common Ancestor of a Binary Tree III
     }
 }
