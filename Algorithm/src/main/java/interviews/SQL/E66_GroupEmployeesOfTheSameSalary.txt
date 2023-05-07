@@ -1,0 +1,39 @@
+
+** Requirement:
+- Divide the employees team:
++ >=2 two member each team
++ All member have the same salary each team
++ If an employee has an unique salary --> not assigned
++ Team's id based on the rank of salary
+Ex:
+ team_id = 1 --> lowest salary
+
+** Idea
+1.
+1.1, Idea
+- We need to filter all salary such that count(1) =1
+- We just need to partition by (salary) + dense_rank() over(order by employee_id)
+- We just need to get data having team_id<=2.
+
+with cte1 as(
+Select distinct salary from Employees group by salary having count(1)>1
+),
+cte2 as(
+Select
+    employee_id,
+    name,
+    salary,
+    dense_rank() over(order by salary) as team_id
+from Employees where salary in (Select * from cte1)
+)
+
+Select * from cte2 order by team_id, employee_id;
+
+* Tối ưu:
+- Bỏ distinct đi --> Vì không cần thiết.
+
+#Reference:
+1907. Count Salary Categories
+2153. The Number of Passengers in Each Bus II
+586. Customer Placing the Largest Number of Orders
+2324. Product Sales Analysis IV

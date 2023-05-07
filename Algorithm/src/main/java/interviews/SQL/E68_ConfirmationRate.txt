@@ -1,0 +1,34 @@
+
+** Requirement:
+- each user:
+    + confirmation rate = the number of confirmed messsages / the number of total of requested messages
+- Round the confirmation rate to two decimal places.
+
+** Idea
+1.
+1.1, Idea
+- We just need to left join and use ifelse to count( confirmed message )
+
+with cte1 as(
+Select
+user_id,
+round( sum(if(action='confirmed', 1, 0))/ count(1), 2) as confirmation_rate
+from Confirmations c group by user_id
+),
+cte2 as(
+Select
+s.user_id,
+ifnull(c1.confirmation_rate, 0) as confirmation_rate
+from Signups s left join cte1 c1 on s.user_id=c1.user_id
+)
+
+Select * from cte2;
+
+* Thông tin thêm:
+- Có 1 cách viết khác là left join luôn --> Thì shorter code.
+
+#Reference:
+1949. Strong Friendship
+1322. Ads Performance
+1777. Product's Price for Each Store
+1251. Average Selling Price

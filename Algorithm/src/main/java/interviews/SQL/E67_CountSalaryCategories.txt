@@ -1,0 +1,67 @@
+
+** Requirement:
+- Report number of banks for each salary category:
++ "Low Salary": All the salaries strictly less than $20000.
++ "Average Salary": All the salaries in the inclusive range [$20000, $50000].
++ "High Salary": All the salaries strictly greater than $50000.
+
+
+** Idea
+1.
+1.1, Idea
+- Simply, we just use case when with income --> categorize first.
+- Group by category + sum()
+- Using union to build all category table
+- After that, we will do left join operation on that.
+
+* Method-1:
+
+With cte1 as(
+Select
+    case
+        when income<20000 then 'Low Salary'
+        when income>50000 then 'High Salary'
+        else 'Average Salary'
+    end as category
+from Accounts
+),
+cte2 as(
+Select category, count(1) as accounts_count from cte1 group by category
+),
+cte3 as(
+Select 'Low Salary' as category
+UNION
+Select 'Average Salary' as category
+UNION
+Select 'High Salary' as category
+),
+cte4 as(
+Select
+    c3.category, ifnull(c2.accounts_count, 0) as accounts_count
+from cte3 c3 left join cte2 c2 on c2.category=c3.category
+)
+Select * from cte4;
+
+* Method-2:
+- We will build all column category based on the income value.
+- Format:
+Select 'x' as category, SUM(if()) from Accounts.
+
+with cte1 as(
+  Select
+    'Low Salary' as category, SUM(if(income<20000, 1, 0)) as accounts_count
+  from Accounts
+  UNION
+  Select
+    'Average Salary' as category, SUM(if(income>=20000 and income<50000, 1, 0)) as accounts_count
+  from Accounts
+  UNION
+  Select
+    'High Salary' as category, SUM(if(income>50000, 1, 0)) as accounts_count
+  from Accounts
+)
+Select * from cte1;
+
+#Reference:
+1934. Confirmation Rate
+1435. Create a Session Bar Chart
