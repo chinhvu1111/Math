@@ -1,0 +1,125 @@
+
+** Requirment:
+- Strong friendship is:
++ x and y is strong if they have at least 3 common friends
++ List all strong friendships
+
+* Note that:
+- x and y must be friends first.
+
+** Idea
+1.
+1.1,
+-
+Ex:
+user1_id | user2_id
+1        |      2
+1        |      3
+1        |      4
+1        |      5
+2        |      1
+2        |      3
+2        |      4
+2        |      5
+
+--> 1 and 2 is strong friendship.
+- We will self join operator:
+1   |   4   |   2
+==> group by (1,2) --> count>=3
+
+- Case đặc biệt:
+1   |   2   |   3   |   2
+1   |   3   |   4   |   3
+1   |   3   |   3   |   4
+--> Mất records
+row1 chọn join row2 trên a or b ==> Chỉ ra 1 record
+- Muốn join ra 2 phải union
+
+* Method-1:
+- Để tìm số common friends giữa 6 và 31 ta dùng:
+Ta sẽ join 2 lần:
++ Lần 1 sẽ dùng user_id_1 để John ra được column chung 1
++ Sau đó dùng cte đó John tiếp dùng user_id_2 để ra column chung 2
+Chọn ra những thằng mà (column chung 1) = (column chung 2)
++ Sau đó group by user_id_1, user_id_2 những thằng đó.
+
+2	|	3	|	4	|	3
+2	|	3	|	5	|	5
+5 = 5 : Tức là 2 và 3 có chung friend là 5.
+
+with cte1 as(
+    Select
+         p.user1_id,
+         p.user2_id,
+         if(p.user1_id=p1.user2_id and p.user2_id!=p1.user1_id, p1.user1_id, p1.user2_id) as common_id_1
+    from Friendship p join Friendship p1
+    on (p.user1_id=p1.user2_id and p.user2_id!=p1.user1_id) or (p.user1_id=p1.user1_id and p.user2_id!=p1.user2_id)
+),
+cte2 as(
+    Select
+        c1.user1_id,
+        c1.user2_id,
+        common_id_1,
+        if(c1.user2_id=p1.user2_id and c1.user1_id!=p1.user1_id, p1.user1_id, p1.user2_id) as common_id_2
+    from cte1 c1 join Friendship p1
+    on (c1.user2_id=p1.user2_id and c1.user1_id!=p1.user1_id) or (c1.user2_id=p1.user1_id and c1.user1_id!=p1.user2_id)
+),
+cte3 as(
+    Select
+        user1_id,
+        user2_id,
+        count(1) as common_friend
+    from cte2 where common_id_1=common_id_2 group by user1_id, user2_id having count(1)>=3
+)
+
+Select * from cte3;
+#Note:
+- Làm như thế này thì sẽ bị timeout
+# Complexity :
+VD:
+Friendship : 1000 rows
++ cte1 : 1000 * 1000 = 1.000.000
++ cte2 : 1.000.000 * 1000 = 1.000.000.000
+
+* Method-2:
+
+# Write your MySQL query statement below
+
+with cte1 as(
+    Select
+        user1_id,
+        user2_id
+    from Friendship
+    UNION
+    Select
+        user2_id as user1_id,
+        user1_id as user2_id
+    from Friendship
+),
+cte2 as(
+    Select
+        f.user1_id,
+        f.user2_id,
+        count(1) as common_friend
+    from Friendship f join cte1 c1
+    on f.user1_id=c1.user1_id
+    join cte1 c2 on f.user2_id=c2.user1_id where c1.user2_id=c2.user2_id
+    group by f.user1_id, f.user2_id having count(1)>=3
+)
+
+Select * from cte2;
+
+# Complexity :
++ Friendship : 1000 rows
++ cte1 : 2000 (max)
++ cte2 = 1000 * 2000 * 2000 = 4.000.000.000
+
+
+# Câu hỏi:
+- Tại sao method-1 lại slow hơn method-2:
++ Là do dùng quá nhiều predicate (or)
+
+#Reference:
+1951. All the Pairs With the Maximum Number of Common Followers
+1892. Page Recommendations II
+1917. Leetcodify Friends Recommendations

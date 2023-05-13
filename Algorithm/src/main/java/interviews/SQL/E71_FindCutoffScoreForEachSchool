@@ -1,0 +1,63 @@
+
+** Requirment:
+- Mỗi school có capacity (số lượng students có thể chứa) cụ thể
+- Exam table chứa thông tin số lượng students (student_count) đạt ít nhất score.
+--> Tìm điểm mà mỗi trường yêu cầu (min) để có thể số student_count nhiều nhất == capacity
+- Nếu cùng thoả mãn ta sẽ lấy score nhỏ nhất min(score)
+- Nếu school nào không đủ xác định score : return -1
+
+** Idea
+1.
+1.1,
+- Bài này tư duy dạng kiểu tìm (student_count) <= capacity nhưng gần nhất có thể.
++ Bài này sẽ dùng phép left join từ school qua exam --> lọc ra capacity - student_count <0 ==> Lấy cái min nhẩt về sau.
++ Sau đó row_number + partition by school_id order by (capacity - student_count) --> vì mục đích là lấy min(score)
+===> order by (capacity - student_count) desc, score asc
++ Nếu thằng nào bằng null --> return -1
+
+* Method-1:
+
+with cte1 as(
+Select
+    school_id,
+    ifnull(score, -1) score,
+    capacity-student_count as diff_condition
+from
+Schools s left join Exam e on s.capacity >= e.student_count
+),
+cte2 as(
+Select
+    school_id,
+    score,
+    dense_rank() over (partition by school_id order by diff_condition asc, score asc) as rn
+from cte1
+)
+
+Select school_id, score from cte2 where rn=1;
+
+* Method-2:
+- Vì ta thấy 1 quy luật business rằng min(score) <=> số lượng student_count tăng lên
+==> 2 cái này tỉ lệ thuận với nhau --> Về cơ bản ta chỉ cần xét min(score) là được.
+
+with cte1 as(
+Select
+    school_id,
+    ifnull(score, -1) score
+from
+Schools s left join Exam e on s.capacity >= e.student_count
+),
+cte2 as(
+Select
+    school_id,
+    min(score) as score
+from cte1
+group by school_id
+)
+
+Select * from cte2;
+
+#Reference:
+1990. Count the Number of Experiments
+1251. Average Selling Price
+2494. Merge Overlapping Events in the Same Hall
+2082. The Number of Rich Customers

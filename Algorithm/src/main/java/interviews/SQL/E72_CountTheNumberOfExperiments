@@ -1,0 +1,56 @@
+** Requirment:
+- Với mỗi platform thống kê số lượng các experiment về 3 experiment_names (Reading, Sports, Programming)
+
+** Idea
+1.
+1.1,
+- Dùng phép group by platform, experiment_name
+- Thiếu experiment_name nào thì dùng union đủ 3 giá trị vào là được.
+
+# Write your MySQL query statement below
+
+with cte1 as(
+Select
+     platform, experiment_name,
+     count(1) as num_experiments
+from Experiments
+group by platform, experiment_name
+),
+cte2 as(
+Select
+    'Programming' as experiment_name
+UNION
+Select
+    'Sports' as experiment_name
+UNION
+Select
+    'Reading' as experiment_name
+),
+cte3 as(
+Select
+    'Android' as platform
+UNION
+Select
+    'IOS' as platform
+UNION
+Select
+    'Web' as platform
+),
+cte4 as(
+     Select * from cte2 c3 join cte3 c4
+),
+cte5 as(
+Select
+     c2.platform,
+     c2.experiment_name,
+     if(c1.num_experiments is null, 0, num_experiments) as num_experiments
+from
+cte4 c2 left join cte1 c1 on c2.experiment_name = c1.experiment_name and c2.platform=c1.platform
+)
+Select * from cte5;
+
+#Reference:
+2020. Number of Accounts That Did Not Stream
+1677. Product's Worth Over Invoices
+2199. Finding the Topic of Each Post
+1683. Invalid Tweets

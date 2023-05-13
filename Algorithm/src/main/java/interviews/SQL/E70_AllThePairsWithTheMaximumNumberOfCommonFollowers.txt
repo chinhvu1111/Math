@@ -1,0 +1,54 @@
+
+** Requirment:
+- Return lại các pair (user_id có số lượng followers chung là lớn nhất)
+
+** Idea
+1.
+1.1,
+- Đầu tiên phải tìm all các cặp user_ids và số lượng các common follower_ids của chúng.
++ Ta sẽ self join là được
+VD:
+Input:
+Relations table:
++---------+-------------+
+| user_id | follower_id |
++---------+-------------+
+| 1       | 3           |
+| 2       | 3           |
+| 7       | 3           |
+| 1       | 4           |
+| 2       | 4           |
+
+- Bước tiếp theo là sẽ list các pair user_id có max common followers.
+
+
+# Write your MySQL query statement below
+
+* Method-1:
+
+with cte1 as(
+    Select r.user_id, r1.user_id as user_id1
+    from Relations r join Relations r1
+    on r.follower_id=r1.follower_id where r.user_id < r1.user_id
+),
+cte2 as(
+    Select c1.user_id, c1.user_id1, count(1) as num_common_follower from cte1 c1
+    group by c1.user_id, c1.user_id1
+),
+cte3 as (
+    Select
+    user_id as user1_id, user_id1 as user2_id
+    from
+    (Select
+        c2.user_id, c2.user_id1,
+        dense_rank() over(order by c2.num_common_follower desc) rn
+    from cte2 c2) a where a.rn=1
+)
+
+Select * from cte3;
+
+#Reference:
+1988. Find Cutoff Score for Each School
+1972. First and Last Call On the Same Day
+196. Delete Duplicate Emails
+1635. Hopper Company Queries I
