@@ -1,0 +1,86 @@
+
+** Requirement:
+- Phân loại user dựa trên conversation rate:
++ Conversation rate = (100 * total number of purchases for the member) / total number of visits for the member
+=====
+"Diamond": if the conversion rate is greater than or equal to 80.
+"Gold": if the conversion rate is greater than or equal to 50 and less than 80.
+"Silver": if the conversion rate is less than 50.
+"Bronze": if the member never visited the store.
+
+** Idea
+1.
+1.1,
+- Ta sẽ tính conversation rate trước
+- Sau đó categorize sau
+
+* Method-1:
+
+with cte1 as(
+Select
+    m.member_id, m.name,
+    v.visit_id, p.charged_amount
+from
+Members m left join Visits v on m.member_id=v.member_id
+left join Purchases p on v.visit_id = p.visit_id
+),
+cte2 as(
+Select
+    member_id, name, sum(if(visit_id is not null, 1, 0)) as num_visits
+    from cte1 group by member_id, name
+),
+cte3 as(
+Select
+    member_id, name, count(1) as num_charge from cte1
+    where charged_amount is not null group by member_id, name
+),
+cte4 as(
+Select
+    c2.member_id,
+    c2.name,
+    (100 * ifnull(c3.num_charge, 0) / c2.num_visits) as conversation_rate
+from
+ cte2 c2 left join cte3 c3 on c2.member_id=c3.member_id
+),
+cte5 as(
+Select
+    member_id,
+    name,
+case
+    when conversation_rate >=80 then 'Diamond'
+    when conversation_rate >=50 and conversation_rate < 80 then 'Gold'
+    when conversation_rate < 50 then 'Silver'
+    else 'Bronze'
+end as category
+from cte4
+)
+Select * from cte5;
+
+* Method-2:
+- Nếu count(null) --> null
+- Sau đó ta sẽ count(distinct visit_id) : để lấy ra số lượng visit_id khác nhau
++ count distint : Sẽ tự bỏ null đi nếu dùng cách này
+- count(v.visit_id) : thông thường thì sẽ ra kết quả count(1) all.
+
+with cte1 as(
+Select
+    m.member_id,
+    m.name,
+case
+    when count(v.visit_id) = 0 then 'Bronze'
+    when ifnull(count(distinct p.visit_id), 0) * 100 / count(v.visit_id) >= 80 THEN 'Diamond'
+    when ifnull(count(distinct p.visit_id), 0) * 100 / count(v.visit_id) >= 50 THEN 'Gold'
+    else 'Silver'
+end as category
+from
+Members m left join Visits v on m.member_id=v.member_id left join Purchases p
+on v.visit_id = p.visit_id
+group by m.member_id, m.name
+)
+Select * from cte1;
+
+#Reference:
+2066. Account Balance
+1527. Patients With a Condition
+2175. The Change in Global Rankings
+1225. Report Contiguous Dates

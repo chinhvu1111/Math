@@ -1,0 +1,26 @@
+
+** Requirment:
+- Report ids của candidate có ít nhất 2 years experience (>=2) và sum của all interview rounds của candidate > 15
+
+** Idea
+1.
+1.1,
+- Cái này thì ta chỉ cần dùng phép join xong group by sum là được.
+
+with cte1 as(
+Select * from Candidates c where c.years_of_exp >=2
+),
+cte2 as(
+Select c1.candidate_id
+from
+cte1 c1 join Rounds r on c1.interview_id = r.interview_id
+group by c1.candidate_id having sum(r.score) > 15
+)
+
+Select * from cte2;
+
+#Reference:
+2051. The Category of Each Member in the Store
+1194. Tournament Winners
+2084. Drop Type 1 Orders for Customers With Type 0 Orders
+185. Department Top Three Salaries

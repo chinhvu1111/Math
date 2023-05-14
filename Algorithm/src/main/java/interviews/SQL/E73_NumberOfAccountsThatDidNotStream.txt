@@ -1,0 +1,41 @@
+** Requirment:
+- Report số lượng accounts đã mua subcription trong năm 2021 nhưng không hề có streaming session nào.
+
+** Idea
+1.
+1.1,
+- Ta sẽ lọc các thông tin:
++ Subscription table: account có subscription trong năm 2021 : end_date >='2021-01-01'
++ Streams table : ta sẽ lọc ra những thằng Sub_string(stream_date, 1, 4) == 2021 và dùng predicate not in.
+
+* Method-1:
+
+with cte1 as(
+Select * from Subscriptions where end_date >='2021-01-1'
+),
+cte2 as(
+Select account_id from Streams where substring(stream_date, 1, 4)=2021
+),
+cte3 as(
+Select * from cte1 where account_id not in (Select * from cte2)
+)
+
+Select count(1) as accounts_count from cte3;
+
+* Method-2 :
+- Dùng cách chọn trực tiếp thay vì loại trừ truyền thống.
+
+with cte1 as(
+Select count(1) as accounts_count
+from
+Subscriptions sub join Streams str on sub.account_id=str.account_id
+where (year(sub.start_date) = '2021' or year(sub.end_date) = '2021') and year(stream_date) != 2021
+)
+
+Select * from cte1;
+
+#Reference:
+2041. Accepted Candidates From the Interviews
+618. Students Report By Geography
+2480. Form a Chemical Bond
+2339. All the Matches of the League
