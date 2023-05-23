@@ -121,6 +121,17 @@ public class E11_MinimumNumberOfOperationsToSortABinaryTreeByLevel {
         //(4), 6, 5, (7)
         //4, (5), (6), 7 --> Không cần thay đổi gì cả
         //4, (5), (6), 7 ==> 2 lần
+        //- Để đếm số lần swap thì có 2 hướng tư duy:
+        //+ Là count theo số lần 2 array khác nhau --> Failed như trên
+        //+ Chạy swap thật sự ==> Thì sẽ đúng vì
+        //VD: Sẽ có case sau khi swap (i) cho (j>i)
+        //--> Về sau ta xét đến (j) đã thoả mãn rồi (Do bị ảnh hưởng bởi phép swap trước đó)
+        //==> Số lượng swap count có thể giảm đi.
+        //
+        //1.1, Complexity:
+        //- Time complexity : O(n)
+        //- Space complexity : O(n)
+        //+ n is the number of nodes.
         //
         //#Reference:
         //2472. Maximum Number of Non-overlapping Palindrome Substrings

@@ -59,7 +59,7 @@ Select * from cte5;
 * Method-2:
 - Nếu count(null) --> null
 - Sau đó ta sẽ count(distinct visit_id) : để lấy ra số lượng visit_id khác nhau
-+ count distint : Sẽ tự bỏ null đi nếu dùng cách này
++ count distinct : Sẽ tự bỏ null đi nếu dùng cách này
 - count(v.visit_id) : thông thường thì sẽ ra kết quả count(1) all.
 
 with cte1 as(

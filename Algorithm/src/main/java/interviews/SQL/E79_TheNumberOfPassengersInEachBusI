@@ -1,0 +1,102 @@
+
+** Requirement:
+- Buses and passengers arrive at the LeetCode station.
+If a bus arrives at the station at time (tbus) and a passenger arrived at time (tpassenger) where (tpassenger <= tbus) --> (passenger before bus)
+and the passenger did not catch any bus (not match any bus before), the passenger will use that bus.
+
+** Idea
+1.
+1.1,
+- Use substraction = (arrival_time of bus) - (arrival_time of Passenger) --> where substraction>=0 order by substraction asc
+
+* Method-1:
+
+with cte1 as(
+Select
+    bus_id, passenger_id,
+    (b.arrival_time - p.arrival_time) as diff_time
+from Buses b, Passengers p where b.arrival_time - p.arrival_time>=0
+),
+cte2 as(
+Select * from
+(Select
+     bus_id,
+     passenger_id,
+     row_number() over(partition by passenger_id order by diff_time) as rn
+ from cte1) a where a.rn=1
+),
+cte3 as(
+Select
+    bus_id,
+    count(1) as passengers_cnt
+from cte2 group by bus_id
+),
+cte4 as(
+Select
+    b.bus_id,
+    if(c3.bus_id is null, 0, c3.passengers_cnt) as passengers_cnt
+from
+Buses b left join cte3 c3 on b.bus_id = c3.bus_id
+)
+Select * from cte4 order by bus_id;
+
+* Method-2:
+- Phần row_number() ta có thể thay thế bằng phép lấy min(buses.arrival_time)
++ buses.arrival_time - passenger.arrival_time --> Min khi (buses.arrival_time) min của:
++ Mỗi case passenger với n cases buses --> Chọn min.
+- Sau đó ta dùng phép left join là xong
+- Vì mỗi lúc chỉ 1 xe bus đến --> arrival_time với từng xe bus unique
+#Note:
+- Mỗi xe bus có thể đón nhiều passengers cùng 1 lúc.
+
+with cte1 as(
+Select passenger_id, min(b.arrival_time) as arrival_time
+from
+Passengers p
+join
+Buses b on p.arrival_time <= b.arrival_time
+group by passenger_id
+),
+cte2 as(
+Select
+    b.bus_id, count(c1.arrival_time) as passengers_cnt
+from buses b
+left join cte1 c1
+on b.arrival_time = c1.arrival_time
+group by b.bus_id
+order by b.bus_id
+)
+Select * from cte2;
+
+* Method-3:
+- Dùng lag function
+https://leetcode.com/problems/the-number-of-passengers-in-each-bus-i/solutions/1695811/mysql-with-lag-function/
+- Mục đích là để tìm xe bus-1 đã đến trước xe bus-2
+==> Sau đó ta xe bus-1 sẽ chỉ đón các passenger ở giữa khoảng (bus-1 và bus-2)
+==> Phép join cơ bản sẽ nhanh hơn.
+
+with cte1 as(
+Select
+    bus_id, arrival_time,
+    lag(arrival_time, 1, 0) over(order by arrival_time) min_time
+from buses
+),
+cte2 as(
+Select
+    bus_id, count(passenger_id) as passengers_cnt
+from cte1 c1 left join passengers p
+on c1.min_time < p.arrival_time and p.arrival_time <= c1.arrival_time
+group by bus_id
+order by bus_id
+)
+Select * from cte2;
+
+#Reference:
+2159. Order Two Columns Independently
+181. Employees Earning More Than Their Managers
+196. Delete Duplicate Emails
+1789. Primary Department for Each Employee
+2153. The Number of Passengers in Each Bus II
+1435. Create a Session Bar Chart
+579. Find Cumulative Salary of an Employee
+597. Friend Requests I: Overall Acceptance Rate

@@ -1,0 +1,62 @@
+
+** Requirement:
+- Write an SQL report the balance of each user after each transaction.
+- At the beginning, the balance of each account is 0 (Before any transaction)
+- The result order by account_id (asc)
+
+** Idea
+1.
+1.1,
+- We just use full transaction for each row
+Using join operator on account_id and t1.day <= t.day
++ Sum or subtract value based type of action.
+
+* Method-1:
+
+with cte1 as(
+Select * from Transactions order by account_id, day
+),
+cte2 as(
+Select
+    c1.account_id,
+    c1.day,
+    case
+        when t.type='Deposit' then t.amount
+        else t.amount*-1
+    end as amount
+from cte1 c1 join Transactions t on
+c1.account_id=t.account_id and c1.day >= t.day
+),
+cte3 as(
+Select
+    account_id,day,sum(amount) as balance
+from cte2 group by account_id, day order by account_id, day
+)
+Select * from cte3;
+
+* Method-2:
+- Combine window function with sum
+
+#Note:
+- Những dạng kiểu sum lần lượt theo từng day (Order by) có thể dùng window function ngay được ---> Không cần join.
+
+With cte1 as(
+Select
+  account_id,
+  day,
+  SUM(
+  case
+          when t.type='Deposit' then t.amount
+          else t.amount*-1
+      end
+  ) over (partition by account_id order by day) as balance
+from transactions t order by account_id, day
+)
+
+Select * from cte1;
+
+#Reference:
+2084. Drop Type 1 Orders for Customers With Type 0 Orders
+1677. Product's Worth Over Invoices
+2388. Change Null Values in a Table to the Previous Value
+1892. Page Recommendations II

@@ -1,0 +1,58 @@
+
+** Requirement:
+- Write an SQL query to report all the orders based on the following:
++ If a customer has at least one order of type 0, do not report any order of type 1 from that customer.
++ Otherwise, report all the orders of the customer.
+
+** Idea
+1.
+1.1,
+- Filter the customer having at least 1 order of type 0.
+- Rest of them --> report all
+
+* Method-1:
+
+with cte1 as(
+Select
+    distinct(customer_id) as customer_id
+from Orders where order_type=0
+),
+cte2 as(
+Select o.*
+from Orders o where o.customer_id in (Select customer_id from cte1) and order_type=0
+),
+cte3 as(
+Select o.*
+from Orders o where o.customer_id not in (Select customer_id from cte1)
+),
+cte4 as(
+Select * from cte2
+UNION
+Select * from cte3
+)
+Select * from cte4;
+
+* Method-2:
+- Summarize the subject:
++ We want to list all order having order_type = (0/1)
++ We just need to map customer_id to (type) / Each order
+    + Of course, customer_id also distincted
+    + Group by customer_id
++ After that, we will apply in operator.
+
+with cte1 as(
+Select
+    customer_id, min(order_type) as order_type
+from Orders group by customer_id
+),
+cte2 as(
+Select * from Orders
+where (customer_id, order_type) in (Select * from cte1)
+)
+Select * from cte2;
+
+#Reference:
+2112. The Airport With the Most Traffic
+1141. User Activity for the Past 30 Days I
+1892. Page Recommendations II
+1113. Reported Posts

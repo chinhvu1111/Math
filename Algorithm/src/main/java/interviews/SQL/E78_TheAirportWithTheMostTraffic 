@@ -1,0 +1,53 @@
+
+** Requirement:
+- Report the ID of the airport with the most traffic
+- The airport with the most traffic:
++ The airport has the largest total number of flights that either (departed from) or (arrived at the airport) (Tính theo tổng số chuyến bay)
+- If there is more than one airport with the most traffic, report them all.
+
+** Idea
+1.
+1.1,
+-  This problem --> tách columns
++ departure_airport --> airport
++ arrival_airport   --> airport
++ Union all
+
+* Method-1:
+
+with cte1 as(
+Select departure_airport as airport, flights_count from Flights
+UNION ALL
+Select arrival_airport as airport, flights_count from Flights
+),
+cte2 as(
+Select
+airport,
+sum(flights_count) as flights_count
+from cte1
+group by airport
+),
+cte3 as(
+Select
+    a.airport as airport_id
+from
+(
+    Select
+        airport,
+        flights_count,
+        dense_rank() over(order by flights_count desc) as rn
+    from cte2
+)a where a.rn=1
+)
+Select * from cte3;
+
+* Method-2:
+- Thay vì dùng row_number() ở đây ta dùng select max.
+
+total_flights = (select max(total_flights) from agg)
+
+#Reference:
+2142. The Number of Passengers in Each Bus I
+512. Game Play Analysis II
+2199. Finding the Topic of Each Post
+1607. Sellers With No Sales
