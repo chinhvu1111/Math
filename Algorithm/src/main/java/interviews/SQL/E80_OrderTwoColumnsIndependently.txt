@@ -1,0 +1,35 @@
+
+** Requirement:
+- Write SQL query independently:
++ order first_col (ascending order)
++ order second_col (descending order)
+
+** Idea
+1.
+1.1,
+- row_number() + join which having the same rn
+
+* Method-1:
+
+with cte1 as(
+Select first_col, row_number() over(order by first_col) as rn from Data
+),
+cte2 as(
+Select second_col, row_number() over(order by second_col desc) as rn from Data
+),
+cte3 as(
+Select
+    first_col, second_col
+from cte1 c1 join cte2 c2
+on c1.rn=c2.rn
+)
+Select * from cte3;
+
+* Method-2:
+-
+
+#Reference:
+2175. The Change in Global Rankings
+597. Friend Requests I: Overall Acceptance Rate
+584. Find Customer Referee
+1978. Employees Whose Manager Left the Company

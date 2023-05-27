@@ -1,0 +1,36 @@
+
+** Requirement:
+- Write an SQL query to report the day that has the (maximum recorded degree) in (each city).
+If the maximum degree was recorded for the same city multiple times, (return the earliest day) among them.
+    + order by degree desc, day asc
+Return the result table ordered by (city_id) in ascending order.
+
+** Idea
+1.
+1.0, Idea
+- row_number() over (Partition by city_id)
+- rn=1
+
+with cte1 as(
+Select
+    city_id,
+    day,
+    degree,
+    row_number() over(partition by city_id order by degree desc, day asc) as rn
+from Weather
+),
+cte2 as(
+Select
+    city_id,
+    day,
+    degree
+from cte1 where rn=1
+)
+Select * from cte2;
+
+#Reference:
+
+2324. Product Sales Analysis IV
+1809. Ad-Free Sessions
+1892. Page Recommendations II
+1607. Sellers With No Sales

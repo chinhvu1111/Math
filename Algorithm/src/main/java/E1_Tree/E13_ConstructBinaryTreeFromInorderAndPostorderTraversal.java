@@ -60,34 +60,28 @@ public class E13_ConstructBinaryTreeFromInorderAndPostorderTraversal {
     public static int postIndex=0;
 
     public static TreeNode solution(int start, int end){
-        if(start==end){
-            return new TreeNode(inorderOrigin[start]);
+        if(start>end){
+            return null;
         }
         int rootNodeVal=postorderOrigin[postIndex];
         int indexOfInOrder=mapIndexInorder.get(rootNodeVal);
         postIndex--;
 
         TreeNode currentRootNode=new TreeNode(rootNodeVal);
-        System.out.printf("%s %s, ", start, indexOfInOrder-1);
-        System.out.printf("%s %s\n", indexOfInOrder+1, end);
-        if(indexOfInOrder+1<=end){
-            currentRootNode.right=solution(indexOfInOrder+1, end);
-        }
-        if(start<=indexOfInOrder-1){
-            currentRootNode.left=solution(start, indexOfInOrder-1);
-        }
+//        System.out.printf("%s %s, ", start, indexOfInOrder-1);
+//        System.out.printf("%s %s\n", indexOfInOrder+1, end);
+        currentRootNode.right=solution(indexOfInOrder+1, end);
+        currentRootNode.left=solution(start, indexOfInOrder-1);
 
         return currentRootNode;
     }
 
     public static TreeNode buildTree(int[] inorder, int[] postorder) {
         mapIndexInorder=new HashMap<>();
-        mapIndexPostorder=new HashMap<>();
         int n=inorder.length;
 
         for(int i=0;i<n;i++){
             mapIndexInorder.put(inorder[i],i);
-            mapIndexPostorder.put(postorder[i],i);
         }
         inorderOrigin=inorder;
         postorderOrigin=postorder;
@@ -176,6 +170,7 @@ public class E13_ConstructBinaryTreeFromInorderAndPostorderTraversal {
         //          3
         //            \
         //              9
+        //===> Tư duy trên bị SAI.
         //
         //VD:
         //          3
@@ -183,6 +178,7 @@ public class E13_ConstructBinaryTreeFromInorderAndPostorderTraversal {
         //      9      15
 //        int[] inorder=new int[]{9,3,15,20,7};
 //        int[] postorder=new int[]{9,15,7,20,3};
+        //+ Test case 2:
 //        int[] inorder=new int[]{2, 1};
 //        int[] postorder=new int[]{2, 1};
         //          1
@@ -196,13 +192,14 @@ public class E13_ConstructBinaryTreeFromInorderAndPostorderTraversal {
 //        int[] inorder=new int[]{1, 2};
 //        int[] postorder=new int[]{2, 1};
 //        buildTree(inorder, postorder);
+        //+ Test case 3:
         //          1
         //        /
         //      2
         //        \
         //          3
-        //                          postorder= 2,3,1
-        //                          inorder=   3,2,1
+        //                              postorder= 2,3,1
+        //                              inorder=   3,2,1
         //                          /                       \
         //                postorder= 2                      postorder= 2,3
         //                inorder= 3,2                      inorder= ...
@@ -212,16 +209,25 @@ public class E13_ConstructBinaryTreeFromInorderAndPostorderTraversal {
 //        int[] inorder=new int[]{2,3,1};
 //        int[] postorder=new int[]{3,2,1};
 //        buildTree(inorder, postorder);
-        int[] inorder=new int[]{1,2,3,4};
-        int[] postorder=new int[]{2,1,4,3};
-        //                          postorder= 1,2,3,4
-        //                          inorder=   2,1,4,3
-        //                          /                               \
-        //                postorder= 1,2,3                          postorder= 1,2,3
-        //                inorder= 2,1                              inorder= 3
-        //                   /              \                   /           \
-        //                postorder= 1,2    postorder= 2                    NONE
-        //                inorder= 3        inorder= ...
+        //+ Test case 4:
+        int[] postorder=new int[]{1,2,3,4};
+        int[] inorder=new int[]{2,1,4,3};
+        //                                  postorder= 1,2,3,4
+        //                                  inorder=   2,1,4,3 (start=0, end=3)
+        //                          /                                   \
+        //                postorder= 1,2                                postorder= 1,2,3
+        //                inorder= 2,1                                  inorder= 3 (start=3, end=3) --> return 3
+        //                   /              \                       /                   \
+        //                postorder= ...    postorder= 1        postorder= 1,2          postorder= 1,2
+        //                inorder= ...        inorder= 1          inorder= ...            inorder= ... ==> (start > end)
+        //==>
+        //                                4
+        //                              /   \
+        //                            2       3
+        //                              \
+        //                               1
+        //- Có case: Inorder (start==end) --> Bỏ qua --> return null
+        //-
         //#What diff
         //=========
         //if(start>end){
@@ -229,7 +235,50 @@ public class E13_ConstructBinaryTreeFromInorderAndPostorderTraversal {
         //        }
         //And
         //=========
+        //==> Cái này đã giải thích bằng các cases đặc biệt phía trên.
+        //
+        //- Mấu chốt ở đây là:
+        //+ Last node của post order traversal chắc chắn là root node của subtree
+        //+ Map node đó trong inorder thì nhưng node right của root node --> Chính là (danh sách nodes) có trong (subtree) đó
+        //+ Ta đi từ right --> left vì khi chọn được hết root node
+        // --> Những (node còn lại của postOrder) chính là (danh sách node) phân chia của left branch.
+        //
+        //1.1, Complexity
+        //- Space complexity : O(n)
+        //+ Store all tree
+        //
+        //- Time complexity :
+        //- Using master theorem:
+        //https://www.giaithuatlaptrinh.com/?tag=master-theorem
+        //+ Số node mỗi layer giống như nhau = f(n)
+        //+ n là kích thước đầu vào
+        //+ a là số bài toán con trong đệ quy
+        //+ n/b là kích thước của mỗi bài toán con. Tất cả các bài toán con đều được giả định để có cùng kích thước.
+        //+ f(n) là chi phí của công việc được thực hiện bên ngoài lời gọi đệ quy,
+        // trong đó bao gồm chi phí phân chia vấn đề và chi phí hợp nhất các giải pháp
+        //
+        //+ Each subproblem have n/b size (a không bằng b vì b là giá trị trung bình khi chia n)
+        //+ Mỗi layer sẽ là a^i children node --> a^i*f(n/b^i)
+        //+ Ta có L là độ sâu của Tree : L = Log(b)(n)
+        //--> Time complexity  = (xích ma) i:(1 -> L) a^i f(n/b^i)
+        //+ a* f(n/b) = f(n) (layer-1) <=> a^i* f(n/b^i) = f(n) (all layer thứ i)
+        // ==> T(n) = O( f(n) * L ) = O(f(n) * log(b)n) ** [ do số nodes mỗi layer giống nhau = n ]
+        //+ a^i * f(n/b^i) = k^i * f(n) ==> T(n) = f(n) * i(1 --> L) k^i
+        //--> Mà k < 1
+        //==> T(n) = O ( f(n) ) = O(n) (Complexity)
+        //CT:
+        //- a so sánh với b^k
+        //+ a < b^k Nếu a * f(n/b) = k * f(n) với k < 1 ta có T(n) = O(f(n))
+        //+  Nếu a * f(n/b) = K * f(n) với K > 1 ta có T(n) = O(n^ log(b)a)
+        //+ Nếu a * f(n/b) = f(n), ta có T(n)=O(f(n) ^ log(b)n)
+        //
+        //T(n) = a T(n/b) + f(n)
+        //- Ta có ct:
+        //+ a^(log(b)n)= n^(log(b)a) ==> Ở layer cuối cùng số nodes sẽ là [ n^(log(b)a) ]
         //Bellow code
         buildTree(inorder, postorder);
+        //#Reference:
+        //107. Binary Tree Level Order Traversal II
+        //105. Construct Binary Tree from Preorder and Inorder Traversal
     }
 }

@@ -1,0 +1,58 @@
+
+** Requirement:
+- Global ranking of a national team:
+    + It is rank after sorting all the teams by (their points) (DESC)
+    + They have the same point --> break the tie by sorting them by their name in (lexicographical order)
+
+- Each national team should be updated based on its corresponding (points_change) value
+--> Write a SQL to calculate (the change in the global ranking) after (updating each team's point).
+
+** Idea
+1.
+1.1,
+- Finding the current rank --> row_number()
+- Changed the point of each team --> update rank --> find new rank()
+- Finding the final result.
+
+* Method-1:
+
+with cte1 as(
+Select
+    team_id, name, points,
+    row_number() over(order by points, name desc) as rn
+from TeamPoints
+),
+cte2 as(
+Select
+    c1.team_id, c1.name, cast(c1.rn AS signed) as rn,
+    cast(row_number() over(order by (points+points_change), name desc) AS signed) as rn1
+from
+cte1 c1 join PointsChange pc on c1.team_id=pc.team_id
+),
+cte3 as(
+    Select
+        team_id, name, cast((rn1-rn) AS signed) as rank_diff
+    from cte2
+)
+Select * from cte3;
+
+* Method-2:
+- Ta có thể tối ưu thêm 1 chút bằng cách cast ở cuối
+--> Tức là bước select cuối ta mới cố cast --> Đâu đó giảm được số lần cast.
+
+with cte as (select team_id, name, points, dense_rank() over(order by points desc, name) as r1 from teampoints),
+
+cte2 as (
+select teampoints.team_id, name, points+points_change ,
+row_number() over(order by points+points_change desc, name) as r2
+ from teampoints join PointsChange on
+teampoints.team_id = PointsChange.team_id)
+
+
+select cte.team_id, cte.name, cast(r1 as signed) - cast(r2 as signed) as rank_diff from cte join cte2 on cte.team_id = cte2.team_id
+
+#Reference:
+2228. Users With Two Purchases Within Seven Days
+196. Delete Duplicate Emails
+1407. Top Travellers
+2687. Bikes Last Time Used

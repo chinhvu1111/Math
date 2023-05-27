@@ -1,0 +1,89 @@
+
+** Requirement:
+- Write an SQL query to rearrange the Genders table such that
++ the rows alternate between 'female', 'other', and 'male' in order.
+The table should be rearranged such that the IDs of each gender are sorted in ascending order.
+Example:
+Input:
+Genders table:
++---------+--------+
+| user_id | gender |
++---------+--------+
+| 4       | male   |
+| 7       | female |
+| 2       | other  |
+| 5       | male   |
+| 3       | female |
+| 8       | male   |
+| 6       | other  |
+| 1       | other  |
+| 9       | female |
++---------+--------+
+Output:
++---------+--------+
+| user_id | gender |
++---------+--------+
+| 3       | female |
+| 1       | other  |
+| 4       | male   |
+| 7       | female |
+| 2       | other  |
+| 5       | male   |
+| 9       | female |
+| 6       | other  |
+| 8       | male   |
++---------+--------+
+- (female, other, male)
+(3, 1, 4)
+(7, 2, 5)
+(9, 6, 8)
+
+** Idea
+1.
+1.0, Idea
+Example:
+
+* Method-1:
+- row_number() + partition by gender ==> order by rn, gender
+
+with cte1 as(
+Select
+    user_id,
+    gender,
+    row_number() over(partition by gender order by user_id) as rn
+from
+Genders
+),
+cte2 as(
+Select
+    user_id,
+    gender
+from cte1
+order by rn, gender
+)
+Select * from cte2;
+
+* Refactor:
+- Nếu mà trong trường hợp các gender sắp xếp --> Không đúng thứ tự thì ta sẽ map:
++ female : 1
++ other : 2
++ male : 3
+--> Sort được.
+
+SELECT user_id, gender
+FROM Genders
+ORDER BY ROW_NUMBER() OVER(PARTITION BY gender ORDER BY user_id),
+		CASE WHEN gender='female' THEN 1 WHEN gender='other' THEN 2 WHEN gender='male' THEN 3 END;
+
+* Method-2:
+- Thay đổi 1 chút ở chỗ sort
+
+select user_id, gender
+from genders
+order by dense_rank() over (partition by gender order by user_id asc), length(gender) desc
+
+#Reference:
+2314. The First Day of the Maximum Recorded Degree in Each City
+2372. Calculate the Influence of Each Salesperson
+618. Students Report By Geography
+1571. Warehouse Manager

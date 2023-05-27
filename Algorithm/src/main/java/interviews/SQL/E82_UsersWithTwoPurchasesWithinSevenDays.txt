@@ -1,0 +1,45 @@
+
+** Requirement:
+- Write SQL to report the IDs of the users that made any two purchases at most 7 days apart
++ Report Ids user mà thực hiện (bất kỳ) purchases cách nhau tối đa 7 days.
+
+** Idea
+1.
+1.1, Idea
+
+* Method-1:
+
+- Lag (Views row after current row) + partition by user_id order by purchase_date
++ Với những trường hợp mà chỉ có 1 order --> lag(purchase_date, 1, 0)
+- Filter all rows <= 7 days
+- DATE_DIFF(date1, date2) = date2 - date1.
+
+with cte1 as(
+Select
+    user_id,
+    purchase_id,
+    DATEDIFF(lag(purchase_date, 1, 0) over (partition by user_id order by purchase_date desc) ,purchase_date) as date_diff
+from Purchases
+),
+cte2 as(
+Select
+distinct user_id
+from cte1 c1 where date_diff<=7
+)
+Select * from cte2;
+
+* Method-2:
+- Dùng phép join --> Slower rất nhiều.
+select distinct p1.user_id
+from purchases p1
+inner join
+purchases p2
+on p1.user_id=p2.user_id and p1.purchase_id<>p2.purchase_id
+and abs(datediff(p1.purchase_date, p2.purchase_date))<=7
+order by p1.user_id
+
+#Reference:
+2238. Number of Times a Driver Was a Passenger
+1294. Weather Type in Each Country
+1142. User Activity for the Past 30 Days II
+1919. Leetcodify Similar Friends

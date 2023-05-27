@@ -1,0 +1,33 @@
+
+** Requirement:
+- Write an SQL query to report the ID of (each driver) and the number of times (they were a passenger).
+
+** Idea
+1.
+1.1, Idea
+* Method-1:
+
+- Get all distinct (driver_id) + left join Rides + group by driver_id + count(1)
++ count sẽ loại bỏ null --> OK
+
+with cte1 as(
+Select
+    distinct driver_id
+from Rides
+),
+cte2 as(
+Select
+    c1.driver_id,
+    count(r1.passenger_id) as cnt
+from
+cte1 c1 left join Rides r1
+on c1.driver_id=r1.passenger_id
+group by c1.driver_id
+)
+Select * from cte2;
+
+#Reference:
+2292. Products With Three or More Orders in Two Consecutive Years
+1635. Hopper Company Queries I
+1645. Hopper Company Queries II
+1651. Hopper Company Queries III

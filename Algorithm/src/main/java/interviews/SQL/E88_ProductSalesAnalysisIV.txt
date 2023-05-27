@@ -1,0 +1,70 @@
+
+** Requirement:
+- Write an SQL query that reports for
+ + (each user) (the product id) on which the user (spent the most money).
+In case the same user spent the most money on two or more products, (report all of them).
+
+** Idea
+1.
+1.0, Idea
+- We need to group by  product_id | user_id | quantity --> It has many cases of having different sales
+- Calculate the money which each user spent on each product.
+- After that, we will dense_rank() --> order by money
+
+with cte1 as(
+Select
+    product_id, user_id, sum(quantity) as quantity
+from Sales group by product_id, user_id
+),
+cte2 as(
+Select
+    user_id,
+    c1.product_id,
+    (c1.quantity * p.price) as amount_money
+from cte1 c1 join Product p
+on c1.product_id = p.product_id
+),
+cte3 as(
+Select
+    user_id,
+    product_id,
+    dense_rank() over (partition by user_id order by amount_money desc) as rn
+from cte2
+),
+cte4 as(
+Select
+    user_id,
+    product_id
+from cte3 where rn=1
+)
+
+Select * from cte4;
+
+* Refactor:
+with cte1 as(
+Select
+    product_id, user_id, sum(quantity) as quantity
+from Sales group by product_id, user_id
+),
+cte2 as(
+Select
+    user_id,
+    c1.product_id,
+    dense_rank() over (partition by user_id order by (c1.quantity * p.price) desc) as rn
+from cte1 c1 join Product p
+on c1.product_id = p.product_id
+),
+cte3 as(
+Select
+    user_id,
+    product_id
+from cte2 where rn=1
+)
+Select * from cte3;
+
+
+
+#Reference:
+2346. Compute the Rank as a Percentage
+1068. Product Sales Analysis I
+1069. Product Sales Analysis II

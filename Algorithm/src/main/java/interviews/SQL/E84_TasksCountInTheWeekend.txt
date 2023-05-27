@@ -1,0 +1,39 @@
+
+** Requirement:
+- Write an SQL query to report:
++ The number of the tasks that were submitted during the [weekend] (Saturday, Sunday) as (weekend_cnt), and
++ The number of the tasks that were submitted during the [working days] as (working_cnt).
+
+** Idea
+1.
+1.1, Idea
+- Using WEEKDAY(date) to get current weekday.
+Note: 0 = Monday, 1 = Tuesday, 2 = Wednesday, 3 = Thursday, 4 = Friday, 5 = Saturday, 6 = Sunday.
+- In the same, we will calculate (the number of total of rows), (the number of rows submitted on weekend).
+
+* Method-1:
+
+with cte1 as(
+Select
+    count(1) as cnt, sum(if(weekday(submit_date) >=5, 1, 0)) as weekend_cnt
+from Tasks
+),
+cte2 as(
+Select
+    weekend_cnt,
+    (cnt - weekend_cnt) as working_cnt
+from cte1
+)
+Select * from cte2;
+
+* Refactor:
+SELECT
+COUNT(IF(WEEKDAY(submit_date) IN (5, 6), submit_date, NULL)) AS weekend_cnt,
+COUNT(IF(WEEKDAY(submit_date) NOT IN (5, 6), submit_date, NULL)) AS working_cnt
+FROM Tasks;
+
+#Reference:
+2308. Arrange Table by Gender
+613. Shortest Distance in a Line
+2173. Longest Winning Streak
+262. Trips and Users
