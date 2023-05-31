@@ -1,0 +1,37 @@
+
+** Requirement:
+- Write an SQL query to report the (sum of prices) paid by the (customers of each salesperson).
+If a salesperson does not have any customers, the total value should be 0.
+- sale_id is just incremental id.
+    + Sales table only store the information related to the transaction.
+
+** Idea
+1.
+1.0, Idea
+- Customer join Sales
+- Salesperson left Join the table above + group by (salesperson_id, name)
+
+with cte1 as(
+Select
+    c.customer_id, c.salesperson_id, price
+from Customer c join Sales s
+on c.customer_id=s.customer_id
+),
+cte2 as(
+Select
+    s.salesperson_id,
+    name,
+    sum(if(price is null, 0 , price)) as total
+from
+Salesperson s left join cte1 c1
+on s.salesperson_id=c1.salesperson_id
+group by salesperson_id, name
+)
+Select * from cte2;
+
+#Reference:
+2377. Sort the Olympic Table
+2388. Change Null Values in a Table to the Previous Value
+607. Sales Person
+569. Median Employee Salary
+1635. Hopper Company Queries I

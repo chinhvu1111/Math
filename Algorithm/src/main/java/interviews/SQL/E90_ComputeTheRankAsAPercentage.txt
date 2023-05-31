@@ -1,0 +1,48 @@
+
+** Requirement:
+- Write an SQL query that reports the rank of each student in their department as a percentage,
+where the rank as a percentage is computed using the following formula:
++ (student_rank_in_the_department - 1) * 100 / (the_number_of_students_in_the_department - 1).
+The percentage should be rounded to 2 decimal places.
+student_rank_in_the_department is determined by (descending mark),
+such that the student with the highest mark is rank 1. If two students get the same mark, they also get the same rank.
+
+** Idea
+1.
+1.0, Idea
+* Method-1:
+
+- Count the number of students for each department
+- Students left join the table above
+==> Đoạn trên có thể bỏ đi được --> nếu dùng count() over( partition by department_id)
+- dense_rank() over(partition by department_id order by mark)
+
+with cte1 as(
+Select
+    student_id, department_id,
+    count(1) over(partition by department_id) as num_student,
+    rank() over(partition by department_id order by mark desc) as rn
+from Students
+),
+cte2 as(
+Select
+    student_id, department_id,
+    round(if(num_student=1, 0, (rn-1)*100 / (num_student-1)), 2) as percentage
+from cte1
+)
+Select * from cte2;
+
+* Method-2:
+- Using percent_rank()
+SELECT student_id, department_id,
+    ROUND(100*PERCENT_RANK() OVER (
+          PARTITION BY department_id
+          ORDER BY mark DESC)
+    , 2) AS percentage
+FROM Students
+
+#Reference:
+2372. Calculate the Influence of Each Salesperson
+1633. Percentage of Users Attended a Contest
+2004. The Number of Seniors and Juniors to Join the Company
+1484. Group Sold Products By The Date

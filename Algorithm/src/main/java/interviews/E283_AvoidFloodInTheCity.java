@@ -45,7 +45,6 @@ public class E283_AvoidFloodInTheCity {
         int[] rs=new int[n];
 
         for(int i=0;i<n;i++){
-
         }
 
         return null;
