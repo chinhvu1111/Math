@@ -1,0 +1,31 @@
+
+** Requirement:
+- List ra danh sách các user_id là active là :
++ User_id đặt 2 đơn trong 7 ngày.
+
+** Idea
+1.
+1.0, Idea
+* Method-1:
+- Dùng lag(created_at) để tính hiện date của row sau row hiện tại.
+
+with cte1 as(
+Select
+    user_id,
+    item,
+    created_at, lag(created_at, 1, 0) over(partition by user_id order by created_at) as next_created_at
+from Users
+),
+cte2 as(
+Select
+    distinct user_id
+from cte1 where datediff(created_at, next_created_at) <=7
+)
+Select * from cte2;
+
+
+#Reference:
+2688. Find Active Users
+1543. Fix Product Name Format
+2329. Product Sales Analysis V
+1225. Report Contiguous Dates

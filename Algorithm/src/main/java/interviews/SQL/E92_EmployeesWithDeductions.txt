@@ -1,0 +1,45 @@
+
+** Requirement:
+- In a company, each employee must work a certain number of hours every month. Employees work in sessions.
+The number of hours an employee worked can be calculated from the sum of the number of minutes the employee worked in all of their sessions.
+The number of minutes in each session is rounded up.
+
+For example, if the employee worked for 51 minutes and 2 seconds in a session, we consider it 52 minutes.
+Write an SQL query to report the IDs of the employees that will be deducted.
+In other words, report the IDs of the employees that did not work the needed hours.
+
+** Idea
+1.
+1.0, Idea
+* Method-1:
+- Cần làm tròn số minutes mỗi session trước --> Sau đó sum lại
+- Nếu muốn làm tròn --> Thì có thể đổi ra second sau đó ceil(/ 60)
+timestampdiff(second, "2009-09-18 00:00:00", "2009-10-17 00:00:00");
+timestampdiff(minute, "2009-09-18 00:00:00", "2009-10-17 00:00:00");
+- Group by employee_id + sum(TIMESTAMPDIFF(out_time - in_time))
+- Sau đó join + filter.
+
+* Method-1:
+
+with cte1 as(
+Select employee_id, timestampdiff(second, in_time, out_time) as second_work_time from Logs
+),
+cte2 as(
+Select
+    e.employee_id,
+    e.needed_hours,
+    sum(ceil(ifnull(second_work_time, 0)/60)) as work_time from
+Employees e left join cte1 c1
+on e.employee_id=c1.employee_id
+group by e.employee_id, e.needed_hours
+),
+cte3 as(
+Select employee_id from cte2 c2 where c2.work_time < c2.needed_hours * 60
+)
+Select * from cte3;
+
+#Reference:
+2686. Immediate Food Delivery III
+1767. Find the Subtasks That Did Not Execute
+2377. Sort the Olympic Table
+1127. User Purchase Platform

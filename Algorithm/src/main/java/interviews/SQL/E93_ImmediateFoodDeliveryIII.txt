@@ -1,0 +1,27 @@
+
+** Requirement:
+- If the customer's preferred (delivery date is the same as the order date), then the order is called (immediate), otherwise, it is (scheduled).
+Write an SQL query to find the (percentage of immediate orders) on (each unique order_date), rounded to 2 decimal places.
+Return the result table (ordered by order_date in ascending order).
+
+** Idea
+1.
+1.0, Idea
+* Method-1:
+- Find immediate or scheduled type
+- group by count value at the same time.
+
+with cte1 as(
+Select order_date, if(datediff(customer_pref_delivery_date, order_date)=0, 1, 2) as type_order from Delivery
+),
+cte2 as(
+Select order_date, round(sum(if(type_order=1, 1, 0)) / count(type_order) * 100, 2) as immediate_percentage
+from cte1 group by order_date
+)
+Select * from cte2;
+
+#Reference:
+2688. Find Active Users
+1543. Fix Product Name Format
+2329. Product Sales Analysis V
+1225. Report Contiguous Dates

@@ -1,0 +1,36 @@
+
+** Requirement:
+- Tìm những rows bao gồm median salary của mỗi company.
+- Trong khi tính toán median, khi sort salaries của company --> break tie bằng id
+- Median là giá trị chính giữa (Sau khi sort)
+VD:
+1,2,3,4 --> median: 2,3
+1,2,3 --> median 2
+
+** Idea
+1.
+1.0, Idea
+* Method-1:
+- Ta cần tìm count các rows mỗi company trong Employee table --> Để xác định median nằm ở đâu
++ count %2==0 : median là 2: (count/2, count/2+1)
++ count %2==1 : median là : (count+1)/2
+- Ta cần join sang sau đó là tính row_number() + filter những giá trị = (2 gía trị trên) + distinct để tránh trùng lặp
+
+with cte as(
+Select count(1) as num, company
+from Employee group by company
+),
+cte1 as(
+Select
+  if(num %2=0, num/2, (num+1)/2) as num,
+  if(num %2=0, num/2+1, (num+1)/2) as num1,
+  company from cte
+),
+cte2 as(
+Select e.id, e.company, e.salary, c1.num, c1.num1, row_number() over(partition by company order by salary) as rn
+from Employee e left join cte1 c1 on c1.company=e.company
+),
+cte3 as(
+Select id, company, salary from cte2 where rn=num or rn=num1
+)
+Select * from cte3;

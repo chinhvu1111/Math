@@ -1,0 +1,95 @@
+
+** Requirement:
+Table: Trips
+
++-------------+----------+
+| Column Name | Type     |
++-------------+----------+
+| id          | int      |
+| client_id   | int      |
+| driver_id   | int      |
+| city_id     | int      |
+| status      | enum     |
+| request_at  | date     |
++-------------+----------+
+id is the primary key for this table.
+The table holds all taxi trips. Each trip has a unique id, while client_id and driver_id are foreign keys to the users_id at the Users table.
+Status is an ENUM type of ('completed', 'cancelled_by_driver', 'cancelled_by_client').
+
+
+Table: Users
+
++-------------+----------+
+| Column Name | Type     |
++-------------+----------+
+| users_id    | int      |
+| banned      | enum     |
+| role        | enum     |
++-------------+----------+
+users_id is the primary key for this table.
+The table holds all users. Each user has a unique users_id, and role is an ENUM type of ('client', 'driver', 'partner').
+banned is an ENUM type of ('Yes', 'No').
+
+- The cancellation rate is computed by dividing the number of canceled (by client or driver) requests
+with (unbanned) users by the total number of requests with (unbanned) users on that day.
+--> Tính tỉ lệ cancellation (Tỉ lệ huỷ) của (client hoặc driver) mỗi ngày giữa ("2013-10-01" and "2013-10-03")
+
+** Idea
+1.
+1.0, Idea
+* Method-1:
+- Ta có status trong Trips table ('completed', 'cancelled_by_driver', 'cancelled_by_client')
++ Nếu cancelled by driver --> Cần check driver bị banned chưa.
+==> Wrong --> Cần check (cả driver và client không bị banned)
+<> client cũng thế
+- Thông tin users đã bị banned hay không thì nằm trong Users table.
+1.1, Implementation
+- Ta sẽ chuyển id của (client và driver) thành user_order_id phụ thuộc vào status
++ Ta cũng cần thêm 1 trường role để join
+- Sau đó ta sẽ left join sang Users table để check thông tin
+- Group by count(1)/ count(condition)
+-
+Cancellation rate= (Tổng số request bị canceled + unbanned users) / (Tổng số request với users unbanned trong ngày đó)
+
+--> Hiểu sai đề
+- Ta cần left join để tìm request nào có driver và client không bị banned + đơn là cancel --> Được tính vào
+
+# Write your MySQL query statement below
+
+with cte1 as(
+Select
+p.request_at as Day,
+round(sum(if(p.status <> 'completed', 1,0)) / count(1), 2) as 'Cancellation Rate'
+from
+Trips p
+join Users u on p.client_id=u.users_id and u.role='client' and u.banned='No'
+join Users u1 on p.driver_id = u1.users_id and u1.role='driver' and u1.banned='No'
+where p.request_at >='2013-10-01' and p.request_at <='2013-10-03'
+group by p.request_at
+)
+
+Select * from cte1;
+
+* Method-2:
+- Dùng phương pháp NOT IN --> !(No) = Yes để tránh join
+==> Tăng tốc do phép join sẽ tốn time check hơn
++ Distributed process
++ Centralized process
+Đều tốn time hơn.
+
+Select
+request_at as Day,
+round(sum(if(status='completed', 0, 1))/ count(1), 2)  as 'Cancellation Rate'
+from
+Trips p
+where
+client_id not in (Select users_id from Users where banned='Yes')
+and driver_id not in (Select users_id from Users where banned='Yes')
+AND request_at BETWEEN '2013-10-01' AND '2013-10-03'
+group by request_at
+
+#Reference:
+569. Median Employee Salary
+1635. Hopper Company Queries I
+1645. Hopper Company Queries II
+1651. Hopper Company Queries III

@@ -1,0 +1,161 @@
+
+** Requirement:
+- Trả lại median của dãy số
+--> Các số trong dãy số có frequency cụ thể
+
+VD:
+Input:
+Numbers table:
++-----+-----------+
+| num | frequency |
++-----+-----------+
+| 0   | 7         |
+| 1   | 1         |
+| 2   | 3         |
+| 3   | 1         |
++-----+-----------+
+Output:
++--------+
+| median |
++--------+
+| 0.0    |
++--------+
+Explanation:
+If we decompress the Numbers table, we will get [0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 3], so the median is (0 + 0) / 2 = 0.
+- return median của các số đã cho
+
+** Idea
+1.
+1.0, Idea
+* Method-1:
+- Ta sẽ tính sum all frequency --> Để biết ta nên tính ntn
+VD:
++-----+-----------+
+| num | frequency |
++-----+-----------+
+| 0   | 7         |
+| 1   | 1         |
+| 2   | 3         |
+| 3   | 1         |
++-----+-----------+
+VD: 1,2,3,4 --> (2+3)/2
+- sum= 12 --> ( [12/2] + [12/2+1] ) /2
+- Ta sẽ biến đổi như sau:
+- Sort + hàm lag để làm cách nào đó để chia đoạn:
+    + Biết được index=i sẽ là số nào
+
+- Sau đó ta sẽ tính sum all và chia trường hợp:
++ Chẵn thì sẽ lấy median của indexs : i/2, i/2+1
++ Lẻ thì lấy (i+1)/2
++-----+-----------+
+| num | frequency |
++-----+-----------+
+| 0   | 7         |
+| 1   | 1         |
+| 2   | 3         |
+| 3   | 1         |
++-----+-----------+
+- Chia đoạn:
++-----+-----------+
+| num | frequency |
++-----+-----------+
+| 0   | 7         |   7
+| 1   | 1         |   8 = 1+7 --> 7< i <=8 là 1
+| 2   | 3         |   11 =3+8 --> 8< i <=11 là 2
+| 3   | 1         |   12 =1+11 --> 11< i <=12 là 3
++-----+-----------+
+--> LAG
++-----+-----------+
+| num | prev      |
++-----+-----------+
+| 0   | 0         |   7
+| 1   | 7         |   8 = 1+7 --> 7< i <=8 là 1
+| 2   | 8         |   11 =3+8 --> 8< i <=11 là 2
+| 3   | 11         |   12 =1+11 --> 11< i <=12 là 3
++-----+-----------+
+- Dùng sum over --> order by num là ok
+
+# Write your MySQL query statement below
+with cte1 as(
+Select
+    num,
+    sum(frequency) over(order by num) as max_index
+from Numbers
+),
+cte2 as(
+Select
+    num, max_index,
+    lag(max_index,1,0) over(order by num) as prev_index
+from cte1
+),
+cte3 as(
+Select
+    sum(frequency) as sum_index
+from Numbers
+),
+cte4 as(
+Select if(sum_index%2=0, sum_index/2, (sum_index+1)/2) as median_index from cte3
+UNION
+Select if(sum_index%2=0, sum_index/2+1, (sum_index+1)/2) as median_index from cte3
+),
+cte5 as(
+Select c2.num from
+cte4 c4 join cte2 c2 on c2.prev_index < c4.median_index and c4.median_index <= c2.max_index
+),
+cte6 as(
+Select sum(num)/count(1) as median from cte5
+)
+
+Select * from cte6;
+
+* Method-2:
+- Phần này nó tốt hơn mình ở chỗ --> Không cần dùng LAG function
+--> Lower_bound = current_sum - frequency
+- medium = sum()/2 (Có thể tính luôn)
+- Ngoài ra thì median có thể tính để nó thuộc (lower_bound và upper_bound)
+==> Thuộc nhiều số --> Cùng lắm là 1 --> 2 số thôi
+- nên chỉ cần tính avg(num) là được. ===> Không cần xét chính xác đến mức index
+** Chỉ cần xem (sum/2) nó thuộc khoảng bất kỳ của 2 số nào là được.
+VD:
+1,2,3,4
++ sum(frequency)=4/2 = 2
++ 5 thuộc (2) và (3)
+1,2,3,4,5
++ sum(frequency)=5 , 5/2=2.5 ==> Trong SQL không có datatype nên nếu lúc chia nó sẽ bị float
++ 2.5 thuộc (2,3) ==> Nên chỉ chọn 3.
+
+with a as (
+    select num,
+           sum(frequency) over (order by num) - frequency as lower_num,
+           sum(frequency) over (order by num) as upper_num,
+           sum(frequency) over () / 2 as medium_num
+    from numbers
+)
+
+select avg(num) as median
+from a
+where medium_num between lower_num and upper_num
+
+Example:
+Numbers =
+| num | frequency |
+| --- | --------- |
+| 0   | 1         |
+| 1   | 1         |
+| 2   | 1         |
+| 3   | 1         |
+| 4   | 1         |
+Output
+| num | lower_num | upper_num | medium_num |
+| --- | --------- | --------- | ---------- |
+| 0   | 0         | 1         | 2.5        |
+| 1   | 1         | 2         | 2.5        |
+| 2   | 2         | 3         | 2.5        |
+| 3   | 3         | 4         | 2.5        |
+| 4   | 4         | 5         | 2.5        |
+
+#Reference:
+579. Find Cumulative Salary of an Employee
+1369. Get the Second Most Recent Activity
+1821. Find Customers With Positive Revenue this Year
+2356. Number of Unique Subjects Taught by Each Teacher

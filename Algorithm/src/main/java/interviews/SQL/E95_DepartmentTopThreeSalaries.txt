@@ -1,0 +1,30 @@
+
+** Requirement:
+- A company's executives are interested in seeing who earns the most money in (each of the company's departments).
+A high earner in a department is an employee who has a salary in the (top three unique salaries) for that department.
+Write an SQL query to find the employees who are high earners in each of the departments.
+
+** Idea
+1.
+1.0, Idea
+* Method-1:
+- top 3 unique salary --> dense_rank()
+
+
+with cte1 as(
+Select
+    d.name as Department, e.name as Employee, e.Salary,
+    dense_rank() over(partition by e.departmentId order by salary desc) as rn
+    from Employee e join Department d on e.departmentId=d.id
+),
+cte3 as(
+Select Department, Employee, Salary  from cte1 c1 where c1.rn<=3
+)
+
+Select * from cte3;
+
+#Reference:
+262. Trips and Users
+620. Not Boring Movies
+1082. Sales Analysis I
+596. Classes More Than 5 Students
