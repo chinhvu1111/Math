@@ -27,16 +27,22 @@ public class E13_WordLadderII {
         nextNodes.add(beginWord);
         HashSet<String> visited=new HashSet<>();
         int level=1;
-        HashMap<String, List<String>> wordToPreviousNode=new HashMap<>();
+        HashMap<String, HashSet<String>> wordToPreviousNode=new HashMap<>();
 
+        //Lưu tất cả các words trước word hiện tại
+        //VD:
+        //  A   B   C   D
+        //   \  |   |   |
+        //     E      F
         while (!nextNodes.isEmpty()){
             boolean isMatch=false;
-            List<String> nextWords=new ArrayList<>();
+            HashSet<String> nextWords=new HashSet<>();
             HashSet<String> traverse=new HashSet<>();
 
             while (!nextNodes.isEmpty()){
                 String currentWord=nextNodes.poll();
                 int m=currentWord.length();
+                visited.add(currentWord);
 
                 for (int i = 0; i < m; i++) {
                     String currentPattern=currentWord.substring(0,i) + "*" + currentWord.substring(i+1);
@@ -60,8 +66,8 @@ public class E13_WordLadderII {
                         }
                         traverse.add(s);
                         nextWords.add(s);
-                        List<String> prevNodes=wordToPreviousNode.get(s);
-                        if(prevNodes==null) prevNodes=new ArrayList<>();
+                        HashSet<String> prevNodes=wordToPreviousNode.get(s);
+                        if(prevNodes==null) prevNodes=new HashSet<>();
                         prevNodes.add(currentWord);
                         wordToPreviousNode.put(s, prevNodes);
                     }
@@ -72,6 +78,7 @@ public class E13_WordLadderII {
             if(isMatch){
                 break;
             }
+//            System.out.printf("Next words: %s\n", nextWords);
             nextNodes.addAll(nextWords);
             level++;
         }
@@ -92,34 +99,55 @@ public class E13_WordLadderII {
         wordToPaths.put(endWord, initPath);
         nodes.add(endWord);
 //        System.out.printf("Init %s\n", wordToPaths);
+//        System.out.println(wordToPreviousNode);
+//        System.out.println(patternToNodes);
+//        if(true){
+//            return null;
+//        }
 
         while (!nodes.isEmpty()){
             List<String> prevNodes=new ArrayList<>();
 
             while (!nodes.isEmpty()){
                 String currentWord=nodes.poll();
-                List<String> tmpPrevNode=wordToPreviousNode.get(currentWord);
+                HashSet<String> tmpPrevNode=wordToPreviousNode.get(currentWord);
                 HashSet<List<String>> prevPath=wordToPaths.get(currentWord);
-                System.out.printf("Prev nodes: %s %s\n", currentWord, tmpPrevNode);
-                System.out.printf("Prev paths: %s\n", prevPath);
-
+//                System.out.printf("Prev nodes: %s %s\n", currentWord, tmpPrevNode);
+//                System.out.printf("Prev paths: %s\n", prevPath);
+//
                 if(tmpPrevNode==null){
                     continue;
                 }
+                //A     B      C      D
+                //\   /         \   /
+                // E              H
+                //  \           /
+                //        Z
+                //Xét currentWord='E'
+                //prevPath= E,Z
+                //tmpPrevNode= A, B (A và B có thể được đến cùng từ E và H ==> Sẽ tính old paths ở đây)
+                //--> Tính path cho A và B
+                List<String> prevWords=new ArrayList<>();
                 for(String prevNode:tmpPrevNode){
+                    if(prevNode.equals(currentWord)){
+                        continue;
+                    }
+                    prevWords.add(prevNode);
                     HashSet<List<String>> oldPaths=wordToPaths.get(prevNode);
                     if(oldPaths==null) oldPaths=new HashSet<>();
 
                     for(List<String> prePath:prevPath){
+//                        System.out.printf("%s : %s\n",prePath, prevPath);
                         List<String> currentPath=new ArrayList<>();
                         currentPath.add(prevNode);
                         currentPath.addAll(prePath);
                         oldPaths.add(currentPath);
+//                        System.out.printf("%s\n", prePath);
                     }
 //                    System.out.printf("Old path: %s\n",oldPaths);
                     wordToPaths.put(prevNode, oldPaths);
                 }
-                prevNodes.addAll(tmpPrevNode);
+                prevNodes.addAll(prevWords);
             }
             nodes.addAll(prevNodes);
         }
@@ -176,8 +204,67 @@ public class E13_WordLadderII {
 //        String[] wordList = {"hot","dot","dog","lot","log"};
 //        String beginWord = "hit", endWord = "cog";
 //        String[] wordList = {"hot","dot","dog","lot","log","cog"};
-        String beginWord = "a", endWord = "c";
-        String[] wordList = {"a","b","c"};
+        //- Case này bị trường hợp (a --> a)
+        //a --> * --> a ==> Lặp vô tận
+        //+ Cần ignore đi case này ==> Nếu prevWord==currentWord: Ignore đi.
+//        String beginWord = "a", endWord = "c";
+//        String[] wordList = {"a","b","c"};
+        //- Case liên quan đến việc các prev lặp lại nhiều lần --> Chuyển tất cả sang SET (Để tránh lặp lại)
+        String beginWord = "aaaaa", endWord = "ggggg";
+        String[] wordList = {"aaaaa","caaaa","cbaaa","daaaa","dbaaa","eaaaa","ebaaa","faaaa","fbaaa","gaaaa","gbaaa",
+                "haaaa","hbaaa","iaaaa","ibaaa","jaaaa","jbaaa","kaaaa","kbaaa","laaaa","lbaaa",
+                "maaaa","mbaaa","naaaa","nbaaa","oaaaa","obaaa","paaaa","pbaaa","bbaaa","bbcaa",
+                "bbcba","bbdaa","bbdba","bbeaa","bbeba","bbfaa","bbfba","bbgaa","bbgba","bbhaa",
+                "bbhba","bbiaa","bbiba","bbjaa","bbjba","bbkaa","bbkba","bblaa","bblba","bbmaa",
+                "bbmba","bbnaa","bbnba","bboaa","bboba","bbpaa","bbpba","bbbba","abbba","acbba",
+                "dbbba","dcbba","ebbba","ecbba","fbbba","fcbba","gbbba","gcbba","hbbba","hcbba",
+                "ibbba","icbba","jbbba","jcbba","kbbba","kcbba","lbbba","lcbba","mbbba","mcbba",
+                "nbbba","ncbba","obbba","ocbba","pbbba","pcbba","ccbba","ccaba","ccaca","ccdba",
+                "ccdca","cceba","cceca","ccfba","ccfca","ccgba","ccgca","cchba","cchca","cciba",
+                "ccica","ccjba","ccjca","cckba","cckca","cclba","cclca","ccmba","ccmca","ccnba",
+                "ccnca","ccoba","ccoca","ccpba","ccpca","cccca","accca","adcca","bccca","bdcca",
+                "eccca","edcca","fccca","fdcca","gccca","gdcca","hccca","hdcca","iccca","idcca",
+                "jccca","jdcca","kccca","kdcca","lccca","ldcca","mccca","mdcca","nccca","ndcca",
+                "occca","odcca","pccca","pdcca","ddcca","ddaca","ddada","ddbca","ddbda","ddeca",
+                "ddeda","ddfca","ddfda","ddgca","ddgda","ddhca","ddhda","ddica","ddida","ddjca",
+                "ddjda","ddkca","ddkda","ddlca","ddlda","ddmca","ddmda","ddnca","ddnda","ddoca",
+                "ddoda","ddpca","ddpda","dddda","addda","aedda","bddda","bedda","cddda","cedda",
+                "fddda","fedda","gddda","gedda","hddda","hedda","iddda","iedda","jddda","jedda",
+                "kddda","kedda","lddda","ledda","mddda","medda","nddda","nedda","oddda","oedda",
+                "pddda","pedda","eedda","eeada","eeaea","eebda","eebea","eecda","eecea","eefda",
+                "eefea","eegda","eegea","eehda","eehea","eeida","eeiea","eejda","eejea","eekda",
+                "eekea","eelda","eelea","eemda","eemea","eenda","eenea","eeoda","eeoea","eepda",
+                "eepea","eeeea","ggggg","agggg","ahggg","bgggg","bhggg","cgggg","chggg","dgggg",
+                "dhggg","egggg","ehggg","fgggg","fhggg","igggg","ihggg","jgggg","jhggg","kgggg",
+                "khggg","lgggg","lhggg","mgggg","mhggg","ngggg","nhggg","ogggg","ohggg","pgggg",
+                "phggg","hhggg","hhagg","hhahg","hhbgg","hhbhg","hhcgg","hhchg","hhdgg","hhdhg",
+                "hhegg","hhehg","hhfgg","hhfhg","hhigg","hhihg","hhjgg","hhjhg","hhkgg","hhkhg",
+                "hhlgg","hhlhg","hhmgg","hhmhg","hhngg","hhnhg","hhogg","hhohg","hhpgg","hhphg",
+                "hhhhg","ahhhg","aihhg","bhhhg","bihhg","chhhg","cihhg","dhhhg","dihhg","ehhhg",
+                "eihhg","fhhhg","fihhg","ghhhg","gihhg","jhhhg","jihhg","khhhg","kihhg","lhhhg",
+                "lihhg","mhhhg","mihhg","nhhhg","nihhg","ohhhg","oihhg","phhhg","pihhg","iihhg",
+                "iiahg","iiaig","iibhg","iibig","iichg","iicig","iidhg","iidig","iiehg","iieig",
+                "iifhg","iifig","iighg","iigig","iijhg","iijig","iikhg","iikig","iilhg","iilig",
+                "iimhg","iimig","iinhg","iinig","iiohg","iioig","iiphg","iipig","iiiig","aiiig",
+                "ajiig","biiig","bjiig","ciiig","cjiig","diiig","djiig","eiiig","ejiig","fiiig",
+                "fjiig","giiig","gjiig","hiiig","hjiig","kiiig","kjiig","liiig","ljiig","miiig",
+                "mjiig","niiig","njiig","oiiig","ojiig","piiig","pjiig","jjiig","jjaig","jjajg",
+                "jjbig","jjbjg","jjcig","jjcjg","jjdig","jjdjg","jjeig","jjejg","jjfig","jjfjg",
+                "jjgig","jjgjg","jjhig","jjhjg","jjkig","jjkjg","jjlig","jjljg","jjmig","jjmjg",
+                "jjnig","jjnjg","jjoig","jjojg","jjpig","jjpjg","jjjjg","ajjjg","akjjg","bjjjg",
+                "bkjjg","cjjjg","ckjjg","djjjg","dkjjg","ejjjg","ekjjg","fjjjg","fkjjg","gjjjg",
+                "gkjjg","hjjjg","hkjjg","ijjjg","ikjjg","ljjjg","lkjjg","mjjjg","mkjjg","njjjg",
+                "nkjjg","ojjjg","okjjg","pjjjg","pkjjg","kkjjg","kkajg","kkakg","kkbjg","kkbkg",
+                "kkcjg","kkckg","kkdjg","kkdkg","kkejg","kkekg","kkfjg","kkfkg","kkgjg","kkgkg",
+                "kkhjg","kkhkg","kkijg","kkikg","kkljg","kklkg","kkmjg","kkmkg","kknjg","kknkg",
+                "kkojg","kkokg","kkpjg","kkpkg","kkkkg","ggggx","gggxx","ggxxx","gxxxx","xxxxx",
+                "xxxxy","xxxyy","xxyyy","xyyyy","yyyyy","yyyyw","yyyww","yywww","ywwww","wwwww",
+                "wwvww","wvvww","vvvww","vvvwz","avvwz","aavwz","aaawz","aaaaz"};
         System.out.println(findLadders(beginWord, endWord, Arrays.asList(wordList)));
+        //#Reference:
+        //1. Two Sum
+        //1153. String Transforms Into Another String
+        //1347. Minimum Number of Steps to Make Two Strings Anagram
+        //1213. Intersection of Three Sorted Arrays
     }
 }

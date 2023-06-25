@@ -180,6 +180,33 @@ public class E15_JumpGameVII {
         return dp[n-1];
     }
 
+    public static boolean canReachDynamicProgrammingRefactor(String s, int minJ, int maxJ) {
+        if(s == null || s.length() == 0) return false;
+        int n = s.length();
+        if(s.charAt(0) == '1' || s.charAt(n - 1) == '1') return false;
+        boolean[] dp=new boolean[n];
+        dp[0]=true;
+        int start;
+        int end=0;
+
+        for(int i=0;i<n;i++){
+            if(!dp[i]){
+                continue;
+            }
+            start=Math.max(i+minJ, end+1);
+            end=Math.min(n-1, i+maxJ);
+            for(int j=start;j<=end;j++){
+                if(s.charAt(j)=='0'){
+                    dp[j]=true;
+                }
+            }
+            if(dp[n-1]){
+                return true;
+            }
+        }
+        return dp[n-1];
+    }
+
     public static void main(String[] args) {
         //** Requirement
         //- Kiểm tra xem liệu có thể move (i=0) --> (n-1) : return (true/ false)
@@ -342,13 +369,22 @@ public class E15_JumpGameVII {
         //+ Mỗi lần tăng i ---> window slide sẽ dịch sang phải 1 đơn vị ===> DẤU HIỆU NHẬN BIẾT để LÀM SLIDE WINDOW <Các khoảng dịch 1 đơn vị 1>
         //+ Ở rìa sẽ là bỏ đi dp(i-maxJum-1) và thêm dp(i-minJump+1)
         //===> Cái này cần suy luận thêm --> Về cơ bản là bảo toàn số lượng thôi.
+        //- Tức là mỗi index ta sẽ thu được thêm giá trị nào --> Khi tăng index lên thì ==> slice window cũng di chuyển
+        // thêm 1 đơn vị ==> Các giá trị biên nếu đã add vào thì sẽ phải có lúc remove nó ra ngoài (dp[i-minJump]==true)
+        // Và đòng thời thêm dp(i-minJump+1)
+        //* Kinh nghiệm tư duy:
+        //- Tư duy dạng bảo toàn của slice window.
         //
         //3.2, Complexity:
         //- Time complexity : O(n)
         //- Space complexity : O(n)
+        //
+        //3.3, Refactor
+        //- https://leetcode.com/problems/jump-game-vii/solutions/1622748/explained-java-solution-beat-100-dp-sliding-window-easy-approach/
         System.out.println(canReach(s, minJump, maxJump));
         System.out.println(canReachRefactor(s, minJump, maxJump));
         System.out.println(canReachDynamicProgramming(s, minJump, maxJump));
+        System.out.println(canReachDynamicProgrammingRefactor(s, minJump, maxJump));
         //#Reference:
         //1. Two Sum
         //1345. Jump Game IV
