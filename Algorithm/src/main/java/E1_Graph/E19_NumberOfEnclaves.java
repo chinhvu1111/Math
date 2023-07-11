@@ -82,6 +82,13 @@ public class E19_NumberOfEnclaves {
         //- Tư duy là xét những nodes ở viền trước --> Sau đó khi xét max= 500 nodes
         //==> Nhưng đỉnh còn lại chính là nhưng điểm hợp lệ.
         //
+        //1.1, Optimization
+        //- Ở đây thay vì add các nodes vào all queue --> Thì theo lời giải mẫu nó sẽ:
+        //+ BFS từng node 1 ==> Theo đó reduce được time.
+        //
+        //1.2, Complexity
+        //- Time complexity : O(4*N*M) = O(M*N)
+        //- Space complexity : O(N*M)
 //        int[][] grid = {{0,1,1,0},{0,0,1,0},{0,0,1,0},{0,0,0,0}};
         int[][] grid = {
                 {0,0,0,1,1,1,0,1,0,0},

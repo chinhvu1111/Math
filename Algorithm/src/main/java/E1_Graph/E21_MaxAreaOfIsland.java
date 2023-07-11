@@ -53,28 +53,6 @@ public class E21_MaxAreaOfIsland {
         return rs;
     }
 
-    //- Mỗi cell chỉ được phép đi qua 1 lần --> Ta chỉ có thể update count cho 1 phần tử 1 lúc.
-    //- Tư duy này dạng update số phần tử trong 1 tập hợp
-    //1 1 1 1 1 1
-    //1 1 1
-    //1 1 1
-    //1 1
-    //
-    //1 1 0 (1) --> sẽ bị sai vì bên dưới chưa tính
-    //1 1 1 [1]
-    //
-    //3 3 0 2
-    //3 4 5 2
-    //+ Làm như thế nào để 1 tập hợp --> Sẽ có chung 1 count?
-    //==> Với tư duy dạng này thì ta sẽ hướng đến việc ==> Tìm root + chỉ tính count cho root đó thôi
-    //** --> Ở đây ta sẽ dùng UNION FIND ==> Gộp tất cả vào 1 group
-    //+ Root là node nào? top-left node.
-    // root(i,j) = (e,f) --> Hash()
-    //
-    //- Gộp như nào thế nào:
-    //+ Giữa (i,j) và (k,l) gộp như thế nào?
-    //--> Chọn cái nào có (count lớn hớn thì sẽ là root) của cái count nhở hơn
-    //+ Kết hợp nhiều subgraph --> cộng dồn count vào 1 graph
     public static class Node{
         int x;
         int y;
@@ -180,8 +158,29 @@ public class E21_MaxAreaOfIsland {
         return rs;
     }
 
-    public static int maxAreaOfIsland(int[][] grid) {
+    public static int maxAreaOfIslandUnionFind(int[][] grid) {
         return solutionDp(grid);
+    }
+
+    public static int solutionDFS(int[][] grid, int x, int y){
+        if(x<0||y<0||x>=grid.length||y>=grid[0].length||grid[x][y]==0){
+            return 0;
+        }
+        grid[x][y]=0;
+        return 1+ solutionDFS(grid, x-1, y) + solutionDFS(grid,x+1, y)
+                + solutionDFS(grid, x, y-1) + solutionDFS(grid, x, y+1);
+    }
+
+    public static int maxAreaOfIslandDFS(int[][] grid){
+        int n=grid.length;
+        int m=grid[0].length;
+        int rs=0;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                rs=Math.max(rs, solutionDFS(grid, i, j));
+            }
+        }
+        return rs;
     }
 
     public static void main(String[] args) {
@@ -192,6 +191,44 @@ public class E21_MaxAreaOfIsland {
         //1.
         //1.0, Brainstorm
         //- Constraints:
+        //+ m == grid.length
+        //+ n == grid[i].length
+        //+ 1 <= m, n <= 50
+        //
+        //- Mỗi cell chỉ được phép đi qua 1 lần --> Ta chỉ có thể update count cho 1 phần tử 1 lúc.
+        //- Tư duy này dạng update số phần tử trong 1 tập hợp
+        //1 1 1 1 1 1
+        //1 1 1
+        //1 1 1
+        //1 1
+        //
+        //1 1 0 (1) --> sẽ bị sai vì bên dưới chưa tính
+        //1 1 1 [1]
+        //
+        //3 3 0 2
+        //3 4 5 2
+        //+ Làm như thế nào để 1 tập hợp --> Sẽ có chung 1 count?
+        //==> Với tư duy dạng này thì ta sẽ hướng đến việc ==> Tìm root + chỉ tính count cho root đó thôi
+        //** --> Ở đây ta sẽ dùng UNION FIND ==> Gộp tất cả vào 1 group
+        //+ Root là node nào? top-left node.
+        // root(i,j) = (e,f) --> Hash()
+        //
+        //- Gộp như nào thế nào:
+        //+ Giữa (i,j) và (k,l) gộp như thế nào?
+        //--> Chọn cái nào có (count lớn hớn thì sẽ là root) của cái count nhở hơn
+        //+ Kết hợp nhiều subgraph --> cộng dồn count vào 1 graph
+        //
+        //1.1, Complexity:
+        //- Time complexity : O(N*M)
+        //+ N is the number of rows of grid array
+        //+ M is the number of columns of grid array
+        //
+        //- Space complexity : O(N*M)
+        //
+        //* Method 2:
+        //2.
+        //2.0,
+        //- DFS --> Chỉ đơn giản là đi all nodes mỗi lần traverse loop(N*M)
 //        int[][] grid={
 //                {1,1,0,0,0},
 //                {1,1,0,0,0},
@@ -203,17 +240,18 @@ public class E21_MaxAreaOfIsland {
 //                {0,0,0,0,1},
 //                {0,0,0,1,1}};
         //(3,8), (4,8), (4,9), (4,10), (3,10), (5,10)
-//        int[][] grid={
-//                {0,0,1,0,0,0,0,1,0,0,0,0,0},
-//                {0,0,0,0,0,0,0,1,1,1,0,0,0},
-//                {0,1,1,0,1,0,0,0,0,0,0,0,0},
-//                {0,1,0,0,1,1,0,0,1,0,1,0,0},
-//                {0,1,0,0,1,1,0,0,1,1,1,0,0},
-//                {0,0,0,0,0,0,0,0,0,0,1,0,0},
-//                {0,0,0,0,0,0,0,1,1,1,0,0,0},
-//                {0,0,0,0,0,0,0,1,1,0,0,0,0}};
-        int[][] grid={{1}};
-        System.out.println(maxAreaOfIsland(grid));
+        int[][] grid={
+                {0,0,1,0,0,0,0,1,0,0,0,0,0},
+                {0,0,0,0,0,0,0,1,1,1,0,0,0},
+                {0,1,1,0,1,0,0,0,0,0,0,0,0},
+                {0,1,0,0,1,1,0,0,1,0,1,0,0},
+                {0,1,0,0,1,1,0,0,1,1,1,0,0},
+                {0,0,0,0,0,0,0,0,0,0,1,0,0},
+                {0,0,0,0,0,0,0,1,1,1,0,0,0},
+                {0,0,0,0,0,0,0,1,1,0,0,0,0}};
+//        int[][] grid={{1}};
+        System.out.println(maxAreaOfIslandUnionFind(grid));
+        System.out.println(maxAreaOfIslandDFS(grid));
         //#Reference:
         //417. Pacific Atlantic Water Flow
         //463. Island Perimeter

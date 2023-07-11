@@ -1,0 +1,85 @@
+
+** Requirement:
+Table: Employee
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| id          | int  |
+| month       | int  |
+| salary      | int  |
++-------------+------+
+(id, month) is the primary key for this table.
+Each row in the table indicates the salary of an employee in one month during the year 2020.
+- Mỗi row chỉ lương của 1 employee trong 1 tháng trong năm 2020
+
+- Viết SQL để tính tóm tắt tiền lương tích luỹ của mỗi employee trong 1 table tổng hợp duy nhất
++ Each month mà employee đó worked, sum up salaries trong month đó và previous two months.
++ If an employee did not work for the company in (previous months), their (effective salary) for those months is 0.
++ Do not include the 3-month sum for (the most recent month) that the employee worked for in the summary ==> Bỏ việc tính cho tháng gần nhất.
++ Do not include the 3-month sum for (any month) (the employee did not work) ==> Không tính cho tháng mà nhân viên không làm việc.
+
++ Return the result table (ordered by id) in (ascending order). In case of a tie, (order it by month) in (descending order).
+
+** Idea
+1.
+1.0, Idea
+
+* Method-1:
+- Constraint:
+
+- Brainstorm:
++ Ta sẽ dùng phép row_number để loại ra các tháng lớn nhất
++ left join + group by sum()
+
+with cte1 as(
+Select a.id, a.month, a.salary
+from
+(Select
+     *,
+     row_number() over(partition by id order by month desc) as rn
+ from Employee) a where a.rn<>1
+),
+cte2 as(
+Select
+c1.id, c1.month, c1.salary, ifnull(e.salary, 0) as salary1
+from cte1 c1 left join Employee e
+on (c1.month-1=e.month or c1.month-2=e.month or c1.month=e.month) and c1.id=e.id
+),
+cte3 as(
+Select c2.id, c2.month, sum(c2.salary1) as Salary
+from cte2 c2 group by c2.id, c2.month order by id asc, month desc
+)
+Select * from cte3;
+
+#Reference:
+601. Human Traffic of Stadium
+627. Swap Salary
+1873. Calculate Special Bonus
+2474. Customers With Strictly Increasing Purchases
+* Method-2:
+- Ta có thể lấy ra số max month bằng cách [ group by id, max(month) as maxmonth ]
+==> Sau đó ta dùng nó để select tiếp.
+
+SELECT
+    E1.id,
+    E1.month,
+    (IFNULL(E1.salary, 0) + IFNULL(E2.salary, 0) + IFNULL(E3.salary, 0)) AS Salary
+FROM
+    (SELECT
+        id, MAX(month) AS month
+    FROM
+        Employee
+    GROUP BY id
+    HAVING COUNT(*) > 1) AS maxmonth
+        LEFT JOIN
+    Employee E1 ON (maxmonth.id = E1.id
+        AND maxmonth.month > E1.month)
+        LEFT JOIN
+    Employee E2 ON (E2.id = E1.id
+        AND E2.month = E1.month - 1)
+        LEFT JOIN
+    Employee E3 ON (E3.id = E1.id
+        AND E3.month = E1.month - 2)
+ORDER BY id ASC , month DESC
+;

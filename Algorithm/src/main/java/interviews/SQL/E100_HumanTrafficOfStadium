@@ -1,0 +1,116 @@
+
+** Requirement:
+Table: Stadium
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| id            | int     |
+| visit_date    | date    |
+| people        | int     |
++---------------+---------+
+- visit_date is the primary key for this table.
+- Each row of this table contains the visit date and visit id to the stadium with the number of people during the visit.
+- No two rows will have the same visit_date, and as the id increases, the dates increase as well.
+--> Chứa thông tin người visit đến stadium vào visit_date cho trước.
+
+- Viết SQL để hiển thị records với 3 hoặc nhiều rows với id liên tiếp nhau và số lượng người >= 100 với.
+
+** Idea
+1.
+1.0, Idea
+* Method-1:
+
+- Brainstorm:
+- Cần tìm những id liên tiếp nhau + people >=100
++ Visit_date không cần liên tiếp nhau
+
+Ex:
+Input:
+Stadium table:
++------+------------+-----------+
+| id   | visit_date | people    |
++------+------------+-----------+
+| 1    | 2017-01-01 | 10        |   0   0
+| 2    | 2017-01-02 | 109       |   1   0
+| 3    | 2017-01-03 | 150       |   2   1
+| 4    | 2017-01-04 | 99        |   0   0
+| 5    | 2017-01-05 | 145       |   1   0
+| 6    | 2017-01-06 | 1455      |   2   1
+| 7    | 2017-01-07 | 199       |   3   2
+| 8    | 2017-01-09 | 188       |   4   3
++------+------------+-----------+
+- Cần phải loại ra :
++ Trường hợp ==0
++ Trường hợp liên tiếp <=3
+==> Giả sử dùng row_number() thì mình cũng không đánh dấu dạng (1,2,3,4) được do nó tăng theo id
+- Nên mình sẽ dùng lag để tính:
++ Nếu people <100 --> currentValue=0, prevValue=0
++ Khi mình tạo được thông tin như trên --> self join (4 join all <= 8-4)
++ Để count incremental --> Ta cần dùng hàm sum để cộng
+==> Vẫn không được do nó sẽ cộng dồn vào all
+
+- Ta sẽ group by theo hiệu của 2 số --> sau đó sẽ lấy danh sách cần ra là được.
+Stadium table:
++------+------------+-----------+
+| id   | visit_date | people    |
++------+------------+-----------+
+| 1    | 2017-01-01 | 10        |   0
+| 2    | 2017-01-02 | 109       |   1
+| 3    | 2017-01-03 | 150       |   2
+| 4    | 2017-01-04 | 99        |   0
+| 5    | 2017-01-05 | 145       |   3
+| 6    | 2017-01-06 | 1455      |   4
+| 7    | 2017-01-07 | 199       |   5
+| 8    | 2017-01-09 | 188       |   6
+| 9                             |   6
+| 10                            |   7
++------+------------+-----------+
+
+# Write your MySQL query statement below
+
+with cte1 as(
+Select
+    id,
+    visit_date,
+    people,
+    if(people>=100, lag(value+1, 1, 0) over(order by id), 0) as curr_value
+from
+(
+Select *, 0 as value
+from Stadium
+) a
+),
+cte2 as(
+Select
+    id,
+    visit_date,
+    people,
+    if(people >=100, sum(curr_value) over (order by id), 0) as value
+from cte1 c1
+),
+cte3 as(
+    Select
+    id,
+    visit_date,
+    people,
+    (id-value) as range_value
+    from cte2 where people>=100
+),
+cte4 as(
+    Select range_value from cte3 group by range_value having count(1) >=3
+),
+cte5 as(
+    Select
+    c3.id,
+    c3.visit_date,
+    c3.people
+    from cte3 c3 join cte4 c4 on c3.range_value=c4.range_value
+)
+Select * from cte5 order by visit_date;
+
+#Reference:
+615. Average Salary: Departments VS Company
+1378. Replace Employee ID With The Unique Identifier
+1633. Percentage of Users Attended a Contest
+2687. Bikes Last Time Used

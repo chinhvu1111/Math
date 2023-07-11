@@ -290,6 +290,8 @@ public class E22_PacificAtlanticWaterFlow {
         //--> Tư duy dạng traverse từ rìa Pacific --> rìa Alantic có vẻ hơi rườm ra vì ta cần add all nodes trên đường đi vào result
         //+ Chạy từ rìa vào với Pacific traverse all nodes có thể tìm thấy + add vào hashset
         //- Sẽ có cases nó đi từ Pacific Ocean --> (i,j) và (Atlantic Ocean) --> (i,j) : Là 2 đường khác nhau
+        //--> Ta sẽ chạy từ Atlantic Ocean traverse lần nữa + add all nodes vào setAtlantic
+        //- Ta có 2 hashSet return lại các phần tủ chung nhau giữa chúng là được.
         //
         //1.1, Complexity:
         //- Time complexity : O(N*M)
@@ -297,6 +299,12 @@ public class E22_PacificAtlanticWaterFlow {
         //- Space complexity : O(2*N*M) = O(N*M)
         //+ 2 hashset, 2 queues
         //+ Worst case, space = O(N*M*3) ==> O(N*M)
+        //
+        //* Method 2:
+        //2,
+        //2.0,
+        //- Cách này đơn giản là tạo 2 queue + 2 visited + traverse từ lần lượt các node ở biên (Pacific và Alantic)
+        //- Traverse visited 1 lần nữa để lấy ra all nodes thoả mãn.
         //
         System.out.println(pacificAtlantic(heights));
         //#Reference:

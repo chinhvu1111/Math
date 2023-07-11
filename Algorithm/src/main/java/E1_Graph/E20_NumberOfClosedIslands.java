@@ -85,7 +85,7 @@ public class E20_NumberOfClosedIslands {
             }
             Queue<int[]> currentNodes=new LinkedList<>();
             currentNodes.add(nodes);
-            boolean isClosedIsland= nodes[0] == 0 || nodes[0] == n - 1 || nodes[1] == 0 || nodes[1] == m - 1;
+            boolean isNotClosedIsland= nodes[0] == 0 || nodes[0] == n - 1 || nodes[1] == 0 || nodes[1] == m - 1;
 
             while (!currentNodes.isEmpty()){
                 int[] currentNode=currentNodes.poll();
@@ -100,13 +100,16 @@ public class E20_NumberOfClosedIslands {
                     if(x1>=0&&x1<n&&y1>=0&&y1<m&&grid[x1][y1]==0){
                         currentNodes.add(new int[]{x1, y1});
                         grid[x1][y1]=1;
+                        if(isNotClosedIsland){
+                            continue;
+                        }
                         if(x1==0||x1==n-1||y1==0||y1==m-1){
-                            isClosedIsland=true;
+                            isNotClosedIsland=true;
                         }
                     }
                 }
             }
-            if(!isClosedIsland){
+            if(!isNotClosedIsland){
 //                System.out.printf("%s %s\n",nodes[0], nodes[1]);
                 rs++;
             }
@@ -152,6 +155,13 @@ public class E20_NumberOfClosedIslands {
 //                {1,0,1,1,1,0,1},
 //                {1,0,0,0,0,0,1},
 //                {1,1,1,1,1,1,1}};
+        //
+        //1.1, Optimization
+        //- Ở đây mình đang tìm cách BFS cho mọi điểm trong graph --> Điều này có vẻ không được tối ưu
+        //==> Có vẻ traverse ngày lúc duyệt loop(N*M) sẽ làm phép toán nhanh hơn <> add all nodes vào queue.
+        //
+        //1.2, Complexity
+        //-
         int[][] grid =
                        {{1,1,0,1,1,1,1,1,1,1},
                         {0,0,1,0,0,1,0,1,1,1},
