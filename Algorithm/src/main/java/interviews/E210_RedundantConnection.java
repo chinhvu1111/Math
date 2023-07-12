@@ -65,6 +65,8 @@ public class E210_RedundantConnection {
         int[][] arr=new int[][]{{1,2},{2,3},{3,4},{1,4},{1,5}};
         //Beat : 92.36 --> 100%
         int[] result=findRedundantConnection(arr);
+        //Time complexity:
+        //- O(log(log(N))
 
         prinln(result);
     }
