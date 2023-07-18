@@ -102,7 +102,7 @@ public class E33_GraphValidTree {
         //        (7)
         //+ Graph cần phải không có chu kỳ
         //+ Không có đồ thị độc lập
-        //--> Vì là đô thị vô hướng --> Không cần xác định root của tree
+        //--> Vì là (đồ thị vô hướng) --> Không (cần xác định root) của tree
         //
         //* Chú ý:
         //- Với đồ thị vô hướng --> Chỉ có thể check dựa trên visited[i][j] ==> Vì (i) có thể đến (j) cả 2 chiều
