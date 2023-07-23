@@ -229,5 +229,8 @@ public class E2_AlienDictionary_Reference {
         //649. Dota2 Senate
         //2223. Sum of Scores of Built Strings
         //2279. Maximum Bags With Full Capacity of Rocks
+        //2778. Sum of Squares of Special Elements
+        //1293. Shortest Path in a Grid with Obstacles Elimination
+        //1448. Count Good Nodes in Binary Tree
     }
 }

@@ -1,4 +1,4 @@
-package E1List;
+package E1_List;
 
 public class E1_LinkedListComponents {
 
