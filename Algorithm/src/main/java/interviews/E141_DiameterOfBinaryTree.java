@@ -91,7 +91,7 @@ public class E141_DiameterOfBinaryTree {
         //2.1,
         //Ở đây ý tưởng là ta sẽ lưu lại thông tin tại mỗi node bao gồm
         //- result[0] : chính là độ dài path lớn nhất của điểm đó có thể đến các điểm con của nó (parent node --> sub node)
-        //==> Mục đích để chia bài toán ra thành nhiều (root) nums[i] là root --> Khoảng cách (path) lớn nhất của nó là bao nhiều
+        //==> Mục đích để chia bài toán ra thành nhiều (root) nums[i] là root --> Khoảng cách (path) lớn nhất của nó là bao nhiêu
         //Với 2 nodes của của nums[i]
         //
         //- result[1] : là dộ sâu của (parent node --> sub node (xa nhất của nó)
