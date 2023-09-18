@@ -1,8 +1,106 @@
 package E1_Topological_sort;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class E6_CountSubtreesWithMaxDistanceBetweenCities {
-    public static int[] countSubgraphsForEachDiameter(int n, int[][] edges) {
-        return null;
+    public int[] countSubgraphsForEachDiameter(int n, int[][] edges) {
+        int m=edges.length;
+        List<Integer>[] adjNodes=new ArrayList[n+1];
+
+        for(int[] edge: edges){
+            int u=edge[0];
+            int v=edge[1];
+            if(adjNodes[u]==null){
+                adjNodes[u]=new ArrayList<>();
+            }
+            if(adjNodes[v]==null){
+                adjNodes[v]=new ArrayList<>();
+            }
+            adjNodes[u].add(v);
+            adjNodes[v].add(u);
+        }
+        int[] rs=new int[n-1];
+
+        for(int i=0;i<1<<n;i++){
+            if(Integer.bitCount(i)<2){
+                continue;
+            }
+            int d=getMaxDistance(i, n, adjNodes);
+            // System.out.printf("Current distance: %s, %s\n", i, d);
+
+            if(d>=1){
+                rs[d-1]++;
+            }
+        }
+        return rs;
+    }
+
+    public static void dfs(int node, int[] dist, List[] adjNodes, int mask){
+        List<Integer> nodes=adjNodes[node];
+        // System.out.printf("%s, adj: %s\n", node, nodes);
+
+        for(Integer nextNode: nodes){
+            if(((mask>>(nextNode-1)&1)==1)&&dist[nextNode]==Integer.MIN_VALUE){
+                dist[nextNode]=dist[node]+1;
+                dfs(nextNode, dist, adjNodes, mask);
+            }
+        }
+    }
+
+    public static int getMaxDistance(int mask, int n, List[] adjNodes){
+        int[] dist=new int[n+1];
+        Arrays.fill(dist, Integer.MIN_VALUE);
+
+        for(int i=1;i<=n;i++){
+            if(((mask>>(i-1)&1)==1)){
+                dist[i]=0;
+                dfs(i, dist, adjNodes, mask);
+                break;
+            }
+        }
+        //111 = 4+3
+        // System.out.printf("Mask: %s\n", mask);
+        // for(int i=1;i<=n;i++){
+        //     System.out.printf("%s, ", dist[i]);
+        // }
+        // System.out.println();
+        int j=-1;
+
+        for(int i=1;i<=n;i++){
+            if(((mask>>(i-1)&1)==1)){
+                if(dist[i]==Integer.MIN_VALUE){
+                    return -1;
+                }
+                if(j==-1||dist[i]>dist[j]){
+                    j=i;
+                }
+            }
+        }
+        if(j==-1){
+            return -1;
+        }
+        dist=new int[n+1];
+        Arrays.fill(dist, Integer.MIN_VALUE);
+        // System.out.printf("Node: %s\n", j);
+        dist[j]=0;
+        dfs(j, dist, adjNodes, mask);
+        int maxDistance=-1;
+        //    1 -- 4
+        //    |
+        //    3 -- 2
+        //
+        //11=1011
+
+        for(int i=1;i<=n;i++){
+            if(((mask>>(i-1)&1)==1)){
+                // System.out.printf("%s, ", dist[i]);
+                maxDistance=Math.max(maxDistance, dist[i]);
+            }
+        }
+        // System.out.printf("%s\n", maxDistance);
+        return maxDistance;
     }
 
     public static void main(String[] args) {

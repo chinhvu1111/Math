@@ -36,6 +36,30 @@ public class E87_DivisorGame {
         return n%2==0;
     }
 
+    public static boolean divisorGameDynamicProgramming(int n) {
+        boolean[] dp=new boolean[n+1];
+
+        for(int i=1;i<=n;i++){
+            if(i==1){
+                dp[i]=false;
+            }else if(i==2){
+                dp[i]=true;
+            }else{
+//                for(int j=1;j*j<=i;j++){
+//                    if(i%j==0){
+//                        dp[i]=!dp[i-j];
+//                        if(dp[i]){
+//                            break;
+//                        }
+//                    }
+//                }
+                //-->
+                dp[i]=!dp[i-1];
+            }
+        }
+        return dp[n];
+    }
+
     public static void main(String[] args) {
         //** Requirement
         //- Having n number
@@ -124,6 +148,22 @@ public class E87_DivisorGame {
         //
         //n=10 : 1,5,2
         //
+        //Consider if the number is 2, Alice starts with 1 and she wins
+        //for 3, Alice chooses 1, Bob again chooses 1 and alice looses
+        //Consider Number 4
+        //4 = Alice -> (4-1) - gives 3 to Bob
+        //3 = Bob -> (3-1) -  gives 2 to Alice
+        //2 - Alice -> (2-1) - gives 1 to Bob
+        //Now Bob cannot choose anything and he looses
+        //like this if we try for each and every number, we will get a pattern that if we know that the N is odd, then alice is loosing, if N is even alice is winning.
+        //Simple solution to this problem is to return N % 2 == 0
+        //
+        //+ n=2: Alice first (2-1) --> return true
+        //+ n=4 : Alice first (4-1) ==> Give 3 to bob ==> Give 2 to alice ==> win
+        //+ n=6 : Alice first (6-1) ==> Give 5 to bob
+        //===> Cứ trừ 1 là biến chẵn thành số lẻ
+        //+ n=10 : Alice first (10-1) ==> Give 9 to bob ==> Give even to alice ==> return true cho Alice ngay.
+        //
         //1.1,
         //* Complexity of slow way
         //- Time complexity :
@@ -149,6 +189,7 @@ public class E87_DivisorGame {
         int n=2;
         System.out.println(divisorGameSlow(n));
         System.out.println(divisorGame(n));
+        System.out.println(divisorGameDynamicProgramming(n));
         //#Reference:
         //738. Monotone Increasing Digits
         //2420. Find All Good Indices
