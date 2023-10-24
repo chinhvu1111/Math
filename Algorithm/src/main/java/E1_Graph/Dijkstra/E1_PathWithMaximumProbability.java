@@ -7,7 +7,6 @@ import java.util.*;
 public class E1_PathWithMaximumProbability {
 
     public double maxProbability(int n, int[][] edges, double[] succProb, int start_node, int end_node) {
-
         return 1;
     }
 
@@ -289,6 +288,53 @@ public class E1_PathWithMaximumProbability {
         //
         //- Comparator với double cần:
         //+ -Double.compare(o1[1], o2[1])
+        //
+        //- Idea của Dijkstra
+        //- Idea của nó là các weight >=0
+        //- Ta dùng max heap để sắp xếp các khoảng cách hiện tại
+        //+ Mỗi lần ta sẽ xét 1 node với distance từ start --> current node min nhất <=> Việc poll từ max heap ra
+        //+ Sau đó tính khoảng cách từ nó đến các neighbor nodes ==> nếu giá trị tính nhỏ hơn ==> update <> thì thôi
+        //+ Sau khi xét xong current node thì tương đương với việc ta đã xét được Min distance từ (start --> current node) rồi
+        //  + Việc keep trace visited <=> poll node đó ra khỏi max heap / priority queue
+        //
+        //- Câu hỏi?
+        //+ Liệu có case nào mà điểm mới --> Tính ra mà có thể update lại các điểm đã poll rồi hay không?
+        //Ex:
+        //1 -> 2 -> 3 -> 4
+        //\    \
+        // \    7
+        //  \    \
+        //   5 -> 6
+        //+ Ở đây ta thấy rằng nếu:
+        //(1 -> 2 -> 6) < (1 -> 5 -> 6)
+        //+ Giả sử
+        //  + (1 -> 5) + (5 -> 6) < (1 -> 2) + (2 -> 7)
+        //  ==> 6 sẽ là cái min tiếp theo
+        //- Lúc đó giá sử (7 -> 6) chỉ là 1 chiều:
+        //+ Ta sẽ tính được 6 là min là X
+        //+ Nếu 7 tính tiếp được kết quả ==> Ta sẽ lại phải add vào queue
+        //- Lúc đó giá sử (7 -> 6) chỉ là 2 chiều:
+        //+ Giá trị 7 sẽ có lợi hơn nếu đi từ 1 -> 5 -> 6 -> 7 thay vì đi từ (1 -> 2 -> 7) đã > (1 -> 5 -> 6) rồi.
+        //** Tư duy greedy y hệt là dạng nước lan.
+        //
+        //- Time complexity : O(V+E*Log(V))
+        //  + V: Do cần traverse hết all vertex
+        //  + E*Log(V) : Vì mỗi node đi qua hết edge liên quan của nó ==> Push all edge vào heap = E*Log(E)
+        //  + E max nhất = V^V (Cùng lắm mỗi node connect đến all nodes còn lại) = O(E*Log(E)) = O(E*Log(V^2)) = O(E*2*Log(V)) = O(E*Log(V))
+        //- Space complexity : O(V+E)
+        //  + Distance array : O(V)
+        //  + Priority queue : O(E)
+        //
+        //** NOTE:
+        //- Chú ý với:
+        //+ undirected graph : Không cần tính lại node cũ
+        //+ directed graph : cần tính lại các nodes kể cả các node poll ra rồi
+        //- Dijkstra được dùng cho:
+        //+ Weight graph
+        //- BFS được dùng cho
+        //+ Unweight graph
+        //
+        //-
         //
         //#Reference:
         //505. The Maze II
