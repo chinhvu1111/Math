@@ -316,6 +316,66 @@ public class E1_PathWithMaximumProbability {
         //- Lúc đó giá sử (7 -> 6) chỉ là 2 chiều:
         //+ Giá trị 7 sẽ có lợi hơn nếu đi từ 1 -> 5 -> 6 -> 7 thay vì đi từ (1 -> 2 -> 7) đã > (1 -> 5 -> 6) rồi.
         //** Tư duy greedy y hệt là dạng nước lan.
+        //=========== 1 lưu ý nữa về bản chất dủa Dijikstra
+        //Ex:
+        // 1 -- 2 -- 5 (target) --> Sai tất cả là target hết
+        //  \       |
+        //   3 -- 4
+        //- Giả dụ trong trường hợp nhân với nhau theo số thực
+        //+ (1,2)= 0.1
+        //+ (1,3)=0.2
+        //+ (2,5)= 0.4
+        //+ (3,4)=0.6
+        //+ (4,5)=0.001
+        //==> Ở đây ta thấy nếu đi (1 - 3 - 4) sẽ tệ hơn (1 - 2 - 5) (target=5)
+        //Nhưng khi đi (1 - 3 - 4 - 5) sẽ tốt hơn (1 - 2 - 5) (target=5)
+        //+ Step 0: start=1
+        //+ Step 1: 1 -> 2(0.1), 1 -> 3(0.1)
+        //1 2   3
+        //0 0.1 0.2
+        //+ Step 2: Chọn 2 (Chọn node chưa đi mà min distance)
+        // 1 - 2 - 5 = 0.1*0.4
+        //1 | 2   | 3   | 5
+        //0 |0.1  | 0.2 | 0.04
+        //+ Step 3: Chọn 5 min=0.04 + visited[5]=false
+        //1 | 2   | 3   | 5     | 4
+        //0 |0.1  | 0.2 | 0.04  | 0.00004
+        //** Ta thấy ở đây rằng distance(5)= 0.04 không phải min_distance từ (1 -> 5)
+        //===> Thuật toán dijikstra chỉ để tìm (node có khoảng cách min/max) đến (start node)?
+        //* Dijikstra không phải thuật toán dạng tìm kiếm min distance của 1 node --> all nodes còn lại? ==> "WRONG IDEA"
+        //** Chẳng qua bài trên là dạng đặc biệt
+        //- Chỉ có thể tìm min distance của all remaining nodes nếu nó là (directed graph)
+        //  + Khi chiều (4 -> 5) là 1 chiều ==> 5 không thể xuống 4 được, tính được bình thường cho (5 theo 1 - 3 - 4 -5)
+        //  + Khi chiều (5 -> 4) là 1 chiều ==> 5 không thể xuống 4 được, tính được bình thường cho (4 theo 1 - 2 - 5 - 4) và (5)
+        //- Nếu không phải nhân số thực --> Gía trị sẽ cộng dồn ==> Sẽ không có case (1 - 3 -4 - 5) < (1 - 2 - 5) (Do 4 - 5 small)
+        //- Nếu hướng (4 - 5) và (5 -> 4) cùng tồn tại ==> Nhân số thực sẽ ra small dần --> 0 (Nên sẽ không có case ntn)
+        //
+        //** Liệu trong undirected graph thì visited rồi thì có cần xét lại không?
+        // * "CÓ"
+        //- Ở đây ta thấy là sẽ là cộng dồn ==> undirected graph
+        //  + Nếu node nào đi rồi thì sao?
+        //Ex:
+        //1 ---- 2
+        //\   /
+        // 3 --- 4
+        //weight(1,2) = 0.1
+        //weight(2,3) = 0.2
+        //weight(1,3) = 2
+        //weight(3, 4) = 4
+        //+ Step 1:
+        // 1
+        // 0
+        //+ Step 2: min=0 (Vị trí node 1)
+        //  + 1 ->2
+        //  + 1 -> 3
+        // 1 | 2   |  3
+        // 0 | 0.1 |  2
+        //+ Step 3: min=(1,2) ==> 2 -> 3
+        // 1 | 2   |  3 (updated)
+        // 0 | 0.1 |  0.1+0.2=0.3
+        //- Ta thấy dù 3 đã visited ==> Nhưng có updated tức là ta vẫn có thể xét 3 tiếp (Mặc dù đây là undirected graph)
+        //** Ta vẫn phải (add vào queue) với nhưng (update nodes)
+        //==> Chứ (không phải) cứ (run qua rồi) ta sẽ (không xét nữa)
         //
         //- Time complexity : O(V+E*Log(V))
         //  + V: Do cần traverse hết all vertex

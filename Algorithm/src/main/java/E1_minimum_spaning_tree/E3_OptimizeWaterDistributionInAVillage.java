@@ -400,6 +400,10 @@ public class E3_OptimizeWaterDistributionInAVillage {
 //        int n = 5;
 //        int[] wells = {46012,72474,64965,751,33304};
 //        int[][] pipes = {{2,1,6719},{3,2,75312},{5,3,44918}};
+        //#Reference:
+        //2473. Minimum Cost to Buy Apples
+        //2493. Divide Nodes Into the Maximum Number of Groups
+        //2876. Count Visited Nodes in a Directed Graph
 
         int n = 3;
         int[] wells = {3,3,2};

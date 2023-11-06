@@ -118,7 +118,7 @@ public class E2_LongestSubstringWithAtMostKDistinctCharacters_slidewindow_hashta
         //** Bài này tư duy như sau:
         //1.
         //1.0, Lỗi sai tư duy index nearest
-        //- Không phải dùng mỗi index là xong --> Tức là tư duy giốn kiểu:
+        //- Không phải dùng mỗi index là xong --> Tức là tư duy giống kiểu:
         //+ 1 hashset để remove phần tử
         //+ 1 hashIndex để lấy phần tử nearest index ==> sau đó thêm 1 phần tử mà mới ==> remove s[start] trước đó đi ==> end++ lên
         //==> Sẽ bị thiếu case sau:
