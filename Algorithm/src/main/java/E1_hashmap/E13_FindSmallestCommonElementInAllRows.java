@@ -89,15 +89,18 @@ public class E13_FindSmallestCommonElementInAllRows {
         return -1;
     }
 
-    public int smallestCommonElementBinarySearch(int[][] mat) {
+    public static int smallestCommonElementBinarySearch(int[][] mat) {
         int n=mat.length;
         int m=mat[0].length;
 
+        //Time : O(m)
         for(int i=0;i<m;i++){
             int value=mat[0][i];
             boolean found=true;
 
+            //Time : O(n)
             for(int j=1;j<n&&found;j++){
+                //Time : O(log(m))
                 found= Arrays.binarySearch(mat[j], value)>=0;
             }
             if(found){
@@ -150,7 +153,7 @@ public class E13_FindSmallestCommonElementInAllRows {
         //
         //1.2, Complexity:
         //- Space : O(n*m)
-        //- Time : O(n*m)
+        //- Time : O(n*m*log(m))
         //
         //2.
         //2.0, Binary search
@@ -173,5 +176,6 @@ public class E13_FindSmallestCommonElementInAllRows {
         System.out.println(smallestCommonElement(arr));
         System.out.println(smallestCommonElementOptimization(arr));
         System.out.println(smallestCommonElementShortenOptimization(arr));
+        System.out.println(smallestCommonElementBinarySearch(arr));
     }
 }

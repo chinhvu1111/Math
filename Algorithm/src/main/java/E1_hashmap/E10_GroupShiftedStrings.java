@@ -1,8 +1,6 @@
 package E1_hashmap;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class E10_GroupShiftedStrings {
 
@@ -78,6 +76,43 @@ public class E10_GroupShiftedStrings {
         return ((aInt-bInt)+26)%26;
     }
 
+    public static String getHashWord(String word){
+        StringBuilder hashKey=new StringBuilder();
+        int n=word.length();
+
+        for(int i=1;i<n;i++){
+            char c=word.charAt(i);
+            char prevC=word.charAt(i-1);
+            hashKey.append((char)((c-prevC+26)%26));
+        }
+        return hashKey.toString();
+    }
+
+    public static List<List<String>> groupStringsHashMethod(String[] strings) {
+        //Space : O(n*k)
+        Map<String, List<String>> mapHashToList = new HashMap<>();
+
+        //Time : O(n)
+        for(String s:strings){
+            //TIme : O(k)
+            String hashKey=getHashWord(s);
+            List<String> oldElements=mapHashToList.get(s);
+
+            if(oldElements==null){
+                oldElements=new ArrayList<>();
+            }
+            oldElements.add(s);
+            mapHashToList.put(hashKey, oldElements);
+        }
+        List<List<String>> rs=new ArrayList<>();
+
+        //Time : O(n)
+        for(String key: mapHashToList.keySet()){
+            rs.add(mapHashToList.get(key));
+        }
+        return rs;
+    }
+
     public static void main(String[] args) {
         //** Requirement
         //- String s có thể shift với mỗi character sang thằng character sau nó 1 unit
@@ -142,6 +177,20 @@ public class E10_GroupShiftedStrings {
         //s[3]-s[2]+s[1]-s[0] = s1[3]-s1[2]+s1[1]-s1[0]
         //==> Thành ra là phải tính hashKey của string ==> Sau đó là phân group
         //
+        //- Hash key function sẽ implement ntn?
+        //- Hash key, ta sẽ không dùng append int vì : l-a=11
+        // ==> Nó sẽ trùng với (abc): (b-a).append(c-b)=11
+        //  + Ta sẽ +26 vì số có thể là số <0
+        //  + %26 vì có thể hash>26 --> Không thể cast ra (lower case character)
+        System.out.printf("hash(abc)= %s\n",getHashWord("abc"));
+        System.out.printf("hash(al)= %s\n",getHashWord("al"));
+        //1.1, Optimization
+        //
+        //1.2, Complexity
+        //- n is the number of words
+        //- k is the (average/ max) length of each word
+        //- Space: O(n*k)
+        //- Time: O(n*k)
         String[] strings = {"abc","bcd","acef","xyz","az","ba","a","z"};
         System.out.println(groupStrings(strings));
         System.out.println(getSub('a', 'z'));
@@ -192,9 +241,14 @@ public class E10_GroupShiftedStrings {
         System.out.println("====================");
         String[] strings1= {"fpbnsbrkbcyzdmmmoisaa","cpjtwqcdwbldwwrryuclcngw","a","fnuqwejouqzrif","js","qcpr","zghmdiaqmfelr","iedda","l","dgwlvcyubde","lpt","qzq","zkddvitlk","xbogegswmad","mkndeyrh","llofdjckor","lebzshcb","firomjjlidqpsdeqyn","dclpiqbypjpfafukqmjnjg","lbpabjpcmkyivbtgdwhzlxa","wmalmuanxvjtgmerohskwil","yxgkdlwtkekavapflheieb","oraxvssurmzybmnzhw","ohecvkfe","kknecibjnq","wuxnoibr","gkxpnpbfvjm","lwpphufxw","sbs","txb","ilbqahdzgij","i","zvuur","yfglchzpledkq","eqdf","nw","aiplrzejplumda","d","huoybvhibgqibbwwdzhqhslb","rbnzendwnoklpyyyauemm"};
         System.out.println(groupStrings(strings1));
+        System.out.println(groupStringsHashMethod(strings1));
+        //
         //#Reference:
         //1691. Maximum Height by Stacking Cuboids
         //135. Candy
         //2332. The Latest Time to Catch a Bus
+        //2330. Valid Palindrome IV
+        //257. Binary Tree Paths
+        //2546. Apply Bitwise Operations to Make Strings Equal
     }
 }
