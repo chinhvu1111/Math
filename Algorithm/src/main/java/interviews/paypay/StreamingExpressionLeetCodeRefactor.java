@@ -72,6 +72,16 @@ public class StreamingExpressionLeetCodeRefactor {
 //        String s="1*2-3/4+5*6-7*8+9/10";
 //        String s=" 3/2 ";
 //        String s=" 3+5 / 2 ";
+        //- Idea
+        //- Bài này idea dạng cache sign và preVal
+        //+ sign: dấu trước đó
+        //+ preVal : val trước đó
+        //  + Nếu +/- thì:
+        //      + Sign='+' : rs=+preValue
+        //      + Sign='-' : rs=-preValue
+        //  + Nếu */ / thì:
+        //      + sign="*" preValue*=current_num
+        //      + sign="/" preValue/=current_num
         String s=" 3+5";
         System.out.println(calculate(s));
     }

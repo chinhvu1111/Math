@@ -14,6 +14,5 @@ public class E21_FlattenAMultilevelDoublyLinkedList {
     }
 
     public static void main(String[] args) {
-
     }
 }
