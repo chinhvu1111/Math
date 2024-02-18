@@ -44,7 +44,7 @@ public class E4_ReverseVowelsOfAString {
                 ||c=='u'||c=='U';
     }
 
-    public String reverseVowelsOptimization(String s) {
+    public static String reverseVowelsOptimization(String s) {
         int n=s.length();
         char[] sArr=s.toCharArray();
         int low=0, high=n-1;
@@ -97,5 +97,8 @@ public class E4_ReverseVowelsOfAString {
         //344. Reverse String
         //1119. Remove Vowels from a String
         //2810. Faulty Keyboard
+        String s = "leetcode";
+        System.out.println(reverseVowels(s));
+        System.out.println(reverseVowelsOptimization(s));
     }
 }

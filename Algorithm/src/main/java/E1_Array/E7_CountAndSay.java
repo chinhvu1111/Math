@@ -20,7 +20,8 @@ public class E7_CountAndSay {
     public static String countAndSay(int n) {
         String s="1";
         for(int i=2;i<=n;i++){
-            System.out.println(s.length());
+//            System.out.println(s.length());
+            System.out.println(s);
             s=getStringCountAndSay(s);
         }
         return s;
@@ -35,6 +36,9 @@ public class E7_CountAndSay {
         //countAndSay(3) = say "11" = two 1's = "21"
         //countAndSay(4) = say "21" = one 2 + one 1 = "12" + "11" = "1211"
         //--> Lần lượt.
+        //- Tức n là số lần biến đổi
+        //Ex:
+        //1211 --> 11(1 số 1)|12 (1 số 2) |21 (2 số 1)
         //
         //** Idea
         //1.

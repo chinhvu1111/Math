@@ -8,7 +8,9 @@ public class E9_FindAndReplaceInString {
 
     public static String findReplaceString(String s, int[] indices, String[] sources, String[] targets) {
         int k=indices.length;
+        //Space : O(k*m)
         HashMap<Integer, List<String[]>> indexToString=new HashMap<>();
+        //Time : O(k)
         for(int i=0;i<k;i++){
             List<String[]> list=indexToString.get(indices[i]);
             if(list==null){
@@ -21,6 +23,7 @@ public class E9_FindAndReplaceInString {
         int n=s.length();
         StringBuilder str=new StringBuilder();
 
+        //Time : O(n)
         for(int j=0;j<n;j++){
             // System.out.printf("%s %s\n", j, indexToString.get(j));
             if(indexToString.containsKey(j)){
@@ -29,6 +32,7 @@ public class E9_FindAndReplaceInString {
                 boolean isRelace=false;
                 StringBuilder temp = new StringBuilder();
 
+                //Time : O(k)
                 for(int h=0;h<listStr.size();h++){
                     j=tempJ;
                     String currentSource=listStr.get(h)[0];
@@ -93,6 +97,12 @@ public class E9_FindAndReplaceInString {
         //--> HashMap<Integer, String>
         //- Khi reach đến integer thuộc hashmap --> Ta sẽ làm 1 bước là check và thay thế
         //
+        //1.1, Optimization
+        //1.2, Complexity
+        //- M is the average length of string
+        //- K is size of indices array
+        //- Space : O(k*m)
+        //- Time : O(n*k)
         //#Reference:
         //2497. Maximum Star Sum of a Graph
         //243. Shortest Word Distance
