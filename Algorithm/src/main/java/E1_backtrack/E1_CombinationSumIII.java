@@ -39,7 +39,7 @@ public class E1_CombinationSumIII {
     }
     public static void main(String[] args) {
         //** Requirement:
-        //- Tìm tất cả tập hợp k numbers such that sum up to n
+        //- Tìm tất cả tập hợp k numbers such that (sum up to n)
         //+ Only numbers 1 through 9 are used.
         //+ Each number is used at most once.
         //

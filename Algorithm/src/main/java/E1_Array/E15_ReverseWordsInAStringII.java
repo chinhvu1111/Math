@@ -36,7 +36,8 @@ public class E15_ReverseWordsInAStringII {
 
     public static void main(String[] args) {
         //** Requirement
-        //-
+        //* Đơn giản là reverse words
+        //- Mà chỉ tốn O(constant)
         //
         //** Idea
         //1.
@@ -124,6 +125,8 @@ public class E15_ReverseWordsInAStringII {
         //- Ta thấy rằng nếu swap 2 array ngay cạnh từ first to last
         //  + Sẽ không ảnh hướng đến length đằng sau
         //
+//        1."the blue" -> swap -> eulb eth -> reverse -> blue the
+        //2."the blue" -> reverse -> eht eulb -> swap -> blue the
         //s = ['t','h','e',' ','s','k','y',' ','i','s',' ','b','l','u','e']
         //==> reverse each word
         //s = ['e','h','t',' ','y','k','s',' ','s','i',' ','e','u','l','b']

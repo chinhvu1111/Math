@@ -85,7 +85,6 @@ public class E2_StrobogrammaticNumberII {
     }
 
     public static List<String> findStrobogrammaticOptimization(int n) {
-
         return generateStroboNumbers(n, n);
     }
 
@@ -121,6 +120,9 @@ public class E2_StrobogrammaticNumberII {
     public static void main(String[] args) {
         // Đề bài:
         //- (A strobogrammatic number) is a number that looks the same (when rotated 180 degrees) (looked at upside down).
+        //- Given an integer n,
+        //* Return all the strobogrammatic numbers that are of (length n).
+        // You may return the answer in any order.
         //
         // Tư duy
         //1.
@@ -145,10 +147,14 @@ public class E2_StrobogrammaticNumberII {
         //6969
         //Ex:
         //n=6
-        //8(6969)8
+        //8(6969)8 ==> Tức là phải được add vào first last các char giống nhau (1,0,8) thì khi lật thì mới ra giống được.
+        //Ex: 8968+1+8968
         //1691
         //- n=14
         //==> Ta chỉ cần tìm n=7 => Là ta có thể map ra đối xứng còn lại
+        //(str(n=7)) + 1/8/0 + (reverse(str(n=7)))
+        //Ex:
+        //16 + 0 + 91 : 91 là reversed của 16
         //
         //1.1, Optimization
         //- Ở đây ta sẽ add trước ==> Sau đó mới từ SET sinh ra các string
@@ -273,7 +279,7 @@ public class E2_StrobogrammaticNumberII {
         //2081. Sum of k-Mirror Numbers
         int n=4;
 //        int n=14;
-//        System.out.println(findStrobogrammatic(n));
+        System.out.println(findStrobogrammatic(n));
         System.out.println(findStrobogrammaticOptimization(n));
         System.out.println(findStrobogrammaticLevelOrderTraversal(n));
     }
