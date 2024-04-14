@@ -13,22 +13,22 @@ public class E1_PathWithMaximumProbability {
     public double maxProbabilityBell(int n, int[][] edges, double[] succProb, int start_node, int end_node) {
         int maxEdges=Math.min(edges.length, n-1);
         double dp[][]=new double[n+1][maxEdges+1];
-        HashMap<String, Double> prob=new HashMap();
-        for(int i=0;i<n;i++){
-            for(int j=1;j<=maxEdges;j++){
-                dp[i][j]=0;
-            }
-        }
+        HashMap<String, Double> prob=new HashMap<>();
+//        for(int i=0;i<n;i++){
+//            for(int j=1;j<=maxEdges;j++){
+//                dp[i][j]=0;
+//            }
+//        }
         dp[start_node][0]=1;
         List<Integer>[] adjNodes=new ArrayList[n];
         for(int i=0;i<edges.length;i++){
             int x=edges[i][0];
             int y=edges[i][1];
             if(adjNodes[x]==null){
-                adjNodes[x]=new ArrayList();
+                adjNodes[x]=new ArrayList<>();
             }
             if(adjNodes[y]==null){
-                adjNodes[y]=new ArrayList();
+                adjNodes[y]=new ArrayList<>();
             }
             adjNodes[y].add(x);
             adjNodes[x].add(y);
@@ -59,6 +59,70 @@ public class E1_PathWithMaximumProbability {
         }
         return rs;
     }
+
+    public double maxProbabilityOptimization2(int n, int[][] edges, double[] succProb, int start, int end) {
+        int m=edges.length;
+        double[] dp =new double[n];
+        PriorityQueue<double[]> queue=
+                new PriorityQueue<>((o1, o2) -> -Double.compare(o1[1], o2[1]));
+        boolean[] visited=new boolean[n];
+        queue.add(new double[]{start, 1});
+        HashMap<String, Double> prob=new HashMap<>();
+        dp[start]=1D;
+        visited[start]=true;
+
+        List<Integer>[] adjNodes=new ArrayList[n];
+        for(int i=0;i<edges.length;i++){
+            int x=edges[i][0];
+            int y=edges[i][1];
+            if(adjNodes[x]==null){
+                adjNodes[x]=new ArrayList();
+            }
+            if(adjNodes[y]==null){
+                adjNodes[y]=new ArrayList();
+            }
+            adjNodes[y].add(x);
+            adjNodes[x].add(y);
+            prob.put(x+""+y, succProb[i]);
+            prob.put(y+""+x, succProb[i]);
+        }
+
+        while(!queue.isEmpty()){
+            double[] currentNode=queue.poll();
+            int node=(int)currentNode[0];
+            double value=currentNode[1];
+            if(node==end){
+                return value;
+            }
+            List<Integer> currentAdjNodes=adjNodes[node];
+            if(currentAdjNodes==null){
+                continue;
+            }
+            for(Integer nextNode: currentAdjNodes){
+                if(visited[nextNode]){
+                    continue;
+                }
+                // System.out.printf("Out of loop, Prev node: %s, prev value %s, node: %s newNode %s\n",node, value, nextNode, dp[nextNode]);
+                if(dp[nextNode]<value*prob.get(node+""+nextNode)){
+                    double newValue=value*prob.get(node+""+nextNode);
+                    dp[nextNode]=newValue;
+                    queue.add(new double[]{nextNode, newValue});
+                    // System.out.printf("Prev node: %s, prev value %s, node: %s newNode %s\n",node, value, nextNode, newValue);
+                }
+                // if(prob.containsKey(node+""+nextNode)){
+                //     if(dp[node]<dp[nextNode]*prob.get(node+""+nextNode)){
+                //         double newValue=dp[nextNode]*prob.get(node+""+nextNode);
+                //         dp[node]=newValue;
+                //         queue.add(new double[]{node, newValue});
+                //         System.out.printf("%s %s\n", nextNode, dp[node]);
+                //     }
+                // }
+            }
+            visited[node]=true;
+        }
+        return dp[end];
+    }
+
 
     public double maxProbabilityBellOptimization(int n, int[][] edges, double[] succProb, int start_node, int end_node) {
         double[] dp =new double[n+1];
@@ -173,7 +237,8 @@ public class E1_PathWithMaximumProbability {
         //- Nếu đi theo BFS --> 2 sẽ update 0.5*0.11 = 0.055
         //--> 2 đã được update là 0.055 : Nếu 2 --> 1 thì có thể sẽ bị sai
         //+ Đi đến 1 --> Ta nên đi 0 -> 2 -> 1 = 0.1*0.11=0.011 ==> Nếu update vào 2 thì ta không tính được 1 đúng
-        //
+        //- Chọn điểm start=0
+        // + Nếu là dijkstra -> Tính khoảng cách từ 0 ==> all nodes
         //Target vertex | Shortest distance | prev
         //  (0)                 0             +
         //   1                  0.5            0
@@ -182,14 +247,14 @@ public class E1_PathWithMaximumProbability {
         //
         //Target vertex | Shortest distance | prev
         //   0                  0              +
-        //  (1)                 0.5           0
+        //  (1)                 0.5            0
         //   2                  0.055          1
         //   3                  0.05           1
         //
         //Target vertex | Shortest distance | prev
         //   0                  0              +
         //   1                  0.5            0
-        //  (2)                 0.055         1
+        //  (2)                 0.055          1
         //   3                  0.05           1
         //
         //Target vertex | Shortest distance | prev
@@ -333,7 +398,7 @@ public class E1_PathWithMaximumProbability {
         //+ Step 1: 1 -> 2(0.1), 1 -> 3(0.1)
         //1 2   3
         //0 0.1 0.2
-        //+ Step 2: Chọn 2 (Chọn node chưa đi mà min distance)
+        //+ Step 2: Chọn 2 (Chọn node (chưa đi) mà min distance)
         // 1 - 2 - 5 = 0.1*0.4
         //1 | 2   | 3   | 5
         //0 |0.1  | 0.2 | 0.04
@@ -349,6 +414,17 @@ public class E1_PathWithMaximumProbability {
         //  + Khi chiều (5 -> 4) là 1 chiều ==> 5 không thể xuống 4 được, tính được bình thường cho (4 theo 1 - 2 - 5 - 4) và (5)
         //- Nếu không phải nhân số thực --> Gía trị sẽ cộng dồn ==> Sẽ không có case (1 - 3 -4 - 5) < (1 - 2 - 5) (Do 4 - 5 small)
         //- Nếu hướng (4 - 5) và (5 -> 4) cùng tồn tại ==> Nhân số thực sẽ ra small dần --> 0 (Nên sẽ không có case ntn)
+        //
+        //* Đại loại nếu đi từ (1 -> 2 -> 5), (1 -> 3 -> 4) thì
+        //* Trong undirected graph:
+        //  + 2 paths trên đều có thể đi qua edge(4,5)
+        //  ==> Cái nào trước đó nhỏ hơn thì lấy vẫn đúng --> Không cần xét lại
+        //      ==> Với undirected graph "không" cần xét lại node đã visited
+        //* Trong directed graph:
+        //  + 2 paths trên chỉ có 1 path được đi qua edge(4,5)
+        //  ==> Cái nào trước đó nhỏ hơn thì sẽ không còn đúng nữa:
+        //      + 1 -> 2 -> 5 đang nhỏ hơn nhưng không đi qua được edge(4,5) thì sẽ không bằng việc (1 -> 3 -> 4) đi qua edge(4,5)
+        //      ==> Với directed graph cần xét lại node đã visited
         //
         //** Liệu trong undirected graph thì visited rồi thì có cần xét lại không?
         // * "CÓ"
@@ -390,14 +466,20 @@ public class E1_PathWithMaximumProbability {
         //+ undirected graph : Không cần tính lại node cũ
         //+ directed graph : cần tính lại các nodes kể cả các node poll ra rồi
         //- Dijkstra được dùng cho:
-        //+ Weight graph
+        //  + Weight graph
         //- BFS được dùng cho
-        //+ Unweight graph
+        //  + Unweight graph
         //
         //-
         //
         //#Reference:
         //505. The Maze II
         //1976. Number of Ways to Arrive at Destination
+        //* Solution:
+        //  - maxProbabilityBellOptimization
+        //  - maxProbabilityBell
+        //  - maxProbabilityOptimization2
+        //* Invalid solution:
+        //  - maxProbability1
     }
 }
