@@ -415,7 +415,7 @@ public class E1_PathWithMaximumProbability {
         //- Nếu không phải nhân số thực --> Gía trị sẽ cộng dồn ==> Sẽ không có case (1 - 3 -4 - 5) < (1 - 2 - 5) (Do 4 - 5 small)
         //- Nếu hướng (4 - 5) và (5 -> 4) cùng tồn tại ==> Nhân số thực sẽ ra small dần --> 0 (Nên sẽ không có case ntn)
         //
-        //* Đại loại nếu đi từ (1 -> 2 -> 5), (1 -> 3 -> 4) thì
+        //** Đại loại nếu đi từ (1 -> 2 -> 5), (1 -> 3 -> 4) thì
         //* Trong undirected graph:
         //  + 2 paths trên đều có thể đi qua edge(4,5)
         //  ==> Cái nào trước đó nhỏ hơn thì lấy vẫn đúng --> Không cần xét lại
@@ -427,7 +427,12 @@ public class E1_PathWithMaximumProbability {
         //      ==> Với directed graph cần xét lại node đã visited
         //
         //** Liệu trong undirected graph thì visited rồi thì có cần xét lại không?
-        // * "CÓ"
+        // ** "CÓ" ==> Chỉ xảy ra với dạng bài tỉ lệ
+        //  - Như là các cạnh sau có thể ảnh hưởng đến kết quả tổng thế
+        //      + Weight có thể <0
+        //      + Weight là tỉ lệ 1/10000 ==> Ảnh hưởng đến kết quả chung.
+        //* (Với weight>0 chưa qua node thì ok còn nếu qua rồi --> sẽ không cần đi lại vì cộng dồn sum (+) thì chắc chắn tệ hơn)
+        //  + Với directed or undirected là như nhau.
         //- Ở đây ta thấy là sẽ là cộng dồn ==> undirected graph
         //  + Nếu node nào đi rồi thì sao?
         //Ex:
@@ -452,6 +457,19 @@ public class E1_PathWithMaximumProbability {
         //- Ta thấy dù 3 đã visited ==> Nhưng có updated tức là ta vẫn có thể xét 3 tiếp (Mặc dù đây là undirected graph)
         //** Ta vẫn phải (add vào queue) với nhưng (update nodes)
         //==> Chứ (không phải) cứ (run qua rồi) ta sẽ (không xét nữa)
+        //
+        //- Tìm shortest path ntn?
+        //Ex:
+        // 0  ---(1)---  1
+        // |             |(10) \(11)
+        // 2 --- (2)---  3 -(1)- 5
+        //- Khi đến 0 -> 1 thì không phải là edges trong shortest path từ (0 --> n-1)
+        //  + Vì nó qua điểm 3,5 với weight rất lớn
+        //- Không phải add all edges khi traverse là được.
+        //* Với mỗi step thì:
+        //- Ta xác định được shortest path từ (source -> current node)
+        //  + Cái này sẽ được add tiếp vào (min/max) queue để có thể tìm (shortest path) của các (next nodes)
+        //- Để tìm shortest path thì không phải add all edges khi traverse là được.
         //
         //- Time complexity : O(V+E*Log(V))
         //  + V: Do cần traverse hết all vertex
