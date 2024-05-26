@@ -190,7 +190,7 @@ public class E16_TheNumberOfBeautifulSubsets {
         return skip + take; // Return total count of subsets
     }
 
-    public int beautifulSubsetsDynamicProgramming(int[] nums, int k) {
+    public static int beautifulSubsetsDynamicProgramming(int[] nums, int k) {
         int totalCount = 1;
 
         Map<Integer, Map<Integer, Integer>> freqMap = new TreeMap<>();
