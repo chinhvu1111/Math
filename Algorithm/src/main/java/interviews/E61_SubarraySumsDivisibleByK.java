@@ -161,6 +161,7 @@ public class E61_SubarraySumsDivisibleByK {
         int[] arr = new int[k];   // To store mod value of prefix sum
         arr[0] = 1;  // Inititally sum is zero . So , we are incrementing 0th index value.
 
+        //Tính số lượng prefix sum mà %k ==0
         for(int num: nums){
             sum += num;
             if(sum < 0){
@@ -303,9 +304,21 @@ public class E61_SubarraySumsDivisibleByK {
         //==> currentSum bây giờ ko có tác dụng vì nó là sum_prefix
         //--> arr[] --> Duyệt toán bộ arr tính
         //s+=x*(x-1)/2
-        //Giải thích:
-        //1,2,3,4 --> có 4 danh sách prefix thỏa mãn --> Số lượng sum = số cặp (prefix đi đôi với nhau_
+        //** Giải thích:
+        //1,2,3,4 --> có 6 danh sách prefix thỏa mãn --> Số lượng sum = số cặp (prefix đi đôi với nhau)
+        //  + (1,2),(1,3),(1,4)
+        //  + (2,3),(2,4)
+        //  + (3,4)
+        //= 4*(4-1)/2 = 4*3/2 = 6 != (Với công thức cộng dồn)
+        //Ex:
+        //1,2,3 => cộng dồn = 1+2+3 = 6 = (3*(3+1)/2)
+        //
         //--> CT : count=x*(x-1)/2.
+        //
+        //#Reference:
+        //1590. Make Sum Divisible by P
+        //2364. Count Number of Bad Pairs
+        //2845. Count of Interesting Subarrays
 
 //        System.out.println(subarraysDivByK(arr, 5));
 //        System.out.println(subarraysDivByKOptimized1(arr, 5));

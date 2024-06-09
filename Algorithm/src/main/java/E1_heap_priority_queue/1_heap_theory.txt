@@ -1,0 +1,94 @@
+
+1, Concept
+1.1, Heap structure
+- A full binary tree is a binary tree in which each node has exactly zero or two children.
+- A complete binary tree is a binary tree, which is completely filled, with the possible exception of the bottom level, which is filled from left to right.
+    + A complete binary tree = A full binary tree - Bottom case
+
+A Heap has the following properties:
+
+- Insertion of an element into the Heap has a time complexity of
+    + O(logN);
+- Deletion of an element from the Heap has a time complexity of
+    + O(logN);
+- The maximum/minimum value in the Heap can be obtained with
+    + O(1) time complexity.
+
+Classification of Heap
+There are two kinds of heaps: Max Heap and Min Heap.
+- Max Heap: Each node in the Heap has a value no less than its child nodes. Therefore, the top element (root node) has the largest value in the Heap.
+- Min Heap: Each node in the Heap has a value no larger than its child nodes. Therefore, the top element (root node) has the smallest value in the Heap.
+
+Max heap:
+
+        9
+      /   \
+    8      7
+   /  \   /  \
+  6    5 4    3
+  root has max value <> min heap
+
+1.2, Heap insertion
+- Insert new node follow the rule:
+    + Left to right
+       + Right có thể empty
+
+MIN HEAP
+Ex:
+        6
+      /   \
+     9     10
+    /  \
+  15    12
+Insert 5:
+- Vì insert left -> right
+          6
+       /     \
+     9        10
+    /  \     /
+  15    12 5
+- Thấy 10>5 chưa thoả mãn min heap
+    + swap(10,5)
+          6
+       /     \
+     9        5
+    /  \     /
+  15    12 10
+- Thấy 6>5 chưa thoả mãn min heap
+    + swap(6,5)
+          5
+       /     \
+     9        6
+    /  \     /
+  15    12 10
+==> Thoả mãn min heap
+
+MAX HEAP
+- Tương tự
+        10
+      /   \
+    5      2
+  /
+ 4
+Insert(15)
+- Right of 5
+        10
+      /   \
+    5      2
+  /   \
+ 4     15
+- swap(5,15)
+        10
+      /   \
+    15      2
+  /   \
+ 4     5
+- swap(10,15)
+        15
+      /   \
+    10      2
+  /   \
+ 4     5
+
+1.3, Heap deletion
+-

@@ -265,7 +265,8 @@ public class E6_1_MaximumCompatibilityScoreSum {
         //          0 0 0 0     (0) <- ahhhh much better
         //        ^ remember we ignore this carry bit
         //
-        //* Formula: -x = ~x + 1
+        //* Formula:
+        // -x = ~x + 1
         //Example: x = 5 (assume 4-bit numbers)
         //x      = 0101
         //~x     = 1010
