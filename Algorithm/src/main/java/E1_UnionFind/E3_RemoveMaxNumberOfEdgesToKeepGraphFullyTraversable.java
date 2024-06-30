@@ -54,13 +54,16 @@ public class E3_RemoveMaxNumberOfEdgesToKeepGraphFullyTraversable {
     }
 
     public static int maxNumEdgesToRemove(int n, int[][] edges) {
+        //Space: O(V)
         int[] parents=new int[n+1];
         Arrays.fill(parents, -1);
+        //Space: O(E)
         List<int[]> commonEdges=new ArrayList<>();
         List<int[]> aliceEdges=new ArrayList<>();
         List<int[]> bobEdges=new ArrayList<>();
         int m=edges.length;
 
+        //Time: O(E)
         for(int i=0;i<m;i++){
             int[] edge=edges[i];
             parents[edge[1]]=edge[1];
@@ -78,12 +81,14 @@ public class E3_RemoveMaxNumberOfEdgesToKeepGraphFullyTraversable {
 
         for(int i=0;i<commonEdges.size();i++){
             int[] curEdge=commonEdges.get(i);
+            //Time: O(E)
             numRemovedEdge+=addEdge(curEdge[0],curEdge[1], parents);
         }
 //        System.out.println("Alice");
         int[] copyOfCommon=Arrays.copyOf(parents, n+1);
         for(int i=0;i<aliceEdges.size();i++){
             int[] curEdge=aliceEdges.get(i);
+            //Time: O(E)
             numRemovedEdge+=addEdge(curEdge[0],curEdge[1], parents);
         }
         if(!isValidTraverse(parents, n)){
@@ -92,6 +97,7 @@ public class E3_RemoveMaxNumberOfEdgesToKeepGraphFullyTraversable {
 //        System.out.println("Bob");
         for(int i=0;i<bobEdges.size();i++){
             int[] curEdge=bobEdges.get(i);
+            //Time: O(E)
             numRemovedEdge+=addEdge(curEdge[0],curEdge[1], copyOfCommon);
         }
         if(!isValidTraverse(copyOfCommon, n)){
@@ -164,6 +170,15 @@ public class E3_RemoveMaxNumberOfEdgesToKeepGraphFullyTraversable {
         // + Cái này dùng chung cho cả Alice and Bob
         //- Sau đó làm cho từng Alice và Bob
         //
+        //- Đại loại là UNION FIND:
+        //  + Dùng common edges ==> reduce chính nó xuống
+        //      + Ra được số common edges có thể removed
+        //  + Dùng alice ==> Reduce
+        //      + Sau khi reduce, cần check all nodes:
+        //          + Đôi 1 có parent[e[i]]==parent[e[1]] hay không?
+        //          ** = nhau thì có nghĩa là connected lẫn nhau
+        //  + Tương tự với Bob
+        //
         //- Return -1 when graph could not traversed by Alice and Bob
         //
         //1.1, Implementation
@@ -172,6 +187,17 @@ public class E3_RemoveMaxNumberOfEdgesToKeepGraphFullyTraversable {
         //  + Add an edge --> Check two nodes whether they are connected or not
         //  + Connected : Remove
         //  + Not connected : Add
+        //
+        //1.2, Optimization
+        //1.3, Complexity
+        //- Space: O(V+E)
+        //- Time: O(E)
+        //Time complexity: O(E∗α(N)).
+        //
+        //We iterate over edges, and for every edge we call the function performUnion(),
+        // whose time complexity is equal to O(α(N) as we have included union by size as well as path compression.
+        // Therefore, the total time complexity is equal to O(E∗α(N)).
+        //* Note that α is the Inverse Ackermann function which grows so slowly that it can be considered as O(1).
         //
         int n = 4;
         int[][] edges = {{3,1,2},{3,2,3},{1,1,3},{1,2,4},{1,1,2},{2,3,4}};

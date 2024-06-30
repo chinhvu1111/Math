@@ -148,7 +148,7 @@ public class E4_DiameterOfNAryTree {
         //--> Depth <= 1000 ==> Vẫn ok
         //
         //- Brainstorm
-        //- Tính min heigh của 1 pair nodes + các edges không cần đi qua root node
+        //- Tính min height của 1 pair nodes + các edges không cần đi qua root node
         //+ Ta sẽ chia các nodes trung gian thành các root node trung gian
         //VD:
         //                1

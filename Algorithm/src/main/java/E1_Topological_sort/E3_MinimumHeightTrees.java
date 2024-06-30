@@ -228,6 +228,18 @@ public class E3_MinimumHeightTrees {
         //* Tính chất 4:
         //- Nếu tree nhận centroid node là root node thì khoảng cách từ centroid node cho đến leaf node sẽ bằng nửa đường kính của đồ thị
         //==> Tức là có thể có 1 leaf node nào đó có khoảng cách đến centroid node tương tự.
+        //
+        //* Tại sao không phải là 3 centroid nodes?
+        //+ Nếu 3 nodes:
+        //    3
+        //  /   \
+        // 1     2
+        //==> Nó sẽ build được ntn ==> Xén được thêm 1 layer leaf nodes nữa
+        //+ Nếu 2 centroid nodes:
+        // 3 -- 2
+        //==> 3 và 2 sẽ đối xứng vai trò như nhau ==> Có thể được.
+        //  ==> Xén layer cũng khá đều r
+        //
         //- Ta có 2 trường hợp:
         //+ 1 centroid node
         //+ 2 centroid nodes
