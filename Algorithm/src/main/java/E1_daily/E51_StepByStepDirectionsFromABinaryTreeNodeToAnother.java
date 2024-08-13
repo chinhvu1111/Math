@@ -339,6 +339,10 @@ public class E51_StepByStepDirectionsFromABinaryTreeNodeToAnother {
         //          R -> R -> Left
         //          R -> R -> Right
         //          + Common length = 2
+        //** Kinh nghiệm:
+        //- Ta có thể dùng cái (directions) để có thể xác định (distance)
+        //- Ta cũng có thể dùng map để lưu lại parent của node --> Traverse dùng DFS
+        //
         //3.1, Optimization
         //3.2, Complexity
         //- Space: O(n)

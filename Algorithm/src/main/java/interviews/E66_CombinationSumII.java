@@ -51,5 +51,14 @@ public class E66_CombinationSumII {
 //        int target=8;
         int target=5;
         combinationSum2(arr, target);
+        //#Reference:
+        //Subsets
+        //Subsets II
+        //Permutations
+        //Permutations II
+        //Combinations
+        //Combination Sum
+        //Combination Sum III
+        //Palindrome Partition
     }
 }

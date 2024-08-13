@@ -57,6 +57,12 @@ public class E135_FillingBookcaseShelves {
         int n=books.length;
         int[] dp=new int[n+1];
 
+        //Xét book thứ index=i
+        //- dp[i] : là min heigh tại index=i
+        //  + dp[i] có thể tính theo dp[i-k] + height (của đoạn còn lại) nếu:
+        //      + Đoạn còn lại đó <= limit weight
+        //  ==> Ta lấy min là được.
+        //
         for(int i=1;i<=n;i++){
             //Một mình nó 1 layer
             int min=dp[i-1]+books[i-1][1];
@@ -78,7 +84,7 @@ public class E135_FillingBookcaseShelves {
         //** Requirement:
         //- You are given an array books where books[i] = [thicknessi, heighti] indicates the (thickness) and (height) of the ith book.
         //- You are also given an integer (shelfWidth).
-        //- We want to place these books in order onto bookcase shelves that have a total width (shelfWidth).
+        //- We want to place these books in order onto bookcase shelves that have a total (width) (shelfWidth).
         //- We choose some of the books to place on this shelf such that the (sum of their thickness) is
         // (less than or equal) to (shelfWidth) then build (another level) of the shelf of the bookcase
         // so that the total (height of the bookcase) has increased by (the maximum height) of the books we just put down.
@@ -123,7 +129,7 @@ public class E135_FillingBookcaseShelves {
         //  layer 1: [2,3],[2,3] (Height=3)
         //  layer 2: [1,1] (Height = 1)
         //  => total of height = 5
-        //- Mỗi book tại index=i có thể đặt vào lauer:
+        //- Mỗi book tại index=i có thể đặt vào layer:
         //  + layer=(0 -> i)
         //- Dp[i][j]: là total height:
         //  + Nếu layer (j) kết thúc tại book[i]
@@ -141,6 +147,13 @@ public class E135_FillingBookcaseShelves {
         //  + Dùng dp[i][l] là thừa thãi
         //  ==> Ta chỉ quan tâm (min height) tại index=i là được.
         //  + Vì layer là bao nhiêu chẳng được.
+        //
+        //* Xét book thứ index=i
+        //- dp[i] : là min heigh tại index=i
+        //  + dp[i] có thể tính theo dp[i-k] + height (của đoạn còn lại) nếu:
+        //      + Đoạn còn lại đó <= limit weight
+        //  ==> Ta lấy min là được.
+        //
         //- Với mỗi index=i
         //  + Ta sẽ loop đọc lại all (j: i-1 -> 0):
         //   Với mỗi j:

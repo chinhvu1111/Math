@@ -306,6 +306,11 @@ public class E7_TheMazeIII {
         //The maze contains at least 2 empty spaces.
         //- Số cells cũng không quá lớn ==> Có thể traverse từng cells được
         //
+        //** Dijkstra chỉ dùng cho (weight>=0)
+        //- Dijkstra's algorithm solves the shortest-path problem for any weighted,
+        // directed graph with (non-negative weights).
+        // It can handle graphs consisting of cycles, but (negative weights) will cause this algorithm to produce (incorrect results).
+        //
         //- Brainstorm
         //Ex:
         //maze =

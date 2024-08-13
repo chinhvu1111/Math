@@ -126,6 +126,14 @@ public class E155_MinimumDeletionsToMakeStringBalanced {
         //aaabaabba =>
         //Output: 4
         //Expect: 5
+        //- Point ở đây là vẫn có thể có case chọn xoá "a" sẽ có lợi hơn chọn xoá "b":
+        //  Ex:
+        //  s = "bbbbaa"
+        //  + Xoá (aa): bbbb ==> len=4
+        //  + Xoá (bb): bbaa ==> vẫn phải xoá tiếp thành bb or aa ==> len = 2
+        //<> nếu ta đổi chỗ vai trò a cho b ==> Không có tác dụng vì (a -> b) là valid.
+        //** ==> Ưu tiên xoá "a"
+        //
         String s ="bbabaa";
         //+ Chọn xoá bbab(aa) ==> Tốt hơn là xoá bba(b)aa
         //  + Mặc dù từ right -> left thì count(b) ít hơn.
@@ -133,7 +141,7 @@ public class E155_MinimumDeletionsToMakeStringBalanced {
         //Output: 4
         //Expected : 3
         //* Bài này giống bài ngoặc ==> STACK
-        //  + Với mỗi b thì xoá mỗi a bên phải của b là được.
+        //  ==> Với mỗi b thì xoá mỗi a bên phải của b là được.
         //
         //1.1, Optimization
         //1.2, Complexity
@@ -142,21 +150,28 @@ public class E155_MinimumDeletionsToMakeStringBalanced {
         //
         //2. Dynamic programming
         //2.0, Brainstorm
+        //- Với dynamic thì ta vẫn ưu tiên xoá "a" nhưng sẽ đi từ i (0 -> n)
+        //  + Giả sử dp[i] là số char cần deleted.
+        //
         //- Point ở đây là lấy 'a' làm tham chiếu thay vì 'b'
         //  + Dùng 'b' thì sẽ bị case bên trên
         //- dp[i] là min character cần xoá để string valid
         //+ CT:
         //  + S[i]=='a':
+        //      + Cần xoá thêm at least 1 số b phía trước
+        //      + Vì số bị deleted bị giới hạn bằng count(a) ==> min(dp[i]+1, countB)
         //      + Keep current a ==> remove prev b
         //          + b...ba==> Cần remove all prev b
         //          + countB
-        ///     + Mỗi a tương ứng với xoá 1 b
+        //      + Mỗi a tương ứng với xoá 1 b
         //          + aaaa : dp[a(i=2)] = min(dp[a(i=1)]+1, countB)
         //      + Remove a ==> Keep b
         //          + dp[i]+1
         //  + S[i]=='b':
-        //      + Sau chưa biết ntn: countB++
-        //      + dp[i+1]=dp[i]
+        //      + Không cần xoá "b" này ngay bây giờ
+        //          + Chỉ cần tăng countB
+        //          countB++ ==> Để xoá sau
+        //          + dp[i+1]=dp[i] : số cần deleted thì sẽ kept
         //
         //2.1, Optimization
         //2.2, Complexity
