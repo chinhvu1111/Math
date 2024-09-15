@@ -48,7 +48,7 @@ public class E76_BrokenCalculator {
     }
 
     public static void main(String[] args) {
-        // Requirement
+        //**Requirement
         //- There is (a broken calculator) that has the (integer startValue) on its display initially.
         //- In one operation, you can:
         //  + multiply (the number) on display (by 2), or

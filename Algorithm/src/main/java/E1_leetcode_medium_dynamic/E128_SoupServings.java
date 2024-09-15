@@ -153,7 +153,7 @@ public class E128_SoupServings {
         //  + (n-25, n-75) : 0.25
         //==> Qua layer 1 ==> Tỉ lệ giảm xuống 0.25/4
         //- Bài này có thể làm với memoziation
-        //- Không nên chia ra 2 loại rate ==> Khó có thể memoziation được.
+        //- Không nên chia ra 2 loại rate ==> Khó có thể memoization được.
         //
         //          50,50
         //         /    \       \      \

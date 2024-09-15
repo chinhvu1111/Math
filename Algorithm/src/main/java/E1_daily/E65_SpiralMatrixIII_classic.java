@@ -91,6 +91,13 @@ public class E65_SpiralMatrixIII_classic {
         // Whenever you move outside the grid's boundary, we continue our walk outside the grid (but may return to the grid boundary later.).
         // Eventually, we reach all rows * cols spaces of the grid.
         //* Return (an array of coordinates) representing (the positions of the grid) in the order you visited them.
+        //Ex:
+        //16 7  8   9
+        //15 6  1   2
+        //14 5  4   3
+        //13 12 11 10
+        //1 -> 2 -> 3 -> 4 -> 5 -> 6 ->9
+        //-> out -> out -> out -> 10 -> 11 ->...
         //
         //** Idea
         //1.
