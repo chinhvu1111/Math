@@ -1,9 +1,8 @@
 package interviews;
 
-public class E89_ShortestPalindrome {
+public class E89_ShortestPalindrome_classic {
 
     public static String shortestPalindrome(String s) {
-
         if(isPalindrome(s.length()-1,s)){
             return s;
         }
@@ -43,7 +42,6 @@ public class E89_ShortestPalindrome {
         long hashValue2=0;
         int p=31;
         int m=1_000_000_009;
-
 
         return rs.toString();
     }
