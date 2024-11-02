@@ -41,6 +41,7 @@ public class E146_CountSquareSubmatricesWithAllOnes {
         int n=matrix.length;
         int m=matrix[0].length;
         int rs=0;
+
         for(int i=0;i<n;i++){
             for(int j=0;j<m;j++){
                 if(matrix[i][j]!=0&&i>0&&j>0){
@@ -124,7 +125,11 @@ public class E146_CountSquareSubmatricesWithAllOnes {
         //  [0,1,2,3]
         //- Tính số square ntn?
         //+ Tại matrix[i][j] có thể có size square = x
-        //  + Số square tối đa có thể tảo từ matrix[i][j] <=> [i,j] là góc) = dp[i][j]-1.
+        //  + Số square tối đa có thể tạo từ matrix[i][j] <=> [i,j] là góc) = dp[i][j]-1.
+        //  + Vì nó tính theo đường chéo:
+        //      + Số hình mà kết hợp với (i,j) tạo thành square
+        //          + = số node đường chéo
+        //          + số điểm (i1,j1) ở đường chéo là up node và (i,j) là down node.
         //
         //1.1, Optimization
         //- Ta có thể tối ưu space from O(n^2) -> O(1)
