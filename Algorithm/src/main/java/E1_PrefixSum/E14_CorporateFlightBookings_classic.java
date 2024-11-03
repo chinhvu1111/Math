@@ -1,9 +1,6 @@
 package E1_PrefixSum;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
-public class E14_CorporateFlightBookings {
+public class E14_CorporateFlightBookings_classic {
 
     public static int[] corpFlightBookings(int[][] bookings, int n) {
 //        Arrays.sort(bookings, new Comparator<int[]>() {

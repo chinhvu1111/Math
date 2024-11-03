@@ -1,9 +1,6 @@
 package E1_PrefixSum;
 
-import java.util.HashMap;
-import java.util.TreeMap;
-
-public class E12_MaxSumOfRectangleNoLargerThanK {
+public class E12_MaxSumOfRectangleNoLargerThanK_classic {
 
     public static int sumRec(int i, int j, int i1, int j1, int[][] dp){
         return dp[i1][j1] - dp[i-1][j1] - dp[i1][j-1] + dp[i-1][j-1];

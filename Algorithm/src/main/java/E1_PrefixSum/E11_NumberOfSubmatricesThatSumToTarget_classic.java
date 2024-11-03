@@ -3,7 +3,7 @@ package E1_PrefixSum;
 import java.util.HashMap;
 import java.util.Map;
 
-public class E11_NumberOfSubmatricesThatSumToTarget {
+public class E11_NumberOfSubmatricesThatSumToTarget_classic {
 
     public static int sumRec(int i, int j, int i1, int j1, int[][] dp){
         return dp[i1][j1] - dp[i-1][j1] - dp[i1][j-1] + dp[i-1][j-1];

@@ -61,9 +61,14 @@ public class E145_CircularSentence {
         //
         //
         //1.1, Optimization
+        //- Nếu đứng ở space(' '), index=i chỉ cần xét:
+        //  + (i-1),i,(i+1) thôi.
+        //  ==> Không cần prevC, curC làm gì
         //
         //1.2, Complexity
-        //-
+        //- Time: O(n)
+        //- Space: O(1)
+        //
         String sentence = "leetcode exercises sound delightful";
         System.out.println(isCircularSentence(sentence));
         System.out.println(isCircularSentenceRefer(sentence));

@@ -63,6 +63,12 @@ Insert 5:
   15    12 10
 ==> Thoả mãn min heap
 
+Inserted 10 into the min-heap: 10
+Inserted 7 into the min-heap: 7 10
+Inserted 11 into the min-heap: 7 10 11
+Inserted 5 into the min-heap: 5 7 11 10
+Inserted 4 into the min-heap: 4 5 11 10 7
+
 MAX HEAP
 - Tương tự
         10
