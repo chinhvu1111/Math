@@ -19,10 +19,13 @@ public class E4_SwimInRisingWater {
             Arrays.fill(minTime[i], Integer.MAX_VALUE);
         }
         minTime[0][0]=grid[0][0];
+        //Space: O(n*m)
         PriorityQueue<int[]> queue=new PriorityQueue<>((a,b) -> a[2]-b[2]);
         queue.add(new int[]{0,0, minTime[0][0]});
-        
+
+        //Time: O(n*m)
         while(!queue.isEmpty()){
+            //Time: O(log(n*m))
             int[] curNode=queue.poll();
             for(int i=0;i<dx.length;i++){
                 int x1=curNode[0]+dx[i];

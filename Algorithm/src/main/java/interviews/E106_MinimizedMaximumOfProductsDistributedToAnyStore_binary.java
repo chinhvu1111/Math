@@ -41,6 +41,40 @@ public class E106_MinimizedMaximumOfProductsDistributedToAnyStore_binary {
         return rs;
     }
 
+    public static int countNumberRetail(int[] quantities, int maxProductNum, int n, int m){
+        int rs=0;
+        for(int i=0;i<m;i++){
+            if(quantities[i]%maxProductNum!=0){
+                rs++;
+            }
+            rs+=quantities[i]/maxProductNum;
+        }
+        return rs;
+    }
+
+    public static int minimizedMaximumBinarySearch(int n, int[] quantities) {
+        int m = quantities.length;
+        int max=0;
+
+        for (int quantity : quantities) {
+            max = Math.max(max, quantity);
+        }
+        int low = 1, high=max;
+        int rs=0;
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            int retailCount = countNumberRetail(quantities, mid, n, m);
+            if(retailCount>n){
+                low=mid+1;
+            }else {
+                rs=mid;
+                high=mid-1;
+            }
+//             System.out.printf("val:%s, count: %s, low: %s, high: %s\n", mid, retailCount, low, high);
+        }
+        return rs;
+    }
+
     public static void main(String[] args) {
 //        int[] quantities=new int[]{15,10,10};
 //        int n=7;
@@ -53,8 +87,10 @@ public class E106_MinimizedMaximumOfProductsDistributedToAnyStore_binary {
         //Case 3 : Này đặc biệt khi n==length()
         //==> Lúc đó chỉ còn 1 cách duy nhất là lấy toàn bộ mảng chính là phép chia
         //Result : max(quantities[i])
-        int[] quantities=new int[]{5,7};
-        int n=2;
+//        int[] quantities=new int[]{5,7};
+//        int n=2;
+        int[] quantities=new int[]{24,18,12,6,3,24,5,19,10,20,2,18,27,3,13,22,11,16,19,13};
+        int n=26;
         //Bài này tư duy như sau:
         //1, ta dùng tư duy theo dạng range + condition như bình thường với :
         //- low : 1 (Không phải min vì nếu để min --> Bị sai case {5,7}
@@ -90,5 +126,6 @@ public class E106_MinimizedMaximumOfProductsDistributedToAnyStore_binary {
         //- đi từ high --> tìm MAX.
         //- đi từ low ---> tìm MIN.
         System.out.println(minimizedMaximum(n, quantities));
+        System.out.println(minimizedMaximumBinarySearch(n, quantities));
     }
 }
