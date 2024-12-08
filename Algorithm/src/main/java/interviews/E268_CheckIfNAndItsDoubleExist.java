@@ -26,6 +26,9 @@ public class E268_CheckIfNAndItsDoubleExist {
     public static void main(String[] args) {
         int[] arr=new int[]{10,2,5,3};
         //#Reference
+        //2767. Partition String Into Minimum Beautiful Substrings
+        //2762. Continuous Subarrays
+        //2355. Maximum Number of Books You Can Take
         //1347. Minimum Number of Steps to Make Two Strings Anagram
         //540. Single Element in a Sorted Array
         //2092. Find All People With Secret
