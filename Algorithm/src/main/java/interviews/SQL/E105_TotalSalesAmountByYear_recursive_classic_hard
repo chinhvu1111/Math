@@ -1,0 +1,394 @@
+** Requirement:
+Table: Product
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| product_id    | int     |
+| product_name  | varchar |
++---------------+---------+
+product_id is the primary key (column with unique values) for this table.
+product_name is the name of the product.
+
+Table: Sales
+
++---------------------+---------+
+| Column Name         | Type    |
++---------------------+---------+
+| product_id          | int     |
+| period_start        | date    |
+| period_end          | date    |
+| average_daily_sales | int     |
++---------------------+---------+
+- product_id is the primary key (column with unique values) for this table.
+- (period_start) and (period_end) indicate the (start and end date) for (the sales period), and (both dates) are inclusive.
+- The (average_daily_sales column) holds (the average daily sales amount) of the items for the period.
+- (The dates of the sales years) are between 2018 to 2020.
+
+
+Write a solution to report (the total sales amount) of (each item) for (each year),
+with corresponding (product_name, product_id, report_year, and total_amount).
+
+Return the result table ordered by product_id and report_year.
+
+The result format is in the following example.
+
+Example 1:
+
+Input:
+Product table:
++------------+--------------+
+| product_id | product_name |
++------------+--------------+
+| 1          | LC Phone     |
+| 2          | LC T-Shirt   |
+| 3          | LC Keychain  |
++------------+--------------+
+Sales table:
++------------+--------------+-------------+---------------------+
+| product_id | period_start | period_end  | average_daily_sales |
++------------+--------------+-------------+---------------------+
+| 1          | 2019-01-25   | 2019-02-28  | 100                 |
+| 2          | 2018-12-01   | 2020-01-01  | 10                  |
+| 3          | 2019-12-01   | 2020-01-31  | 1                   |
++------------+--------------+-------------+---------------------+
+Output:
++------------+--------------+-------------+--------------+
+| product_id | product_name | report_year | total_amount |
++------------+--------------+-------------+--------------+
+| 1          | LC Phone     |    2019     | 3500         |
+| 2          | LC T-Shirt   |    2018     | 310          |
+| 2          | LC T-Shirt   |    2019     | 3650         |
+| 2          | LC T-Shirt   |    2020     | 10           |
+| 3          | LC Keychain  |    2019     | 31           |
+| 3          | LC Keychain  |    2020     | 31           |
++------------+--------------+-------------+--------------+
+Explanation:
+LC Phone was sold for the period of 2019-01-25 to 2019-02-28, and there are 35 days for this period. Total amount 35*100 = 3500.
+LC T-shirt was sold for the period of 2018-12-01 to 2020-01-01, and there are 31, 365, 1 days for years 2018, 2019 and 2020 respectively.
+LC Keychain was sold for the period of 2019-12-01 to 2020-01-31, and there are 31, 31 days for years 2019 and 2020 respectively.
+
+2018-12-01 to 2020-01-01:
+    + [2018-12-01 to 2019-01-01)
+    + [2019-01-01 to 2021-01-01)
+
+inter_period_start, inter_period_end, period_start, period_end
+   2019-01-01     |  2019-12-31      |  2020-01-01 | 2021-12-01
+   2020-01-01     |  2020-12-31      |  2021-01-01 | 2021-12-01
+
+** Idea
+1.
+1.0, Idea
+* Method-1:
+- We will split the one to multiple row using the CTE recursive
+- period_start and period_end:
+    + year_diff == 0
+    ==> Keep
+    + year_diff <> 0:
+        + Let's calculate the period_end
+Ex:
+period_start and period_end
++ year_diff(period_start, period_end) > 1:
+    + period_start, (period_start+1 year truncate) - interval 1 day
+    + (period_start+1 year truncate), period_end
+- When do we stop the recursion?
+    + year_diff(period_start, period_end) == 0
+==> + period_start, period_end
+** Because we will generate to the (intermediate) record:
+    + We have (intermediate_period_end) for each range
+** Main point:
+- For each step, we will calculate the (period_start, period_end) base on the previous one
+    + This will ensure that (period_start, period_end) will be in (the same year)
+
+* SQL Function:
+- TIMESTAMPDIFF(YEAR, '2010-05-15', '2024-12-28')
+
+* Nếu muốn viết 1 cte trước recursive cte
+- Viết (WITH RECURSIVE) thôi
+==> Để nó mark là support recursive cte
+    + Sau đó là WITH CTE thoải mái
+
+with recursive prod_sale as(
+    Select
+        s.*, p.product_name
+    from
+    Product p join Sales s on p.product_id = s.product_id
+),
+produce_range as(
+    Select
+        product_id,
+        product_name,
+        average_daily_sales,
+        period_start as inter_period_start,
+        case
+            when year(period_end) - year(period_start) = 0 then period_end
+            else DATE_FORMAT(period_start + interval 1 year, '%Y-01-01') - interval 1 day
+        end as inter_period_end,
+        case
+            when year(period_end) - year(period_start) = 0 then period_start
+            else DATE_FORMAT(period_start + interval 1 year, '%Y-01-01')
+        end as period_start,
+        period_end
+    from prod_sale
+    UNION ALL
+    Select
+        product_id,
+        product_name,
+        average_daily_sales,
+        period_start as inter_period_start,
+        case
+            when year(period_end) - year(period_start) = 0 then period_end
+            else DATE_FORMAT(period_start + interval 1 year, '%Y-01-01') - interval 1 day
+        end as inter_period_end,
+        case
+            when year(period_end) - year(period_start) = 0 then period_start
+            else DATE_FORMAT(period_start + interval 1 year, '%Y-01-01')
+        end as period_start,
+        period_end
+    from produce_range where year(inter_period_end) <> year(period_end)
+),
+amount_info as(
+Select total
+    product_id, product_name, report_year,
+    datediff(inter_period_end + interval 1 day, inter_period_start)*average_daily_sales as total_amount
+from
+(
+    Select *, cast(YEAR(inter_period_end) as CHAR) as report_year from produce_range
+)a group by product_id, product_name, report_year order by product_id, report_year
+)
+Select * from amount_info;
+
+* Kinh nghiệm:
+- Giải thích đơn giản nhất cho RECURSIVE CTE:
+- The recursive member (e.g., the INNER JOIN part) uses the output from the previous iteration as input to generate the next level of results.
+This process continues in loops until no new rows are generated (i.e., the recursive query produces an empty result).
+
+- select DATE_FORMAT('2024-01-01' + interval 1 year, '%Y-%m-01') - interval 1 day
+==> + interval 1 year với string vẫn workable
+
+* WRONG Formula:
+Select TIMESTAMPDIFF(year, '2019-12-01', '2020-01-31')
+| TIMESTAMPDIFF(year, '2019-12-01', '2020-01-31') |
+| ----------------------------------------------- |
+| 0                                               |
+==> Đổi công thức:
+    + YEAR(a) - YEAR(b)
+
+* Khi so sánh với null:
++/-/*...<> null:
+    + return null
+
+WITH RECURSIVE item_split AS (
+    -- Anchor Member: Start with the first part of the string
+    SELECT
+        order_id,
+        SUBSTRING_INDEX(items, ',', 1) AS item,
+        SUBSTRING(items, LENGTH(SUBSTRING_INDEX(items, ',', 1)) + 2) AS remaining_items
+    FROM orders
+    WHERE items IS NOT NULL AND items != ''
+    UNION ALL
+    -- Recursive Member: Split the remaining part of the string
+    SELECT
+        order_id,
+        SUBSTRING_INDEX(remaining_items, ',', 1) AS item,
+        SUBSTRING(remaining_items, LENGTH(SUBSTRING_INDEX(remaining_items, ',', 1)) + 2) AS remaining_items
+    FROM item_split
+    WHERE remaining_items != ''
+)
+SELECT order_id, item
+FROM item_split;
+
+* Anchor Member (Base Case):
+This query starts by selecting the first item from the items column using SUBSTRING_INDEX.
+It selects the portion before the first comma and stores the rest of the string in remaining_items
+for further processing.
+SUBSTRING_INDEX(items, ',', 1) extracts the part before the first comma (the first item in the list).
+SUBSTRING(items, LENGTH(SUBSTRING_INDEX(items, ',', 1)) + 2) extracts the remaining string
+after the first comma.
+The WHERE clause ensures that only rows with non-empty items are processed.
+
+* Recursive Member:
+This query takes the remaining part of the string (remaining_items) and recursively extracts
+the next item from the comma-separated list using SUBSTRING_INDEX again.
+It repeats the extraction process for the remaining portion of the string (remaining_items).
+The recursion continues until there are no more items left (remaining_items becomes empty).
+
+* Termination:
+The recursion stops when there are no more items to process (remaining_items = '').
+
+========================
+- Anchor Member Execution (One-time Execution):
+
+- The anchor query (SELECT id, name, manager_id FROM employees WHERE id = 1) is executed first to generate the initial result set.
+This result forms the "base" or "seed" for the recursion.
+Recursive Member Execution (Loop):
+
+- The recursive member (e.g., the INNER JOIN part) uses the output from the previous iteration as input to generate the next level of results.
+This process continues in loops until no new rows are generated (i.e., the recursive query produces an empty result).
+Termination:
+
+- When the recursive member no longer returns rows, the recursion stops.
+========================
+
+
+| product_id | product_name | average_daily_sales | inter_period_start | inter_period_end | period_start | period_end |
+| ---------- | ------------ | ------------------- | ------------------ | ---------------- | ------------ | ---------- |
+| 1          | LC Phone     | 100                 | 2019-01-25         | 2019-02-28       | 2019-01-25   | 2019-02-28 |
+| 2          | LC T-Shirt   | 10                  | 2018-12-01         | 2018-12-31       | 2019-01-01   | 2020-01-01 |
+| 3          | LC Keychain  | 1                   | 2019-12-01         | 2020-01-31       | 2019-12-01   | 2020-01-31 |
+| 2          | LC T-Shirt   | 10                  | 2019-01-01         | 2019-12-31       | 2020-01-01   | 2020-01-01 |
+| 2          | LC T-Shirt   | 10                  | 2020-01-01         | 2020-01-01       | 2020-01-01   | 2020-01-01 |
+
+
+| 3          | 2019-12-01   | 2020-01-31  | 1
+| product_id | product_name | average_daily_sales | inter_period_start | inter_period_end | period_start | period_end |
+| ---------- | ------------ | ------------------- | ------------------ | ---------------- | ------------ | ---------- |
+| 1          | LC Phone     | 100                 | 2019-01-25         | 2019-02-28       | 2019-01-25   | 2019-02-28 |
+| 2          | LC T-Shirt   | 10                  | 2018-12-01         | 2018-12-31       | 2019-01-01   | 2020-01-01 |
+| 3          | LC Keychain  | 1                   | 2019-12-01         | 2020-01-31       | 2019-12-01   | 2020-01-31 |
+==> inter_period_end = period_end (Product_id==3)
+    + Nến nó mới k ra kết quả
+
+| product_id | product_name | average_daily_sales | inter_period_start | inter_period_end | period_start | period_end |
+| ---------- | ------------ | ------------------- | ------------------ | ---------------- | ------------ | ---------- |
+| 1          | LC Phone     | 100                 | 2019-01-25         | 2019-02-28       | 2019-01-25   | 2019-02-28 |
+| 2          | LC T-Shirt   | 10                  | 2018-12-01         | 2018-12-31       | 2018-12-01   | 2020-01-01 |
+| 3          | LC Keychain  | 1                   | 2019-12-01         | 2020-01-31       | 2019-12-01   | 2020-01-31 |
+
+
+* WRONG Formula:
+Select TIMESTAMPDIFF(year, '2019-12-01', '2020-01-31')
+| TIMESTAMPDIFF(year, '2019-12-01', '2020-01-31') |
+| ----------------------------------------------- |
+| 0                                               |
+==> Đổi công thức:
+    + YEAR(a) - YEAR(b)
+
+
+| product_id | product_name | average_daily_sales | inter_period_start | inter_period_end | period_start | period_end |
+| ---------- | ------------ | ------------------- | ------------------ | ---------------- | ------------ | ---------- |
+| 1          | LC Phone     | 100                 | 2019-01-25         | 2019-02-28       | 2019-01-25   | 2019-02-28 |
+| 2          | LC T-Shirt   | 10                  | 2018-12-01         | 2018-12-31       | 2019-01-01   | 2020-01-01 |
+| 3          | LC Keychain  | 1                   | 2019-12-01         | 2019-12-31       | 2020-01-01   | 2020-01-31 |
+| 2          | LC T-Shirt   | 10                  | 2019-01-01         | 2019-12-31       | 2020-01-01   | 2020-01-01 |
+| 3          | LC Keychain  | 1                   | 2020-01-01         | 2020-01-01       | 2020-01-01   | 2020-01-31 |
+| 2          | LC T-Shirt   | 10                  | 2020-01-01         | 2020-01-01       | 2020-01-01   | 2020-01-01 |
+
+
+If we fill the anchor:
+- inter_period_start = null
+- inter_period_end = null
+
+| product_id | product_name | average_daily_sales | inter_period_start | inter_period_end | period_start | period_end |
+| ---------- | ------------ | ------------------- | ------------------ | ---------------- | ------------ | ---------- |
+| 1          | LC Phone     | 100                 | null               | null             | 2019-01-25   | 2019-02-28 |
+| 2          | LC T-Shirt   | 10                  | null               | null             | 2018-12-01   | 2020-01-01 |
+| 3          | LC Keychain  | 1                   | null               | null             | 2019-12-01   | 2020-01-31 |
+
+** BUG MYSQL cần chú ý:
+Select year('2019-02-28') <> year('');
+| year('2019-02-28') <> year('') |
+| ------------------------------ |
+| null                           |
+
+============================
+- Đáng nhẽ phần (inter_period_start) and (inter_period_end) không cần nhưng nếu không fill
+==> Nó sẽ return lại null:
+    + where null <> x ==> where null
+    ==> Return false
+- Add thêm:
+    + or inter_period_end is null ==> Trong (RECURSIVE CTE)
+    + where inter_period_end is not null ==> Trong (produce_range)
+
+with recursive prod_sale as(
+    Select
+        s.*, p.product_name
+    from
+    Product p join Sales s on p.product_id = s.product_id
+),
+produce_range as(
+    Select
+        product_id,
+        product_name,
+        average_daily_sales,
+        date(null) as inter_period_start,
+        date(null) as inter_period_end,
+        period_start,
+        period_end
+    from prod_sale
+    UNION ALL
+    Select
+        product_id,
+        product_name,
+        average_daily_sales,
+        period_start as inter_period_start,
+        case
+            when year(period_end) - year(period_start) = 0 then period_end
+            else DATE_FORMAT(period_start + interval 1 year, '%Y-01-01') - interval 1 day
+        end as inter_period_end,
+        case
+            when year(period_end) - year(period_start) = 0 then period_start
+            else DATE_FORMAT(period_start + interval 1 year, '%Y-01-01')
+        end as period_start,
+        period_end
+    from produce_range where year(period_end) <> year(inter_period_end) or inter_period_end is null
+),
+amount_info as(
+Select
+    product_id, product_name, report_year,
+    datediff(inter_period_end + interval 1 day, inter_period_start)*average_daily_sales as total_amount
+from
+(
+    Select *, cast(YEAR(inter_period_end) as CHAR) as report_year from produce_range where inter_period_end is not null
+)a group by product_id, product_name, report_year order by product_id, report_year
+)
+Select * from amount_info;
+
+1.1, Optimization
+** Solution 1:
+
+- Chữa với cách khác list all các days sau đó join với sales:
+    + For each day, we will sum(average_daily_sales) one time.
+
+With recursive cte as(
+    Select min(period_start) as date
+    from Sales
+    UNION ALL
+    Select date_add(date, interval 1 day)
+    from cte where date <= (Select max(period_end) from Sales)
+),
+output as(
+Select
+    s.product_id, p.product_name, left(e.date,4) as report_year, sum(s.average_daily_sales) as total_amount
+from Sales s join Product p ON p.product_id = s.product_id
+join cte e on s.period_start <= e.date and s.period_end >= e.date
+Group by s.product_id, p.product_name, left(e.date,4)
+)
+Select * from output order by product_id, report_year;
+
+** Solution 2:
+
+SELECT a.product_id, b.product_name, a.report_year, a.total_amount
+FROM (
+    SELECT product_id, '2018' AS report_year,
+        average_daily_sales * (DATEDIFF(LEAST(period_end, '2018-12-31'), GREATEST(period_start, '2018-01-01'))+1) AS total_amount
+    FROM Sales
+    WHERE YEAR(period_start)=2018 OR YEAR(period_end)=2018
+
+    UNION ALL
+
+    SELECT product_id, '2019' AS report_year,
+        average_daily_sales * (DATEDIFF(LEAST(period_end, '2019-12-31'), GREATEST(period_start, '2019-01-01'))+1) AS total_amount
+    FROM Sales
+    WHERE YEAR(period_start)<=2019 AND YEAR(period_end)>=2019
+
+    UNION ALL
+
+    SELECT product_id, '2020' AS report_year,
+        average_daily_sales * (DATEDIFF(LEAST(period_end, '2020-12-31'), GREATEST(period_start, '2020-01-01'))+1) AS total_amount
+    FROM Sales
+    WHERE YEAR(period_start)=2020 OR YEAR(period_end)=2020
+) a
+LEFT JOIN Product b
+ON a.product_id = b.product_id
+ORDER BY a.product_id, a.report_year

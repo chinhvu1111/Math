@@ -125,6 +125,11 @@ public class E1_MaxChunksToMakeSorted {
         //  + Nếu i không cần swap + arr[i]==i : Ta có thể chia được.
         // + 0(val)=0(pos) ==> rs++
         //
+        //- The array is permuation of [0,n-1]
+        //  + If we get max from nums[i] to nums[j]
+        //      + max==i ==> We can split the array
+        //      ==> We have (one more chunk) : rs++
+        //
         //1.1, Optimization
         //1.2, Complexity
         //- Space: O(1)

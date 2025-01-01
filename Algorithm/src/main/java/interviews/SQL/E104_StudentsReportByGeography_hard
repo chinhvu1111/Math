@@ -1,0 +1,159 @@
+** Requirement:
+Table: Student
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| name        | varchar |
+| continent   | varchar |
++-------------+---------+
+This table may contain (duplicate) rows.
+Each row of this table indicates (the name of a student) and (the continent) they came from.
+
+- A school has students from (Asia, Europe, and America).
+- Write a solution to (pivot) (the continent column) in the Student table so that each name is (sorted alphabetically) and
+- displayed underneath (its corresponding continent).
+- The output headers should be (America, Asia, and Europe), respectively.
+- The test cases are generated so that the student number from America is (not less) than either (Asia or Europe).
+The result format is in the following example.
+
+Example 1:
+
+Input:
+Student table:
++--------+-----------+
+| name   | continent |
++--------+-----------+
+| Jane   | America   |
+| Pascal | Europe    |
+| Xi     | Asia      |
+| Jack   | America   |
++--------+-----------+
+Output:
++---------+------+--------+
+| America | Asia | Europe |
++---------+------+--------+
+| Jack    | Xi   | Pascal |
+| Jane    | null | null   |
++---------+------+--------+
+
+Follow up: If it is unknown which continent has the most students, could you write a solution to generate the student report?
+
+** Idea
+1.
+1.0, Idea
+* Method-1:
+- Get list of name from each continent
+- row_number() to get rn id
+- Using left join to combine the continents by using (rn)
+
+with name_per_continents as(
+Select
+    *, row_number() over(partition by continent order by name asc) as rn
+from Student
+),
+output as(
+Select
+    a.name as 'America',
+    c.name as 'Asia',
+    b.name as 'Europe'
+from
+(select * from name_per_continents where continent = 'America' order by rn) a
+left join
+(select * from name_per_continents where continent = 'Europe' order by rn) b
+on a.rn = b.rn
+left join
+(select * from name_per_continents where continent = 'Asia' order by rn) c
+on a.rn = c.rn
+)
+Select * from output;
+
+1.1, Optimization
+- Use session variables
+
+Select
+    America, Asia, Europe
+from
+    (Select @am:=0, @as:=0, @eu:=0) t,
+    (
+    Select
+        @as:=@as+1 as asid, name as Asia
+    from student where continent = 'Asia' order by name
+    ) as t2
+    RIGHT JOIN
+    (
+        Select
+            @am:=@am+1 as amid, name as America
+        from student where continent = 'America' order by name
+        ) as t1
+    ON asid = amid
+    LEFT JOIN
+    (
+    Select
+            @eu:=@eu+1 as euid, name as Europe
+    from student where continent = 'Europe' order by name
+    ) as t3
+    ON amid = euid
+
+- Explain:
+- One issue you may encounter is the student list for America is not complete
+if you use regular inner join since there are more records in this list comparing with the other two.
+So you may have a solution to use the outer join. Correct! But how to arrange the 3 tables?
+The trick is to put the America list in the middle so that
+we can use right (outer) join and right (outer) join to connect with other two tables.
+
+==> Nói chung đặt america ở giữa để right
+* x <-right join - Ameria left-join-> y
+==> Vẫn cần phải quan tâm thằng nào dài hơn
+
+** Follow-up question:
+* First solution:
+with output as(
+    SELECT
+            MAX(CASE WHEN continent = 'America' THEN name END )AS America,
+            MAX(CASE WHEN continent = 'Asia' THEN name END )AS Asia,
+            MAX(CASE WHEN continent = 'Europe' THEN name END )AS Europe
+    FROM (SELECT *, ROW_NUMBER()OVER(PARTITION BY continent ORDER BY name) AS row_id FROM student) AS t
+    GROUP BY row_id
+)
+Select * from output
+** Main point:
+- Mấu chốt ở đây là không cần select riêng ra thành các (partition by continent):
++ America, Asia, Europe riêng
++ Sau đó left join ==> Sẽ cần thằng có nhiều name nhất
+==> Chỉ cần (GROUP BY rn) + (if else condition) là xong.
+    + Group by rn để tìm for each rn(id) ==> map to name of 3 continents (America, Asia, Europe)
+
+* Second solution:
+* Use variables:
+- Ở đây ta có thể chọn count variable dựa trên value của column:
+    + if continent = 'America':
+        count(x) ==> return x as row_id
+    + if continent = 'Asia':
+            count(y) ==> return y as row_id
+    + if continent = 'Europe':
+                count(z) ==> return z as row_id
+==> Sau đó ta vẫn sẽ group by rn + agg(max) để ra kết quả
+
+SELECT MAX(America) AS America, MAX(Asia) as Asia, MAX(Europe) AS Europe
+FROM (
+	SELECT
+        CASE WHEN continent = 'America' THEN @r1 := @r1 + 1
+             WHEN continent = 'Asia'    THEN @r2 := @r2 + 1
+             WHEN continent = 'Europe'  THEN @r3 := @r3 + 1 END row_id,
+        CASE WHEN continent = 'America' THEN name END America,
+        CASE WHEN continent = 'Asia'    THEN name END Asia,
+        CASE WHEN continent = 'Europe'  THEN name END Europe
+    FROM student, (SELECT @r1 := 0, @r2 := 0, @r3 := 0) tmp
+    ORDER BY name) t
+GROUP BY row_id;
+
+1.2, Special cases
+
+
+1.1, Complexity
+
+#Reference:
+1892. Page Recommendations II
+3089. Find Bursty Behavior
+596. Classes More Than 5 Students

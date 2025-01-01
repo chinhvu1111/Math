@@ -2,7 +2,7 @@ package E1_Topological_sort;
 
 import java.util.*;
 
-public class E3_MinimumHeightTrees {
+public class E3_MinimumHeightTrees_classic {
 
     public static List<Integer> findMinHeightTrees(int n, int[][] edges) {
         //Edge cases

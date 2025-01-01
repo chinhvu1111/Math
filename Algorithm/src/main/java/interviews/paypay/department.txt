@@ -1,0 +1,41 @@
+import java.util.Arrays;
+
+public class CoinChange {
+    // Mảng dp lưu kết quả tính toán trước
+    private static int[] dp;
+
+    // Hàm khởi tạo bảng DP cho tất cả giá trị từ 0 đến maxChange
+    private static void precomputeDP(int maxChange) {
+        int[] coins = {25, 10, 5, 1};
+        dp = new int[100 + 1] // 100 is max change, đề bài cho là 100;
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0; // Không cần đồng xu để trả lại 0
+
+        // Lập bảng DP
+        for (int x = 1; x <= maxChange; x++) {
+            for (int coin : coins) {
+                if (x >= coin && dp[x - coin] != Integer.MAX_VALUE) {
+                    dp[x] = Math.min(dp[x], dp[x - coin] + 1);
+                }
+            }
+        }
+    }
+
+    // Hàm trả về kết quả đã tính toán trong bảng DP
+    private static int solution(int change) {
+        return dp[change];
+    }
+
+    public static void main(String[] args) {
+        // Khởi tạo bảng DP cho các giá trị từ 0 đến 99
+        precomputeDP(99);
+
+        // Test với các trường hợp mẫu
+        System.out.println(solution(50)); // Output: 2
+        System.out.println(solution(40)); // Output: 3
+        System.out.println(solution(35)); // Output: 2
+        System.out.println(solution(34)); // Output: 6
+        System.out.println(solution(1));  // Output: 1
+        System.out.println(solution(0));  // Output: 0
+    }
+}

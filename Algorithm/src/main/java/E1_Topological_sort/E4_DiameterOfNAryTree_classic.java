@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class E4_DiameterOfNAryTree {
+public class E4_DiameterOfNAryTree_classic {
     // Definition for a Node.
     public static class Node {
         public int val;

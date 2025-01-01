@@ -13,7 +13,7 @@ public class E35_TagerSum {
         if(arr.length==1&&(arr[0]==target||arr[0]==-1*target)){
             return 1;
         }
-        if(arr.length==1&&arr[0]!=target){
+        if(arr.length == 1){
             return 0;
         }
         int n=arr.length;
@@ -21,7 +21,7 @@ public class E35_TagerSum {
         for(int i=0;i<n;i++){
             sum+=arr[i];
         }
-        if(sum<target){
+        if(sum<target||sum<Math.abs(target)){
             return 0;
         }
         int dp[][]=new int[n][sum*2+1];
@@ -55,5 +55,13 @@ public class E35_TagerSum {
             }
         }
         return dp[n-1][target+sum];
+    }
+
+    public static void main(String[] args) {
+//        int[] nums = {1,1,1,1,1};
+//        int target = 3;
+        int[] nums = {100, 100};
+        int target = -400;
+        System.out.println(findTargetSumWays(nums, target));
     }
 }

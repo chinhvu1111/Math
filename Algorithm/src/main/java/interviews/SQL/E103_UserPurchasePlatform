@@ -1,0 +1,180 @@
+** Requirement:
+Table: Spending
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| user_id     | int     |
+| spend_date  | date    |
+| platform    | enum    |
+| amount      | int     |
++-------------+---------+
+The table logs the history of the spending of users that make purchases from an online shopping website
+that has a desktop and a mobile application.
+(user_id, spend_date, platform) is the primary key (combination of columns with unique values) of this table.
+The platform column is an ENUM (category) type of ('desktop', 'mobile').
+
+Write a solution to find (the total number of users) and (the total amount spent) using
++ the mobile (only), the desktop (only),
+and both mobile and desktop together (for each date).
+
+* Return the result table in any order.
+The result format is in the following example.
+
+Example 1:
+
+Input:
+Spending table:
++---------+------------+----------+--------+
+| user_id | spend_date | platform | amount |
++---------+------------+----------+--------+
+| 1       | 2019-07-01 | mobile   | 100    |
+| 1       | 2019-07-01 | desktop  | 100    |
+| 2       | 2019-07-01 | mobile   | 100    |
+| 2       | 2019-07-02 | mobile   | 100    |
+| 3       | 2019-07-01 | desktop  | 100    |
+| 3       | 2019-07-02 | desktop  | 100    |
++---------+------------+----------+--------+
+Output:
++------------+----------+--------------+-------------+
+| spend_date | platform | total_amount | total_users |
++------------+----------+--------------+-------------+
+| 2019-07-01 | desktop  | 100          | 1           |
+| 2019-07-01 | mobile   | 100          | 1           |
+| 2019-07-01 | both     | 200          | 1           |
+| 2019-07-02 | desktop  | 100          | 1           |
+| 2019-07-02 | mobile   | 100          | 1           |
+| 2019-07-02 | both     | 0            | 0           |
++------------+----------+--------------+-------------+
+Explanation:
+On 2019-07-01, user 1 purchased using both desktop and mobile, user 2 purchased using mobile only and user 3 purchased using desktop only.
+On 2019-07-02, user 2 purchased using mobile only, user 3 purchased using desktop only and no one purchased using both platforms.
+
+** Idea
+1.
+1.0, Idea
+* Method-1:
+
+Spending:
+- Group by user_id, spend_date ==> Count(distinct(platform)): view1
+- Filter the view1 to get (mobile, desktop, both) number of user
+
+for each row:
++ count the number for each platform (mobile, desktop) / user
++ agg three times and then executing the union operation to get the final result
+
+with user_info as (
+    Select
+        user_id, spend_date,
+        sum(mobile_count) as mobile_count,
+        sum(desktop_count) as desktop_count,
+        sum(mobile_amount) as mobile_amount,
+        sum(desktop_amount) as desktop_amount
+    from (
+        Select
+            user_id,
+            if(platform = 'mobile', 1,0) mobile_count,
+            if(platform = 'desktop', 1,0) desktop_count,
+            if(platform = 'mobile', amount,0) mobile_amount,
+            if(platform = 'desktop', amount,0) desktop_amount,
+            spend_date
+        from Spending
+    )a group by user_id, spend_date
+),
+spending_view as(
+    Select distinct(spend_date) from Spending
+),
+spending_with_platform_view as (
+    Select spend_date, 'desktop' as platform from spending_view
+    union
+    Select spend_date, 'mobile' as platform from spending_view
+    union
+    Select spend_date, 'both' as platform from spending_view
+),
+platform_info as(
+Select
+    spend_date, 'mobile' as platform, sum(mobile_amount) as total_amount,
+    count(1) as total_users
+from user_info where mobile_count <> 0 and desktop_count = 0 group by spend_date
+UNION
+Select
+    spend_date, 'desktop' as platform, sum(desktop_amount) as total_amount,
+    count(1) as total_users
+from user_info where mobile_count = 0 and desktop_count <> 0 group by spend_date
+UNION
+Select
+    spend_date, 'both' as platform, (sum(desktop_amount)+sum(mobile_amount)) as total_amount,
+    count(1) as total_users
+from user_info where mobile_count <> 0 and desktop_count <> 0 group by spend_date
+),
+output as (
+    Select
+        sp.spend_date, sp.platform,
+        ifnull(pl.total_amount,0) as total_amount,
+        ifnull(pl.total_users,0)  as total_users
+    from spending_with_platform_view sp left join platform_info pl
+    on sp.spend_date = pl.spend_date and sp.platform = pl.platform
+)
+Select * from output;
+
+1.1, Optimization
+1.2, Special cases
+- For each spend_date, we must have 3 platform categories:
+    + desktop
+    + mobile
+    + both
+If we don't have one of them, the value will be filled in 0
+
+1.1, Complexity
+- Time: O(n) => O(log(n))
+
+SELECT
+    p.spend_date,
+    p.platform,
+    IFNULL(SUM(amount), 0) total_amount,
+    COUNT(user_id) total_users
+FROM
+(
+    SELECT DISTINCT(spend_date), 'desktop' platform FROM Spending
+    UNION
+    SELECT DISTINCT(spend_date), 'mobile' platform FROM Spending
+    UNION
+    SELECT DISTINCT(spend_date), 'both' platform FROM Spending
+) p
+LEFT JOIN (
+    SELECT
+        spend_date,
+        user_id,
+        IF(mobile_amount > 0, IF(desktop_amount > 0, 'both', 'mobile'), 'desktop') platform,
+        (mobile_amount + desktop_amount) amount
+    FROM (
+        SELECT
+          spend_date,
+          user_id,
+          SUM(CASE platform WHEN 'mobile' THEN amount ELSE 0 END) mobile_amount,
+          SUM(CASE platform WHEN 'desktop' THEN amount ELSE 0 END) desktop_amount
+        FROM Spending
+        GROUP BY spend_date, user_id
+    ) o
+) t
+ON p.platform=t.platform AND p.spend_date=t.spend_date
+GROUP BY spend_date, platform
+
+* Why is this better?
+- We don't need to use UNION 2 times
+- We don't need to filter 3 metrics for (mobile, desktop, both) + UNION after that:
+==> We just divide them into 2 cases:
+    + We sum amount for each category
+    + Use (if else condition) to get the platform
+- spend_date left join this ==> Done
+
+* Kinh nghiệm:
+- Phần chia không cần phải split thành nhiều UNION
+==> Sẽ chỉ cần if else để chia case là được.
+Ex:
+(Thay vì filter + sum nhiều lần) ==> (sum 1 lần + if else là xong)
+
+#Reference:
+1892. Page Recommendations II
+3089. Find Bursty Behavior
+596. Classes More Than 5 Students

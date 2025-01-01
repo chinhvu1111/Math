@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class E6_CountSubtreesWithMaxDistanceBetweenCities {
+public class E6_CountSubtreesWithMaxDistanceBetweenCities_classic {
     public int[] countSubgraphsForEachDiameter(int n, int[][] edges) {
         int m=edges.length;
         List<Integer>[] adjNodes=new ArrayList[n+1];

@@ -221,12 +221,12 @@ public class E141_FindMinimumDiameterAfterMergingTwoTrees {
 
     public static void main(String[] args) {
         //* Requirement
-        //- There exist two (undirected trees) with n and m nodes, numbered from 0 to n - 1 and from 0 to m - 1, respectively.
+        //- There exist two (undirected trees) with n and m nodes, numbered from (0 to n - 1) and from (0 to m - 1), respectively.
         //- You are given two 2D integer arrays edges1 and edges2 of lengths (n - 1) and (m - 1), respectively,
         // where edges1[i] = [ai, bi] indicates that there is an edge between nodes ai and bi in the first tree
         // and edges2[i] = [ui, vi] indicates that there is an edge between nodes ui and vi in the second tree.
         //- You must connect one node from the first tree with another node from the second tree with an edge.
-        //* Return the minimum possible diameter of the resulting tree.
+        //* Return (the minimum possible diameter) of the resulting tree.
         //* The diameter of a tree is (the length of the longest path) between "any" (two nodes) in the tree.
         //
         // Idea
@@ -256,7 +256,7 @@ public class E141_FindMinimumDiameterAfterMergingTwoTrees {
         //- Không hiểu rõ length có nghĩa là ntn?
         //  + Số node
         //  + Số lượng các edges đi qua
-        //==> Số lượng cách edges = length
+        //==> Số lượng edges = length
         //* Cái này cần hỏi interviewer trước khi làm.
         //
 //        int[][] edges1 = {{0,1},{0,2},{0,3},{2,4},{2,5},{3,6},{2,7}},
@@ -285,13 +285,13 @@ public class E141_FindMinimumDiameterAfterMergingTwoTrees {
         //  + Pass depth vào:
         //      + max(first_depth + second_depth - 2*cur_depth)
         //      + return first_depth
-        //- Ngoài ra còn 1 cách là chọn bừa 1 root ==> tính... (Xemn lại phần topological sort để rõ)
+        //- Ngoài ra còn 1 cách là chọn bừa 1 root ==> tính... (Xem lại phần topological sort để rõ)
         //- Nhớ truyền rs[0] vào method + lấy max bên ngoài thì:
         //  + rs[0] = max(function(rs), rs[0])
         //  Nếu để:
         //      + rs[0] =  max(rs[0], function(rs))
         //      ==> SAI vì rs[0] chưa được updated + function(rs) return lại không phải giá trị MAX
-        //          + Giá trị max thực ra là 1 bước intermediat được gán bên trong.
+        //          + Giá trị max thực ra là 1 bước intermediate được gán bên trong.
         //
         //- Tìm root để min height ntn:
         //  + Cut từng layer từ leaf nodes --> centroid nodes.

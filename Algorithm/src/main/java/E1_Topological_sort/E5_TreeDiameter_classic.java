@@ -2,7 +2,7 @@ package E1_Topological_sort;
 
 import java.util.*;
 
-public class E5_TreeDiameter {
+public class E5_TreeDiameter_classic {
 
 //    public static HashMap<Integer, List<Integer>> adjNodes;
 //    public static int rs;

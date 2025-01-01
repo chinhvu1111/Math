@@ -53,6 +53,15 @@ public class E17_FindScoreOfAnArrayAfterMarkingAllElements {
         int[] arr=new int[]{2,3,5,1,3,2};
         System.out.println(findScore(arr));
         //** Đề bài:
+        //- You are given (an array nums) consisting of (positive integers).
+        //- Starting with score = 0, apply the following algorithm:
+        //  + Choose ((the smallest integer) of the array) that is (not marked).
+        //      + If there is (a tie), choose (the one) with (the smallest index).
+        //  + Add the value of the chosen integer to score.
+        //  + Mark (the chosen element) and (its two adjacent elements) if they exist.
+        //- Repeat until all the array elements are marked.
+        //* Return (the score) you get after applying (the above algorithm).
+        //
         //- Bài này tìm số lần đánh dấu từ phẩn tử min --> max
         //- Nếu index của phần tử đánh dấu là (i) --> thì ta sẽ đánh dấu thêm 2 phần tử bên cạnh là (i-1), (i+1)
         //- Nếu có nhiều phần tử value=min --> lấy smallest index.
