@@ -16,49 +16,23 @@ public class E1_RegularExpressionMatching_hard {
         int n = s.length();
         int m = p.length();
         boolean dp[][] = new boolean[n + 1][m + 1];
-        int countDup = 0;
 
-        for (int i = 0; i <= n; i++) {
-
-            if (i > 1 && s.charAt(i - 1) == s.charAt(i - 2)) {
-                countDup++;
-            } else {
-                countDup = 0;
+        dp[0][0] = true;
+        for (int i = 1; i <= m; i++) {
+            if (p.charAt(i-1) == '*') {
+                dp[0][i] = dp[0][i-1];
+            }else{
+                break;
             }
-            for (int j = 0; j <= m; j++) {
-                if (i == 0 && j == 0) {
-                    dp[i][j] = true;
-                }
-                if (j == 0) {
-                    continue;
-                }
-
-                if (i > 0
-                        && s.charAt(i - 1) == p.charAt(j - 1)) {
+        }
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (s.charAt(i - 1) == p.charAt(j - 1)
+                        || p.charAt(j - 1) == '?') {
                     dp[i][j] = dp[i - 1][j - 1];
-                    continue;
-                }
-
-                boolean v = false;
-
-                if (i - countDup - 1 >= 0 && j - 2 >= 0) {
-                    v = dp[i - countDup - 1][j - 2];
                 }
                 if (p.charAt(j - 1) == '*') {
-                    dp[i][j] = dp[i][j - 2];
-                }
-                if (p.charAt(j - 1) == '*'
-                        && (i == 0 || p.charAt(j - 2) == s.charAt(i - 1))) {
-                    dp[i][j] = v | dp[i][j];
-                    if(j>=2&&i>=1) dp[i][j]=dp[i][j]|dp[i-1][j-2]; 
-                    continue;
-                }
-                if (p.charAt(j - 1) == '*' && p.charAt(j - 2) == '.') {
-                    dp[i][j] = dp[i-1][j]|dp[i-1][j-2]|dp[i][j-2];
-                    continue;
-                }
-                if (i >= 1 && p.charAt(j - 1) == '.') {
-                    dp[i][j] = dp[i - 1][j - 1];
+                    dp[i][j] = dp[i - 1][j] || dp[i - 1][j - 1] || dp[i][j - 1];
                 }
             }
         }
