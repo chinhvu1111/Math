@@ -3,7 +3,7 @@ package E1_two_pointers;
 import java.util.*;
 import java.util.List;
 
-public class E6_CountOfSmallerNumbersAfterSelf {
+public class E6_CountOfSmallerNumbersAfterSelf_hard_classic {
 
     public static class Node{
         int index;
@@ -25,7 +25,7 @@ public class E6_CountOfSmallerNumbersAfterSelf {
 
         for(int i=n-1;i>=0;i--){
             Integer lessNode=sortedNodes.ceiling(nums[i]);
-            System.out.printf("Index=%s, value=%s, greater value=%s\n", i, nums[i], lessNode);
+//            System.out.printf("Index=%s, value=%s, greater value=%s\n", i, nums[i], lessNode);
             if(lessNode==null){
                 rs.add(0, sortedNodes.size());
                 sortedNodes.add(nums[i]);
@@ -57,6 +57,74 @@ public class E6_CountOfSmallerNumbersAfterSelf {
 //        }
 //        System.out.println();
         return rs;
+    }
+
+    public static class SegmentTree{
+
+        public int[] tree;
+        public SegmentTree(int n){
+            tree=new int[4*n];
+        }
+
+        public int query(int left, int right, int qLeft, int qRight, int index){
+            if(qLeft>right||qRight<left){
+                return 0;
+            }
+            if(qLeft<=left&&qRight>=right){
+                return tree[index];
+            }
+            int mid=left+(right-left)/2;
+            int leftRs=query(left, mid, qLeft, qRight, 2*index+1);
+            int rightRs=query(mid+1, right, qLeft, qRight, 2*index+2);
+            return leftRs+rightRs;
+        }
+
+        public void update(int left, int right, int index, int pos, int val){
+            if(pos < left || pos > right){
+                return;
+            }
+            if(left==right){
+                tree[index]=val;
+                return;
+            }
+            int mid=left+(right-left)/2;
+            if(pos<=mid){
+                update(left, mid,2*index+1, pos, val);
+            }else{
+                update(mid+1, right, 2*index+2, pos, val);
+            }
+            tree[index]=tree[2*index+1]+tree[2*index+2];
+        }
+    }
+
+    public static int[] compressArr(int[] nums){
+        int[] orgArr=Arrays.copyOf(nums, nums.length);
+        Arrays.sort(nums);
+        int[] rs=new int[nums.length];
+        int i=0;
+        for(int e: orgArr){
+            rs[i++]=Arrays.binarySearch(nums, e);
+        }
+        return rs;
+    }
+
+    public static List<Integer> countSmallerStuckedSolutionSegmenTree(int[] nums) {
+        int n=nums.length;
+        int[] compressedArr = compressArr(nums);
+//        for (int i = 0; i < compressedArr.length; i++) {
+//            System.out.printf("%s, ", compressedArr[i]);
+//        }
+//        System.out.println();
+        SegmentTree segmentTree=new SegmentTree(n);
+        int[] count=new int[n];
+        Integer[] rs=new Integer[n];
+
+        for(int i=n-1;i>=0;i--){
+            rs[i]=segmentTree.query(0, n-1, 0, compressedArr[i]-1, 0);
+            count[compressedArr[i]]++;
+            segmentTree.update(0, n-1, 0, compressedArr[i], count[compressedArr[i]]);
+        }
+        return Arrays.asList(rs);
     }
 
     public static void main(String[] args) {
@@ -126,6 +194,23 @@ public class E6_CountOfSmallerNumbersAfterSelf {
         //i=0 --> index>0: (i=1 --> i=4)
         //{ (i=0,5), (i=1, 2), (i=2, 1), (i=3,6) (i=4,1) }
         //
+        //2.
+        //2.0, Segment tree
+        //- Chuyển arr --> dạng index
+        //  + Vì vals nếu được sort thì index sẽ chỉ từ [0,n-1]
+        //
+        //- Loop từ (right -> left):
+        //  + Mỗi lần loop đến element ==> count[compressArr[i]]++
+        //  ==> Như cũ là 0 ==> Ta không cần build segment tree = [0...0]
+        //  ==> Ta sẽ update count mới với (index là số thứ tự sau khi sort ==> luôn unique)
+        //  + Tìm count thì ta chỉ cần dùng prefix sum để query (range sum(count))
+        //      + (0, current_val-1): Chỉ tìm các phần tử < current value (Hay là index sort nhỏ hơn)
+        //
+        //2.1, Cases
+        //2.2, Optimization
+        //2.3, Complexity
+        //- Space: O(4*n)
+        //- Time: O(n*log(n))
         //
         //#Reference:
         //327. Count of Range Sum
@@ -151,5 +236,6 @@ public class E6_CountOfSmallerNumbersAfterSelf {
         System.out.println(treeSet.floor(new Node(1, 5)));
         int[] nums = {5,2,6,1};
         System.out.println(countSmallerStuckedSolution(nums));
+        System.out.println(countSmallerStuckedSolutionSegmenTree(nums));
     }
 }

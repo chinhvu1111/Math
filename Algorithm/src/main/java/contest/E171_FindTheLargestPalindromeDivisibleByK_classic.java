@@ -2,7 +2,7 @@ package contest;
 
 import java.math.BigInteger;
 
-public class E171_FindTheLargestPalindromeDivisibleByK {
+public class E171_FindTheLargestPalindromeDivisibleByK_classic {
 
     public static String largestPalindromic(String num) {
         StringBuilder rs=new StringBuilder();

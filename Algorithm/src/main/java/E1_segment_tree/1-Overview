@@ -1,0 +1,93 @@
+
+
+Segment tree:
+- It is fully binary tree
+    + Each node has 2 or 1 children
+- It is not (perfect binary tree)
+- It is not (complete binary tree)
+- But the tree with height ("h-1") is (a perfect binary tree)
+
+1.1, Implement use array with size=(4*n) (Dùng array more efficient than the pointer - sequential mem is better than heap)
+              ?
+           1:[0:6]
+       /             \
+   2:[0:3]          3:[4:6]
+  /     \
+4:[0:1]   5[2:3]
+
+- Why do we need to initalize tree = [0]*4*n?
+- Number of leaf nodes: n
+- Number of internal nodes (Node with depth<=H-1)
+    + : n-1
+=> Total of nodes : n+(n-1) = 2*n-1
+
+1.2, Explanation
+Otherwise, when n is not a power of 2
+For example, n=10, then it is not (a perfect binary tree).
+- Number of nodes in last level=k:
+    + k>=2
+- Number of internal nodes:
+    + m = 2^x <n
+    ==> Except (the root node)
+    + 2*m-1, m<n
+- Total of nodes:
+    + k+2*m-1
+- We have:
+    + k<2*m
+- So total of nodes < 2*m+2*m-1 =4*m-1
+we have (m<n)
+==> Total of nodes < 2*n-1 < 4*n
+
+- Ta sẽ tìm top-> down:
+- Mid node được pre-calulated:
+Ex:
+Find(5,7) mà có (5,9) ==> Ta mới đi sâu
+==> Còn nếu có (5,7) luôn thì return luôn (pre-calculated value)
+
+1.3.1,
+* Time complexity:
+- Time: O(log(n))
+
+1.3, Finding cases
+- Find(x,y) at (x1,y1):
+    + If they are not overlapping
+        + (query_left < left) or (query_right > right)
+    ==> return 0
+- Find(x,y) at (x1,y1):
+    + If they are overlapping:
+        + (query_left <= left and right <= query_right)
+        Ex: query(3,4), left:right = (1,6)
+
+1.4, Update case
+- Use bottom up approach
+- Update the leaf node first and then modifying the intermediate nodes using the (previous nodes)
+
+1.4.1,
+Time complexity: O(log(n))
+
+2, Lazy propagation
+- Update single node ==> Easy
+But in the case, we need to update range of nodes that can make the update (the whole tree)
+==> Worst case time complexity: O(n)
+Ex:
+Increase(left,right) to 2 units
+==> We don't increase them immediately
+Ex:
+Increase(2,4) from (0,4)
+node(0,4) = x
+==> Update node(0,4) = x+2*2 + (mark node(0,4) as "lazy")
+==> Go up and update parent nodes
+
+* Main point:
+- We don't need to go down
+- If we go down later, we will add 2 to the children node
+
+2.1, Lazy logic
+- Lazy array is init with size = 4*n
+- Each node has lazy value:
+    + If we want to mark the children of (the current node) as "lazy":
+        + We need update the lazy value for them:
+        lazy[2*index+1]+= lazy[index]
+        lazy[2*index+2]+= lazy[index]
+    + Current value ==> Sẽ được tính luôn (Không phải lazy)
+

@@ -2,7 +2,7 @@ package contest;
 
 import java.util.*;
 
-public class E177_FindTheCountOfGoodIntegers_optimization {
+public class E177_FindTheCountOfGoodIntegers_optimizationc_division_classic {
 
     public static int countGoodIntegers(int n, int k) {
         if (n == 1) {
