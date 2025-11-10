@@ -1,6 +1,6 @@
 package interviews;
 
-public class E118_Pow_x_n_binary {
+public class E118_Pow_x_n_binary_classic {
 
     public static double dp[];
 

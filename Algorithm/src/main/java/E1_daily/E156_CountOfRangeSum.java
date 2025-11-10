@@ -40,9 +40,15 @@ public class E156_CountOfRangeSum {
 
     public static void main(String[] args) {
         //** Requirement:
-        //- Given an integer array nums and two integers (lower and upper),
+        //- Given (an integer array nums) and two integers (lower and upper),
         //* return (the number of range sums) that lie in [lower, upper] inclusive.
         //- Range sum S(i, j) is defined as (the sum of the elements) in nums between indices (i and j inclusive), where i <= j.
+        //
+        //Example 1:
+        //
+        //Input: nums = [-2,5,-1], lower = -2, upper = 2
+        //Output: 3
+        //Explanation: The three ranges are: [0,0], [2,2], and [0,2] and their respective sums are: -2, -1, 2.
         //
         // Idea
         //1.
@@ -57,11 +63,15 @@ public class E156_CountOfRangeSum {
         //
         //- Brainstorm
         //
+        //
         int[] nums = {-2,5,-1};
         int lower = -2, upper = 2;
         //-2,-1,5
         //- upper=3
         //[-2,-1], [-2],[-1]
+        //
+        //- We need to keep (the order of elements)
+        //
         //
         System.out.println(countRangeSum(nums, lower, upper));
         //

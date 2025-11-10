@@ -1,27 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package leetcode_hard;
 
-/**
- *
- * @author chinhvu
- */
-public class E6_DistinctSubsequences_hard {
+public class E8_LexicographicallySmallestBeautifulString {
 
     public static String smallestBeautifulString(String s, int k) {
-        return null;
+        return "";
     }
 
     public static void main(String[] args) {
         //** Requirement
-        //- A string is beautiful if:
+        //- A string is (beautiful) if:
         //  + It consists of the (first k letters) of (the English lowercase alphabet).
         //  + It does (not contain) any (substring of length 2 or more) which is (a palindrome).
+        //      + Without (the palindrome) with (length>=2)
         //
-        //- You are given a beautiful string s of length n and a positive integer k.
+        //- You are given (a beautiful string s of length n) and (a positive integer k).
         //* Return (the lexicographically smallest string) of length n, which is (larger than) s and is beautiful.
         // If there is (no such string), return (("an empty") string).
         //- (A string a) is lexicographically larger than a string b (of the same length)
@@ -31,6 +23,14 @@ public class E6_DistinctSubsequences_hard {
         //- For example, "abcd" is lexicographically larger than "abcc" because the first position
         // they differ is at the fourth character, and d is greater than c.
         //
+        //Example 1:
+        //
+        //Input: s = "abcz", k = 26
+        //Output: "abda"
+        //Explanation: The string "abda" is beautiful and lexicographically larger than the string "abcz".
+        //It can be proven that there is no string that is lexicographically larger than the string "abcz",
+        // beautiful, and lexicographically smaller than the string "abda".
+        //
         //** Idea
         //1.
         //1.0,
@@ -39,10 +39,11 @@ public class E6_DistinctSubsequences_hard {
         //1 <= n == s.length <= 10^5
         //4 <= k <= 26
         //s is a beautiful string.
-        //  + Time: O(n)
+        //  + length <= 10^5 => Time: O(n)
         //
         //* Brainstorm:
-        //
+        //Ex:
+        //s = "aabdadecgga", (k=4 ==> abcd)
         //
         //1.1, Case
         //
